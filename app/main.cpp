@@ -10,14 +10,15 @@
 #include <stdlib.h>
 
 #include "exampleConfig.h"
-#include "example.h"
+#include "example.hpp"
+#include "os-exec.hpp"
 
 /*
  * Simple main program that demontrates how access
  * CMake definitions (here the version number) from source code.
  */
 int main() {
-  std::cout << "C++ Boiler Plate v"
+  std::cout << "The AwwTools v"
             << PROJECT_VERSION_MAJOR
             << "."
             << PROJECT_VERSION_MINOR
@@ -26,7 +27,10 @@ int main() {
             << "."
             << PROJECT_VERSION_TWEAK
             << std::endl;
+  std::cout << "Embrace the Aww!" << std::endl;
+  std::cout << exec("echo \"Hello World\"") << std::endl;
   std::system("cat ../LICENSE");
+
 
   // Bring in the dummy class from the example source,
   // just to show that it is accessible from main.cpp.
