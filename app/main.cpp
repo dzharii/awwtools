@@ -7,11 +7,29 @@
 #endif
 
 #include <iostream>
+#include <cstdio>
+#include <ctime>
+#include <string>
 #include <stdlib.h>
 
 #include "exampleConfig.h"
 #include "example.hpp"
 #include "os-exec.hpp"
+#include "clip.h"
+
+
+std::string getDateYYYYMMDD() {
+    std::string date;
+    char x[32]{};
+    time_t a = time(nullptr);
+    struct tm d;
+    if (localtime_s(&d, &a) == 0) {
+      strftime(x, sizeof(x), "%F", &d);
+      date = x;
+    }
+    return date;
+}
+
 
 /*
  * Simple main program that demontrates how access
@@ -31,6 +49,14 @@ int main() {
   std::cout << exec("echo \"Hello World\"") << std::endl;
   std::system("cat ../LICENSE");
 
+  // get current date yyyy-mm-dd as string
+  std::string date = getDateYYYYMMDD();
+
+
+  clip::set_text(date);
+  std::cout << "Copied to clipboard: "
+            << date
+            << std::endl;
 
   // Bring in the dummy class from the example source,
   // just to show that it is accessible from main.cpp.
