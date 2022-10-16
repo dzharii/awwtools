@@ -45,7 +45,6 @@ set(TESTFILES        # All .cpp files in tests/
 )
 set(LIBRARY_NAME engine)  # Default name for the library built from src/*.cpp (change if you wish)
 
-set(CLIP_TESTS off)
 
 # --------------------------------------------------------------------------------
 #                            Build! (Change as needed)
