@@ -18,6 +18,13 @@
 #include "clip.h"
 
 
+// cross-platform localtime_s
+#ifdef _MSC_VER
+#define localtime_s(_tm, _time) localtime_s(_tm, _time)
+#else
+#define localtime_s(_tm, _time) localtime_r(_time, _tm)
+#endif
+
 std::string getDateYYYYMMDD() {
     std::string date;
     char x[32]{};
