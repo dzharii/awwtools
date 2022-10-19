@@ -7,26 +7,15 @@
 #endif
 
 #include <iostream>
-#include <cstdio>
-#include <ctime>
 #include <string>
-#include <stdlib.h>
 
 #include "exampleConfig.h"
 #include "example.hpp"
 #include "os-exec.hpp"
 #include "clip.h"
+#include "aw-datetime.hpp"
 
-std::string getDateYYYYMMDD() {
-    std::string date;
-    char buff[32]{};
-    time_t t = time(nullptr);
 
-    if (std::strftime(buff, sizeof(buff), "%F", std::localtime(&t))) {
-        date = buff;
-    }
-    return date;
-}
 
 /*
  * Simple main program that demontrates how access
