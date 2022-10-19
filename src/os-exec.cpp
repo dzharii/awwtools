@@ -1,4 +1,11 @@
+#include <cstdio>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <array>
 #include "os-exec.hpp"
+
 
 #ifdef _MSC_VER
     #define popen _popen

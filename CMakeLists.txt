@@ -39,6 +39,8 @@ find_lto(CXX)
 # --------------------------------------------------------------------------------
 set(SOURCES          # All .cpp files in src/
     src/example.cpp
+    src/aw-datetime.cpp
+    src/os-exec.cpp
 )
 set(TESTFILES        # All .cpp files in tests/
     tests/main.cpp

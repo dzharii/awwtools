@@ -12,8 +12,9 @@
 #include "exampleConfig.h"
 #include "example.hpp"
 #include "os-exec.hpp"
-#include "clip.h"
 #include "aw-datetime.hpp"
+#include "clip.h"
+
 
 
 
