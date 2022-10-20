@@ -7,6 +7,19 @@ The goal of this project to create a set of cross platform tools for enhancing t
 Thank you:
 - 💖 [bsamseth/cpp-project: Boiler plate template for C++ projects, with CMake, Doctest, Travis CI, Appveyor, Github Actions and coverage reports.](https://github.com/bsamseth/cpp-project)
 
+
+## Building
+
+```sh
+git clone https://github.com/dzharii/awwtools
+cd awwtools
+cmake . -B cmake-build -DCMAKE_BUILD_TYPE=DEBUG
+cmake --build cmake-build
+```
+
+The executable is somewhere in `cmake-build/` folder.
+
+
 # Boiler plate for C++ projects
 
 This is a boiler plate for C++ projects. What you get:
