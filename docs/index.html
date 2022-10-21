@@ -13,17 +13,17 @@
 <body>
 <div class="container">
   <h1>٩(⊙‿⊙)۶ Aww Tools</h1>
-  <p>A collection of tools to help you with your projects</p>
+  <p>A collection of productivity tools</p>
+  <p>Embrace the aww!</p>
 
   <h2>Installation</h2>
-  https://github.com/dzharii/awwtools
 
   <p>One of the core ideas of aww tools is to make the contribution process as convenient as possible. This is why aww tools are distributed as a git repo. You are encouraged to open the github repository and fork the project: </p>
   <p><a href="https://github.com/dzharii/awwtools">https://github.com/dzharii/awwtools</a></p>
 
   <p> Or you can postpone this decision and clone it now. I do not insist on forking. Just a suggestion ;) </p>
 
-<pre contenteditable="true"><code>
+<pre><code>
 git clone https://github.com/dzharii/awwtools
 </code></pre>
 
@@ -75,6 +75,12 @@ cmake --build cmake-build
 <script>
   // add copy button to code blocks
   document.querySelectorAll('pre').forEach((pre) => {
+
+    pre.contentEditable = true;
+    pre.oncut = () => false;
+    pre.onpaste = () => false;
+    pre.spellcheck = false;
+
     const button = document.createElement('button');
     button.className = 'copy-button';
     button.innerText = 'Copy';
