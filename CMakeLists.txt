@@ -43,7 +43,7 @@ set(SOURCES          # All .cpp files in src/
     src/os-exec.cpp
 )
 set(TESTFILES        # All .cpp files in tests/
-    tests/main.cpp
+    tests/aww.cpp
 )
 set(LIBRARY_NAME engine)  # Default name for the library built from src/*.cpp (change if you wish)
 
@@ -75,16 +75,16 @@ target_link_libraries(
 target_set_warnings(${LIBRARY_NAME} ENABLE ALL AS_ERROR ALL DISABLE Annoying)
 # target_compile_options(${LIBRARY_NAME} ... )  # For setting manually.
 
-# Add an executable for the file app/main.cpp.
+# Add an executable for the file app/aww.cpp.
 # If you add more executables, copy these lines accordingly.
-add_executable(main app/main.cpp)   # Name of exec. and location of file.
-target_link_libraries(main PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
-target_set_warnings(main ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
-target_enable_lto(main optimized)  # enable link-time-optimization if available for non-debug configurations
+add_executable(aww app/aww.cpp)   # Name of exec. and location of file.
+target_link_libraries(aww PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
+target_set_warnings(aww ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_enable_lto(aww optimized)  # enable link-time-optimization if available for non-debug configurations
 
-# Set the properties you require, e.g. what C++ standard to use. Here applied to library and main (change as needed).
+# Set the properties you require, e.g. what C++ standard to use. Here applied to library and aww (change as needed).
 set_target_properties(
-    ${LIBRARY_NAME} main
+    ${LIBRARY_NAME} aww
       PROPERTIES
         CXX_STANDARD 17
         CXX_STANDARD_REQUIRED YES

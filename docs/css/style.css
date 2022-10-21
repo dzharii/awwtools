@@ -1,0 +1,16 @@
+body {
+    color: #202223;
+    font-family:  Georgia, 'Times New Roman', Times, serif
+}
+
+pre {
+    position: relative;
+    font-size: large;
+}
+
+button.copy-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+}

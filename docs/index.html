@@ -1,12 +1,92 @@
-<style>
- .ex1 .parent {
-    display: grid;
-    place-items: center;
-  }
-</style>
-  <div class="parent blue" >
-  <div class="box coral" contenteditable>
-    Hello awesome world!
-  </div>
-     <!-- Very ugly HTML!-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>٩(⊙‿⊙)۶ Aww Tools</title>
+  <!-- https://milligram.io/#getting-started -->
+  <link rel="stylesheet" href="css/milligram.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
 
+<body>
+<div class="container">
+  <h1>٩(⊙‿⊙)۶ Aww Tools</h1>
+  <p>A collection of tools to help you with your projects</p>
+
+  <h2>Installation</h2>
+  https://github.com/dzharii/awwtools
+
+  <p>One of the core ideas of aww tools is to make the contribution process as convenient as possible. This is why aww tools are distributed as a git repo. You are encouraged to open the github repository and fork the project: </p>
+  <p><a href="https://github.com/dzharii/awwtools">https://github.com/dzharii/awwtools</a></p>
+
+  <p> Or you can postpone this decision and clone it now. I do not insist on forking. Just a suggestion ;) </p>
+
+<pre contenteditable="true"><code>
+git clone https://github.com/dzharii/awwtools
+</code></pre>
+
+<p>✨ Wow! Thank you for making this first step!</p>
+<p>As Lao Tsu says "A journey of a thousand miles begins with a single step."</p>
+
+<p>Next, let's get to the awwtools repo folder. You can do it! </p>
+
+<p>And... let's make sure we have all dependencies installed</p>
+
+<h3>CMake</h3>
+<p>
+  <a href="https://cmake.org/install/">Installing CMake</a> on Windows, Linux, and macOS.
+</p>
+
+<h3>C++ compiler</h3>
+
+<h4>On Windows</h4>
+<p>
+  <a href="https://visualstudio.microsoft.com/vs/community/"></a> Visual Studio Community</a> would be the best choice.
+  Please, enable C++ support during installation.
+</p>
+
+<h4>On GNU/Linux</h4>
+<p>You can use GCC</p>
+
+<h4>On MacOS</h4>
+<p>You can use Clang</p>
+
+<p>I really appreciate you are still here after all these installation</p>
+
+<h2>Building</h2>
+
+"Materialize" the build system with CMake
+<pre><code>
+cmake . -B cmake-build -DCMAKE_BUILD_TYPE=DEBUG
+</code></pre>
+
+<pre><code>
+cmake --build cmake-build
+</code></pre>
+
+
+
+
+
+
+</div>
+<script>
+  // add copy button to code blocks
+  document.querySelectorAll('pre').forEach((pre) => {
+    const button = document.createElement('button');
+    button.className = 'copy-button';
+    button.innerText = 'Copy';
+    button.addEventListener('click', () => {
+      const maybeCode = pre.querySelector('code');
+      if (maybeCode) {
+        const text = (maybeCode.textContent).trim();
+        navigator.clipboard.writeText(text);
+      }
+    });
+    pre.appendChild(button);
+  });
+</script>
+</body>
+</html>
