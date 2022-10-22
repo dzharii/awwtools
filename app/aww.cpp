@@ -8,20 +8,16 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
+#include <filesystem>
 
 #include "exampleConfig.h"
 #include "example.hpp"
 #include "os-exec.hpp"
-#include "aw-datetime.hpp"
+#include "aww-common.hpp"
 #include "clip.h"
 
-
-
-/*
- * Simple main program that demontrates how access
- * CMake definitions (here the version number) from source code.
- */
-int main() {
+int main(int argc, char** argv) {
   std::cout << "The AwwTools v"
             << PROJECT_VERSION_MAJOR
             << "."
@@ -32,11 +28,53 @@ int main() {
             << PROJECT_VERSION_TWEAK
             << std::endl;
   std::cout << "Embrace the Aww!" << std::endl;
-  std::cout << exec("echo \"Hello World\"") << std::endl;
-  std::system("cat ../LICENSE");
 
+  if (argc < 2) {
+    std::cout << "No arguments provided" << std::endl;
+    return 1;
+  }
+
+
+  // argv to vector of strings
+  std::vector<std::string> cmdArgs(argv, argv + argc);
+  cmdArgs.erase(cmdArgs.begin()); // remove first element
+
+  std::string maybeAwwExecutable = "aww";
+  bool isAwwExecutable = false;
+
+  auto itCmdArg = cmdArgs.begin();
+  for (; itCmdArg != cmdArgs.end(); ++itCmdArg) {
+    maybeAwwExecutable += "-" + *itCmdArg;
+    if (std::filesystem::exists(maybeAwwExecutable)) {
+      isAwwExecutable = true;
+      break;
+    } else if (std::filesystem::exists(maybeAwwExecutable + ".exe")) {
+      isAwwExecutable = true;
+      maybeAwwExecutable += ".exe";
+      break;
+    }
+  }
+
+  if (isAwwExecutable) {
+    // slice itCmdArg to end
+    ++itCmdArg;
+    std::vector<std::string> awwExecutableArgs(itCmdArg, cmdArgs.end());
+    std::string awwExecutableArgsStr = aww::string::join(awwExecutableArgs, " ");
+    std::cout << "Executing: "
+              << maybeAwwExecutable
+              << " "
+              << awwExecutableArgsStr
+              << std::endl;
+
+    return system((maybeAwwExecutable + " " + awwExecutableArgsStr).c_str());
+  } else {
+    std::cout << "No aww executable found" << std::endl;
+    return 1;
+  }
+
+  /* Commented code should go to aww-date
   // get current date yyyy-mm-dd as string
-  std::string date = getDateYYYYMMDD();
+  std::string date = aww::date::getDateYYYYMMDD();
 
 
   clip::set_text(date);
@@ -48,4 +86,7 @@ int main() {
   // just to show that it is accessible from main.cpp.
   Dummy d = Dummy();
   return d.doSomething() ? 0 : -1;
+  */
+  return 0;
+
 }
