@@ -10,11 +10,13 @@
 #include <string>
 #include <filesystem>
 #include <fstream>
+#include <regex>
 
 bool findGitRepo(std::filesystem::path, std::filesystem::path &);
+bool tryConvertToGitUrl(std::string, std::string &);
 
 /*
- * Simple main program that demontrates how access
+ * Simple main program that demonstrates how access
  * CMake definitions (here the version number) from source code.
  */
 int main()
@@ -45,7 +47,7 @@ int main()
         }
 
         std::string urlConfigLine;
-
+        bool foundUrl = false;
 
         if (foundOrigin)
         {
@@ -57,8 +59,13 @@ int main()
                     // split str on =
                     std::string delimiter = "=";
                     urlConfigLine = str.substr(str.find(delimiter) + 1);
-                    std::cout << "urlConfigLine: " << urlConfigLine << std::endl;
 
+                    // trim whitespace before and after
+                    urlConfigLine = urlConfigLine.erase(0, urlConfigLine.find_first_not_of(' '));
+                    urlConfigLine = urlConfigLine.erase(urlConfigLine.find_last_not_of(' ') + 1);
+
+                    foundUrl = true;
+                    std::cout << "urlConfigLine: " << urlConfigLine << std::endl;
                     break;
                 }
             }
@@ -67,6 +74,26 @@ int main()
         {
             std::cout << "No origin found" << std::endl;
         }
+
+        if (foundUrl)
+        {
+            std::cout << "Found url: " << urlConfigLine << std::endl;
+
+            std::string webUrl;
+            if (tryConvertToGitUrl(urlConfigLine, webUrl))
+            {
+                std::cout << "Converted to web url: " << webUrl << std::endl;
+                std::system(("start " + webUrl).c_str());
+            }
+            else
+            {
+                std::cout << "Failed to convert to web url" << std::endl;
+            }
+        }
+        else
+        {
+            std::cout << "Could not find url" << std::endl;
+        }
     }
     else
     {
@@ -74,6 +101,34 @@ int main()
     }
 
     return 0;
+}
+
+
+//  Attempts to convert git origin url to a web url
+//  git@github.com:dzharii/awwtools.git     => https://github.com/dzharii/awwtools.git
+//  https://github.com/dzharii/awwtools.git => https://github.com/dzharii/awwtools.git
+bool tryConvertToGitUrl(std::string inputUrl, std::string &httpUrl)
+{
+    if (inputUrl.find("https://") == 0 || inputUrl.find("http://") == 0)
+    {
+        httpUrl = inputUrl;
+        return true;
+    }
+    else if (inputUrl.find("git@github") == 0)
+    {
+        std::regex reGithubSsh("^git@github.com:([^/]+)/(\\S+)$");
+        std::smatch match;
+        if (std::regex_search(inputUrl, match, reGithubSsh))
+        {
+            std::string user = match[1];
+            std::string repo = match[2];
+            std::string githubUrl = "https://git@github.com/" + user + "/" + repo;
+            httpUrl = githubUrl;
+            return true;
+        }
+        return false;
+    }
+    return false;
 }
 
 bool findGitRepo(std::filesystem::path dirPath, std::filesystem::path &gitRepoPath)
@@ -88,16 +143,14 @@ bool findGitRepo(std::filesystem::path dirPath, std::filesystem::path &gitRepoPa
         gitRepoPath = gitPath.string();
         return true;
     }
-    else
+
+    std::cout << "No git repo found in: " << currentDir << std::endl;
+    const bool isRoot = currentDir == currentDir.root_path();
+    if (!isRoot)
     {
-        std::cout << "No git repo found in: " << currentDir << std::endl;
-        const bool isRoot = currentDir == currentDir.root_path();
-        if (!isRoot)
-        {
-            currentDir = currentDir.parent_path();
-            return findGitRepo(currentDir, gitRepoPath);
-        }
-        std::cout << "Reached root directory, no git repo found." << std::endl;
-        return false;
+        currentDir = currentDir.parent_path();
+        return findGitRepo(currentDir, gitRepoPath);
     }
+    std::cout << "Reached root directory, no git repo found." << std::endl;
+    return false;
 }
