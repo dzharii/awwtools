@@ -62,18 +62,17 @@ int main(int argc, char** argv) {
     std::string awwExecutableArgsStr = aww::string::join(awwExecutableArgs, " ");
 
     std::filesystem::path executablePath(maybeAwwExecutable);
-    std::string cmd = std::filesystem::absolute(executablePath).string() + 
-                      " " + 
+    std::string cmd = std::filesystem::absolute(executablePath).string() +
+                      " " +
                       awwExecutableArgsStr;
     std::cout << "Executing: "
               << cmd
               << std::endl;
 
     return system(cmd.c_str());
-  } else {
-    std::cout << "No aww executable found" << std::endl;
-    return 1;
   }
+  std::cout << "No aww executable found" << std::endl;
+  return 1;
 
   /* Commented code should go to aww-date
   // get current date yyyy-mm-dd as string
@@ -90,6 +89,4 @@ int main(int argc, char** argv) {
   Dummy d = Dummy();
   return d.doSomething() ? 0 : -1;
   */
-  return 0;
-
 }
