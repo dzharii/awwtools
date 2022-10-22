@@ -34,3 +34,7 @@ also in this way we can support extensions, for instance, `aww`  can look at mul
 
 - Should aww launcher also show a help page for the aww-tool
 - Should aww launcher be aware about command history?
+
+## MACOS Emulation: 
+
+- [darlinghq](https://docs.darlinghq.org/build-instructions.html)
