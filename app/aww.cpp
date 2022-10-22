@@ -60,13 +60,16 @@ int main(int argc, char** argv) {
     ++itCmdArg;
     std::vector<std::string> awwExecutableArgs(itCmdArg, cmdArgs.end());
     std::string awwExecutableArgsStr = aww::string::join(awwExecutableArgs, " ");
+
+    std::filesystem::path executablePath(maybeAwwExecutable);
+    std::string cmd = std::filesystem::absolute(executablePath).string() + 
+                      " " + 
+                      awwExecutableArgsStr;
     std::cout << "Executing: "
-              << maybeAwwExecutable
-              << " "
-              << awwExecutableArgsStr
+              << cmd
               << std::endl;
 
-    return system((maybeAwwExecutable + " " + awwExecutableArgsStr).c_str());
+    return system(cmd.c_str());
   } else {
     std::cout << "No aww executable found" << std::endl;
     return 1;
