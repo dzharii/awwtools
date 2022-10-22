@@ -1,7 +1,4 @@
 #include "aww-common.hpp"
-
-#include "windows.h"
-
 namespace aww::os::actions {
 
     std::tuple<bool, std::string> launchFile(const std::string& path) {

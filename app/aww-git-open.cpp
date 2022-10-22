@@ -134,7 +134,7 @@ bool tryConvertToGitUrl(std::string inputUrl, std::string &httpUrl)
         {
             std::string user = match[1];
             std::string repo = match[2];
-            std::string githubUrl = "https://git@github.com/" + user + "/" + repo;
+            std::string githubUrl = "https://github.com/" + user + "/" + repo;
             httpUrl = githubUrl;
             return true;
         }
