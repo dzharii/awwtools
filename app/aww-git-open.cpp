@@ -12,6 +12,8 @@
 #include <fstream>
 #include <regex>
 
+#include "aww-common.hpp"
+
 bool findGitRepo(std::filesystem::path, std::filesystem::path &);
 bool tryConvertToGitUrl(std::string, std::string &);
 
@@ -83,7 +85,17 @@ int main()
             if (tryConvertToGitUrl(urlConfigLine, webUrl))
             {
                 std::cout << "Converted to web url: " << webUrl << std::endl;
-                std::system(("start " + webUrl).c_str());
+
+
+                auto res = aww::os::actions::launchFile(webUrl);
+                if (std::get<aww::result>(res))
+                {
+                    std::cout << "Successfully launched file" << std::endl;
+                }
+                else
+                {
+                    std::cout << "Failed to launch file: " << std::get<aww::error>(res) << std::endl;
+                }
             }
             else
             {

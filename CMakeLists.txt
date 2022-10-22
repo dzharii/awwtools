@@ -42,6 +42,16 @@ set(SOURCES          # All .cpp files in src/
     src/aw-datetime.cpp
     src/os-exec.cpp
 )
+if(WIN32)
+    list(APPEND SOURCES src/aww-common-windows.cpp)
+elseif(APPLE)
+    list(APPEND SOURCES src/aww-common-apple.cpp)
+elseif(UNIX)
+    list(APPEND SOURCES src/aww-common-unix.cpp)
+else()
+    list(APPEND SOURCES src/aww-common-unknown.cpp)
+endif()
+
 set(TESTFILES        # All .cpp files in tests/
     tests/aww.cpp
 )
