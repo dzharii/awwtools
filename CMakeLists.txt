@@ -39,7 +39,7 @@ find_lto(CXX)
 # --------------------------------------------------------------------------------
 set(SOURCES          # All .cpp files in src/
     src/example.cpp
-    src/aw-datetime.cpp
+    src/aww-common.cpp
     src/os-exec.cpp
 )
 if(WIN32)
