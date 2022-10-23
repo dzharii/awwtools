@@ -42,3 +42,6 @@ also in this way we can support extensions, for instance, `aww`  can look at mul
 ## Repo
 
 - [X] `main` branch requires pull request flow to protect it from broken builds
+
+## Security
+- [ ] Before running aww-tool -- check it's checksum. The checksum / hash must be generated at compile time

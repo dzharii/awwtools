@@ -17,7 +17,8 @@
 #include "aww-common.hpp"
 #include "clip.h"
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv)
+{
   std::cout << "The AwwTools v"
             << PROJECT_VERSION_MAJOR
             << "."
@@ -29,11 +30,11 @@ int main(int argc, char** argv) {
             << std::endl;
   std::cout << "Embrace the Aww!" << std::endl;
 
-  if (argc < 2) {
+  if (argc < 2)
+  {
     std::cout << "No arguments provided" << std::endl;
     return 1;
   }
-
 
   // argv to vector of strings
   std::vector<std::string> cmdArgs(argv, argv + argc);
@@ -43,19 +44,24 @@ int main(int argc, char** argv) {
   bool isAwwExecutable = false;
 
   auto itCmdArg = cmdArgs.begin();
-  for (; itCmdArg != cmdArgs.end(); ++itCmdArg) {
+  for (; itCmdArg != cmdArgs.end(); ++itCmdArg)
+  {
     maybeAwwExecutable += "-" + *itCmdArg;
-    if (std::filesystem::exists(maybeAwwExecutable)) {
+    if (std::filesystem::exists(maybeAwwExecutable))
+    {
       isAwwExecutable = true;
       break;
-    } else if (std::filesystem::exists(maybeAwwExecutable + ".exe")) {
+    }
+    else if (std::filesystem::exists(maybeAwwExecutable + ".exe"))
+    {
       isAwwExecutable = true;
       maybeAwwExecutable += ".exe";
       break;
     }
   }
 
-  if (isAwwExecutable) {
+  if (isAwwExecutable)
+  {
     // slice itCmdArg to end
     ++itCmdArg;
     std::vector<std::string> awwExecutableArgs(itCmdArg, cmdArgs.end());

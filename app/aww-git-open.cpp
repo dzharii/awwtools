@@ -86,16 +86,12 @@ int main()
             {
                 std::cout << "Converted to web url: " << webUrl << std::endl;
 
-
-                auto res = aww::os::actions::launchFile(webUrl);
-                if (std::get<aww::result>(res))
+                aww::result_t launchFileRes = aww::os::actions::launchFile(webUrl);
+                if (aww::failed(launchFileRes))
                 {
-                    std::cout << "Successfully launched file" << std::endl;
+                    std::cout << aww::make_error("Failed to launch file", launchFileRes) << std::endl;
                 }
-                else
-                {
-                    std::cout << "Failed to launch file: " << std::get<aww::error>(res) << std::endl;
-                }
+                std::cout << "Launched file" << std::endl;
             }
             else
             {
