@@ -92,15 +92,24 @@ target_link_libraries(aww PRIVATE ${LIBRARY_NAME})  # Link the executable to lib
 target_set_warnings(aww ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(aww optimized)  # enable link-time-optimization if available for non-debug configurations
 
+# Aww git open
 add_executable(aww-git-open app/aww-git-open.cpp)   # Name of exec. and location of file.
 target_link_libraries(aww-git-open PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
 target_set_warnings(aww-git-open ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(aww-git-open optimized)  # enable link-time-optimization if available for non-debug configurations
 
+## Aww date
+add_executable(aww-date app/aww-date.cpp)   # Name of exec. and location of file.
+target_link_libraries(aww-date PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
+target_set_warnings(aww-date ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_enable_lto(aww-date optimized)  # enable link-time-optimization if available for non-debug configurations
 
 # Set the properties you require, e.g. what C++ standard to use. Here applied to library and aww (change as needed).
 set_target_properties(
-    ${LIBRARY_NAME} aww aww-git-open
+    ${LIBRARY_NAME}
+        aww
+        aww-git-open
+        aww-date
       PROPERTIES
         CXX_STANDARD 17
         CXX_STANDARD_REQUIRED YES

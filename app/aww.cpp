@@ -15,7 +15,6 @@
 #include "example.hpp"
 #include "os-exec.hpp"
 #include "aww-common.hpp"
-#include "clip.h"
 
 int main(int argc, char **argv)
 {
