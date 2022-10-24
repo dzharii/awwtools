@@ -101,6 +101,35 @@ aww-git-open [optional file or folder path]
   The file path is optional and, when launched without parameters -- attempts to open the current directory.
 </p>
 
+<h3>aww date</h2>
+  <pre><code>
+  # returns current date as YYYY-MM-DD:
+  aww date
+  aww-date
+
+  # returns safe file name string with date
+  aww date [optional text]
+  aww-date [optional text]
+
+  # example:
+  aww date letter to my future self
+  # result
+  # 2022-10-24-letter-to-my-future-self (result is copied to clipboard)
+  </code></pre>
+
+  <p>
+    Source code: <a href="https://github.com/dzharii/awwtools/blob/main/app/aww-date.cpp">/main/app/aww-date.cpp</a>
+  </p>
+
+  <p>
+    This tool copies the current date to the clipboard. It is useful when you want to create a file with a date in the name.
+  </p>
+  <p>
+    If any text is provided as a command line argument, it will be appended to the date.
+    The unsafe filename characters will be replaced with "-".
+  </p>
+
+
 <h2>Q&A</h2>
 
 <h3>Q: Why C++?</h3>
