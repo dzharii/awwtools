@@ -35,11 +35,13 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  // argv to vector of strings
   std::vector<std::string> cmdArgs(argv, argv + argc);
+  std::filesystem::path awwExecutablePath = cmdArgs[0];
+  std::filesystem::path awwExecutableDir = awwExecutablePath.parent_path();
+
   cmdArgs.erase(cmdArgs.begin()); // remove first element
 
-  std::string maybeAwwExecutable = "aww";
+  std::string maybeAwwExecutable = (awwExecutableDir / "aww").string();
   bool isAwwExecutable = false;
 
   auto itCmdArg = cmdArgs.begin();
@@ -78,20 +80,4 @@ int main(int argc, char **argv)
   }
   std::cout << "No aww executable found" << std::endl;
   return 1;
-
-  /* Commented code should go to aww-date
-  // get current date yyyy-mm-dd as string
-  std::string date = aww::date::getDateYYYYMMDD();
-
-
-  clip::set_text(date);
-  std::cout << "Copied to clipboard: "
-            << date
-            << std::endl;
-
-  // Bring in the dummy class from the example source,
-  // just to show that it is accessible from main.cpp.
-  Dummy d = Dummy();
-  return d.doSomething() ? 0 : -1;
-  */
 }
