@@ -15,13 +15,9 @@
 
 #include "aww-common.hpp"
 
-bool findGitRepo(std::filesystem::path, std::filesystem::path &);
-bool tryConvertToGitUrl(std::string, std::string &);
+bool findGitRepo(const std::filesystem::path &, std::filesystem::path &);
+bool tryConvertToGitUrl(const std::string &, std::string &);
 aww::result_t tryFindRepositoryUrlInGitConfig(std::istream &, std::string &);
-
-
-// 2022-10-29 BUG: D:\my-github\awwtools\cmake-build\bin\aww-git-open.exe README.md
-
 
 
 /*
@@ -45,22 +41,27 @@ int main(int argc, char **argv)
   }
 
 
-  std::filesystem::path currentDir = std::filesystem::current_path();
+  std::filesystem::path currentDir = std::filesystem::absolute(std::filesystem::current_path());
   std::string optionalPathAbsolute = "";
 
   if (std::filesystem::exists(optionalFileToOpen)) {
-    std::filesystem::path optionalFileToOpenPathAsPath = optionalFileToOpen;
-    optionalPathAbsolute = std::filesystem::absolute(optionalFileToOpenPathAsPath).string();
+    std::filesystem::path optionalFileToOpenPathAsPath(
+                            std::filesystem::absolute(optionalFileToOpen));
+
+    optionalPathAbsolute = optionalFileToOpenPathAsPath.string();
 
     // check if it is file or directory
     if (std::filesystem::is_directory(optionalFileToOpenPathAsPath)) {
-      currentDir = optionalFileToOpenPathAsPath;
+      currentDir = std::filesystem::absolute(optionalFileToOpenPathAsPath);
+      std::cout << "1 Opening directory: " << currentDir << std::endl;
     } else {
-      currentDir = optionalFileToOpenPathAsPath.parent_path();
+      currentDir = std::filesystem::absolute(optionalFileToOpenPathAsPath.parent_path());
+      std::cout << "2 Opening directory: " << currentDir.string() << std::endl;
     }
   }
 
   std::cout << "Optional file to open: " << optionalPathAbsolute << std::endl;
+  std::cout << "Current directory: " << currentDir << std::endl;
 
 
   std::filesystem::path gitRepo;
@@ -191,7 +192,7 @@ aww::result_t tryFindRepositoryUrlInGitConfig(std::istream &gitConfigStream, std
 //  Attempts to convert git origin url to a web url
 //  git@github.com:dzharii/awwtools.git     => https://github.com/dzharii/awwtools.git
 //  https://github.com/dzharii/awwtools.git => https://github.com/dzharii/awwtools.git
-bool tryConvertToGitUrl(std::string inputUrl, std::string &httpUrl)
+bool tryConvertToGitUrl(const std::string &inputUrl, std::string &httpUrl)
 {
   if (inputUrl.find("https://") == 0 || inputUrl.find("http://") == 0)
   {
@@ -215,7 +216,7 @@ bool tryConvertToGitUrl(std::string inputUrl, std::string &httpUrl)
   return false;
 }
 
-bool findGitRepo(std::filesystem::path dirPath, std::filesystem::path &gitRepoPath)
+bool findGitRepo(const std::filesystem::path& dirPath, std::filesystem::path &gitRepoPath)
 {
   std::cout << "Searching for git repo in: " << dirPath << std::endl;
   std::filesystem::path currentDir(dirPath);
