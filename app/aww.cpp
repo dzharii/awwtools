@@ -36,10 +36,12 @@ int main(int argc, char **argv)
   }
 
   std::vector<std::string> cmdArgs(argv, argv + argc);
-  std::filesystem::path awwExecutablePath = cmdArgs[0];
-  std::filesystem::path awwExecutableDir = awwExecutablePath.parent_path();
-
   cmdArgs.erase(cmdArgs.begin()); // remove first element
+  std::filesystem::path awwExecutablePath = aww::fs::getCurrentExecutablePath();
+  std::filesystem::path awwExecutableDir = std::filesystem::absolute(awwExecutablePath.parent_path());
+
+  std::cout << "awwExecutablePath: " << awwExecutablePath << std::endl;
+  std::cout << "awwExecutableDir: " << awwExecutableDir << std::endl;
 
   std::string maybeAwwExecutable = (awwExecutableDir / "aww").string();
   bool isAwwExecutable = false;

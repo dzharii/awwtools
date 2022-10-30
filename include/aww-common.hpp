@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <ctime>
 #include <stdlib.h>
+#include <filesystem>
 
 namespace aww
 {
@@ -37,6 +38,10 @@ namespace aww::os::actions
 namespace aww::string
 {
   std::string join(const std::vector<std::string> &, const std::string &);
+}
+
+namespace aww::fs {
+  std::filesystem::path getCurrentExecutablePath(void);
 }
 
 #endif // AWW_COMMON_HPP

@@ -1,5 +1,8 @@
+#include <filesystem>
 #include <cstdlib>
 #include "aww-common.hpp"
+#include <mach-o/dyld.h>
+
 
 namespace aww::os::actions
 {
@@ -19,4 +22,18 @@ namespace aww::os::actions
     }
     return std::make_tuple(false, "open failed");
   }
+}
+
+namespace aww::fs
+{
+    std::filesystem::path getCurrentExecutablePath(void)
+    {
+      char result[PATH_MAX];
+      uint32_t size = sizeof(result);
+      if (_NSGetExecutablePath(result, &size) == 0)
+      {
+        return std::filesystem::path(result);
+      }
+      return std::filesystem::path();
+    }
 }

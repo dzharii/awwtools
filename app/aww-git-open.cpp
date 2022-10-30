@@ -15,20 +15,52 @@
 
 #include "aww-common.hpp"
 
-bool findGitRepo(std::filesystem::path, std::filesystem::path &);
-bool tryConvertToGitUrl(std::string, std::string &);
+namespace fs = std::filesystem;
+
+bool findGitRepo(const fs::path &, fs::path &);
+bool tryConvertToGitUrl(const std::string &, std::string &);
 aww::result_t tryFindRepositoryUrlInGitConfig(std::istream &, std::string &);
+aww::result_t getRelativeUrlPath(const fs::path &, const fs::path &, std::string &);
 
 /*
  * Simple main program that demonstrates how access
  * CMake definitions (here the version number) from source code.
  */
-int main()
+int main(int argc, char **argv)
 {
   std::cout << "Embrace the Aww!" << std::endl;
 
-  std::filesystem::path currentDir = std::filesystem::current_path();
-  std::filesystem::path gitRepo;
+  if (argc > 2)
+  {
+    std::cout << "Too many arguments provided" << std::endl;
+    return 1;
+  }
+
+  std::string optionalFileToOpen = "";
+  if (argc == 2)
+  {
+    optionalFileToOpen = argv[1];
+  }
+
+
+  fs::path currentDir = fs::absolute(fs::current_path());
+  fs::path optionalPathAbsolute;
+
+  if (fs::exists(optionalFileToOpen)) {
+    optionalPathAbsolute = fs::absolute(optionalFileToOpen);
+
+    // check if it is file or directory
+    if (fs::is_directory(optionalPathAbsolute)) {
+      currentDir = optionalPathAbsolute;
+    } else {
+      currentDir = fs::absolute(optionalPathAbsolute.parent_path());
+    }
+  }
+
+  std::cout << "Optional file to open: " << optionalPathAbsolute << std::endl;
+  std::cout << "Current directory: " << currentDir << std::endl;
+
+  fs::path gitRepo;
 
   bool gitRepoFound = findGitRepo(currentDir, gitRepo);
 
@@ -39,7 +71,7 @@ int main()
   }
 
   std::cout << "Found git repo: " << gitRepo << std::endl;
-  std::filesystem::path gitConfigPath = gitRepo / "config";
+  fs::path gitConfigPath = gitRepo / ".git" / "config";
   std::cout << "git config path: " << gitConfigPath << std::endl;
 
   // read line by line
@@ -65,6 +97,27 @@ int main()
 
   std::cout << "Converted to web url: " << webUrl << std::endl;
 
+  // extract gitRepo from optionalFileToOpen
+  fs::path gitRepoAbsolute = fs::absolute(gitRepo);
+
+
+  // TODO Error handling and logging
+
+  if (!optionalPathAbsolute.empty())
+  {
+    std::string webPath;
+    aww::result_t webPathConverted = getRelativeUrlPath(gitRepoAbsolute, optionalPathAbsolute, webPath);
+
+    if (aww::failed(webPathConverted))
+    {
+      std::cout << aww::make_error("Failed to convert path to web url", webPathConverted) << std::endl;
+      return 1;
+    }
+
+    webUrl = webUrl + "?path=" + webPath;
+    std::cout << "Opening file: " << webUrl << std::endl;
+  }
+
   aww::result_t launchFileRes = aww::os::actions::launchFile(webUrl);
   if (aww::failed(launchFileRes))
   {
@@ -72,6 +125,34 @@ int main()
   }
   std::cout << "Launched file" << std::endl;
   return 0;
+}
+
+aww::result_t getRelativeUrlPath(const fs::path &parentAbsPath, const fs::path &childAbsPath, std::string &result)
+{
+  std::string parentPathStr = parentAbsPath.string();
+  std::string childPathStr = childAbsPath.string();
+  if (childPathStr.find(parentPathStr) != 0)
+  {
+
+    std::string message;
+    message += "Child path is not a child of parent path.\n";
+    message += "Parent path: '";
+    message += parentPathStr + "'\n";
+    message += "Child path: '" + childPathStr + "'\n";
+    return std::make_tuple(false, message);
+  }
+
+  if (childPathStr == parentPathStr) {
+    result = "";
+    return std::make_tuple(true, "");
+  }
+      // subtract gitrepo from optionalPathAbsolute
+  std::string relativeRepoUrlPath = childPathStr.substr(parentPathStr.length() + 1);
+
+  // replace backslashes with forward slashes
+  std::replace(relativeRepoUrlPath.begin(), relativeRepoUrlPath.end(), '\\', '/');
+  result = relativeRepoUrlPath;
+  return std::make_tuple(true, "");
 }
 
 aww::result_t tryFindRepositoryUrlInGitConfig(std::istream &gitConfigStream, std::string &gitSshOrHttpUri)
@@ -128,7 +209,7 @@ aww::result_t tryFindRepositoryUrlInGitConfig(std::istream &gitConfigStream, std
 //  Attempts to convert git origin url to a web url
 //  git@github.com:dzharii/awwtools.git     => https://github.com/dzharii/awwtools.git
 //  https://github.com/dzharii/awwtools.git => https://github.com/dzharii/awwtools.git
-bool tryConvertToGitUrl(std::string inputUrl, std::string &httpUrl)
+bool tryConvertToGitUrl(const std::string &inputUrl, std::string &httpUrl)
 {
   if (inputUrl.find("https://") == 0 || inputUrl.find("http://") == 0)
   {
@@ -152,16 +233,17 @@ bool tryConvertToGitUrl(std::string inputUrl, std::string &httpUrl)
   return false;
 }
 
-bool findGitRepo(std::filesystem::path dirPath, std::filesystem::path &gitRepoPath)
+bool findGitRepo(const fs::path& dirPath, fs::path &gitRepoPath)
 {
   std::cout << "Searching for git repo in: " << dirPath << std::endl;
-  std::filesystem::path currentDir(dirPath);
-  std::filesystem::path gitPath = currentDir / ".git";
+  fs::path currentDir(dirPath);
+  fs::path gitPath = currentDir / ".git";
   std::cout << "gitPath: " << gitPath << std::endl;
-  if (std::filesystem::exists(gitPath))
+  if (fs::exists(gitPath))
   {
     std::cout << "Found git repo in: " << currentDir << std::endl;
-    gitRepoPath = gitPath.string();
+    // The parent of the .git directory is the git repo
+    gitRepoPath = gitPath.parent_path();
     return true;
   }
 
