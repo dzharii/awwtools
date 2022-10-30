@@ -80,10 +80,39 @@ notify-send "who am i" "I am January"
 Windows 
 
 Powershell.
+Or: 
+- 2022-10-29 [An executable to popup a balloon tip in notification area on Windows, written in C++.](https://gist.github.com/wontoncc/8912875)
+- 2022-10-29 [Notifications and the Notification Area - Win32 apps Microsoft Learn](https://learn.microsoft.com/en-us/windows/win32/shell/notification-area?redirectedfrom=MSDN)
 
 Mac
 - 2022-10-29 [macos - How to get a notification when my commands are done - Ask Different](https://apple.stackexchange.com/questions/9412/how-to-get-a-notification-when-my-commands-are-done)
 (svn update . && ant clean build start && say done) || say error
 - 2022-10-29 [notify-send adapter](https://gist.github.com/blech75/fd6c36c43057607507e2)
+
+```
+aww-http
+```
+- 2022-10-29 [yhirose/cpp-httplib: A C++ header-only HTTP/HTTPS server and client library](https://github.com/yhirose/cpp-httplib)
+- 2022-10-29 [Search · cpp-httplib](https://github.com/search?l=CMake&q=cpp-httplib&type=code)
+
+
+```
+aww-guid
+```
+
+- 2022-10-30 [Cross-platform Linux/Windows GUID generator in C](https://gist.github.com/peschinskiy/17430373872ebed4252dc0a0fe0ceef8)
+
+
+```
+cat /proc/sys/kernel/random/uuid
+```
+
+- 2022-10-30 [CoCreateGuid function combaseapi.h - Win32 apps Microsoft Learn](https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateguid?redirectedfrom=MSDN)
+```
+HRESULT CoCreateGuid(
+  [out] GUID *pguid
+);
+```
+
 
 
