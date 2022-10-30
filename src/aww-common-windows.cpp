@@ -1,5 +1,6 @@
-#include "aww-common.hpp"
+#include <filesystem>
 
+#include "aww-common.hpp"
 #include "Windows.h"
 
 namespace aww::os::actions
@@ -75,5 +76,15 @@ namespace aww::os::actions
       return std::make_tuple(false, "ShellExecuteA failed: A sharing violation occurred.");
     }
     return std::make_tuple(false, "ShellExecuteA failed: Unknown error.");
+  }
+}
+
+namespace aww::fs
+{
+  std::filesystem::path getCurrentExecutablePath(void)
+  {
+    char buffer[MAX_PATH];
+    GetModuleFileNameA(nullptr, buffer, MAX_PATH);
+    return std::filesystem::path(buffer);
   }
 }
