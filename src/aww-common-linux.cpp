@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include "aww-common.hpp"
 
-#ifdef UNIX
+#ifdef __linux__
   #include <unistd.h>
   #include <limits.h>
 #endif
@@ -29,7 +29,7 @@ namespace aww::os::actions
 
 namespace aww::fs
 {
-  #ifdef UNIX
+  #ifdef __linux__
     std::filesystem::path getCurrentExecutablePath(void)
     {
       char result[PATH_MAX];
