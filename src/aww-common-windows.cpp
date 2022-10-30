@@ -84,7 +84,12 @@ namespace aww::fs
   std::filesystem::path getCurrentExecutablePath(void)
   {
     char buffer[MAX_PATH];
-    GetModuleFileNameA(nullptr, buffer, MAX_PATH);
+    DWORD nchar;
+    nchar = GetModuleFileNameA(nullptr, buffer, MAX_PATH);
+    if (nchar == 0)
+    {
+      return std::filesystem::path("");
+    }
     return std::filesystem::path(buffer);
   }
 }

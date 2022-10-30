@@ -1,11 +1,9 @@
 #include <filesystem>
 #include <cstdlib>
 #include "aww-common.hpp"
+#include <unistd.h>
+#include <limits.h>
 
-#ifdef __linux__
-  #include <unistd.h>
-  #include <limits.h>
-#endif
 
 
 namespace aww::os::actions
@@ -29,13 +27,10 @@ namespace aww::os::actions
 
 namespace aww::fs
 {
-  #ifdef __linux__
     std::filesystem::path getCurrentExecutablePath(void)
     {
       char result[PATH_MAX];
       ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
       return std::filesystem::path(std::string(result, (count > 0) ? count : 0));
     }
-
-  #endif
 }

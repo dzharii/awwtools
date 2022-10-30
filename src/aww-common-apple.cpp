@@ -1,10 +1,8 @@
 #include <filesystem>
 #include <cstdlib>
 #include "aww-common.hpp"
+#include <mach-o/dyld.h>
 
-#ifdef APPLE
-  #include <mach-o/dyld.h>
-#endif
 
 namespace aww::os::actions
 {
@@ -28,7 +26,6 @@ namespace aww::os::actions
 
 namespace aww::fs
 {
-  #ifdef APPLE
     std::filesystem::path getCurrentExecutablePath(void)
     {
       char result[PATH_MAX];
@@ -39,5 +36,4 @@ namespace aww::fs
       }
       return std::filesystem::path();
     }
-  #endif
 }
