@@ -45,3 +45,45 @@ also in this way we can support extensions, for instance, `aww`  can look at mul
 
 ## Security
 - [ ] Before running aww-tool -- check it's checksum. The checksum / hash must be generated at compile time
+
+
+## Custom Desktop notifications
+
+```
+aww-notify
+```
+
+Ubuntu: 
+
+There are a bunch of other cool features with notify-send
+
+We can run a command and make it display in the notification:
+
+```
+notify-send <title> <`command`>
+notify-send Date "`date`"
+notify-send Disk "`df / -H`"
+We can use icons with the notifications
+
+notify-send -i <icon> <Message>
+notify-send -i face-wink "Hello! January"
+Really annoying pop up
+
+notify-send  -t 0 "Bringing down the system"
+and
+
+notify-send <title> <message>
+notify-send "who am i" "I am January"
+````
+- 2022-10-29 [How can I send a custom desktop notification? - Ask Ubuntu](https://askubuntu.com/questions/187022/how-can-i-send-a-custom-desktop-notification)
+
+Windows 
+
+Powershell.
+
+Mac
+- 2022-10-29 [macos - How to get a notification when my commands are done - Ask Different](https://apple.stackexchange.com/questions/9412/how-to-get-a-notification-when-my-commands-are-done)
+(svn update . && ant clean build start && say done) || say error
+- 2022-10-29 [notify-send adapter](https://gist.github.com/blech75/fd6c36c43057607507e2)
+
+
