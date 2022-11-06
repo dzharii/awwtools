@@ -37,5 +37,34 @@ int main(int argc, char **argv)
 
   std::vector<std::string> cmdArgs(argv, argv + argc);
   cmdArgs.erase(cmdArgs.begin()); // remove first element
+
+  aww::os::Proccess proc;
+  proc.onStdOut([](std::string line) {
+    char &lastChar = line.back();
+    std::string endl = lastChar == '\n' ? "" : "\n";
+    std::cout << line <<  endl;
+  });
+  proc.onStdErr([](std::string line) {
+    char &lastChar = line.back();
+    std::string endl = lastChar == '\n' ? "" : "\n";
+    std::cout << line <<  endl;
+  });
+  proc.onExit([](int code) {
+    std::cout << "Exit code: " << code << std::endl;
+  });
+
+  std::string cmd = aww::string::join(cmdArgs, " ");
+  std::cout << "Running command: " << cmd << std::endl;
+
+  // measure time
+  auto start = std::chrono::high_resolution_clock::now();
+
+  proc.run(cmd);
+
+  // print time
+  auto end = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+  std::cout << "Command took " << duration.count() << "ms" << std::endl;
+
   return 0;
 }

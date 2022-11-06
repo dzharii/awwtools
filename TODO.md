@@ -53,7 +53,7 @@ also in this way we can support extensions, for instance, `aww`  can look at mul
 aww-notify
 ```
 
-Ubuntu: 
+Ubuntu:
 
 There are a bunch of other cool features with notify-send
 
@@ -77,10 +77,10 @@ notify-send "who am i" "I am January"
 ````
 - 2022-10-29 [How can I send a custom desktop notification? - Ask Ubuntu](https://askubuntu.com/questions/187022/how-can-i-send-a-custom-desktop-notification)
 
-Windows 
+Windows
 
 Powershell.
-Or: 
+Or:
 - 2022-10-29 [An executable to popup a balloon tip in notification area on Windows, written in C++.](https://gist.github.com/wontoncc/8912875)
 - 2022-10-29 [Notifications and the Notification Area - Win32 apps Microsoft Learn](https://learn.microsoft.com/en-us/windows/win32/shell/notification-area?redirectedfrom=MSDN)
 
@@ -93,7 +93,7 @@ Mac
 aww-http
 ```
 - 2022-10-29 [yhirose/cpp-httplib: A C++ header-only HTTP/HTTPS server and client library](https://github.com/yhirose/cpp-httplib)
-- 2022-10-29 [Search · cpp-httplib](https://github.com/search?l=CMake&q=cpp-httplib&type=code)
+- 2022-10-29 [Search ï¿½ cpp-httplib](https://github.com/search?l=CMake&q=cpp-httplib&type=code)
 
 
 ```
@@ -113,6 +113,13 @@ HRESULT CoCreateGuid(
   [out] GUID *pguid
 );
 ```
+
+
+## Thanks
+- 2022-11-06 [Execute a command and get both output and exit status in C++ Windows & Linux - Raymii.org](https://raymii.org/s/articles/Execute_a_command_and_get_both_output_and_exit_code.html)
+> Good example with _popen / _pclose
+
+
 
 
 
