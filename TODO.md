@@ -114,6 +114,10 @@ HRESULT CoCreateGuid(
 );
 ```
 
+## Colors
+
+- 2022-11-06 [Terminal colors in C/C++ - DEV Community](https://dev.to/tenry/terminal-colors-in-c-c-3dgc)
+
 
 ## Thanks
 - 2022-11-06 [Execute a command and get both output and exit status in C++ Windows & Linux - Raymii.org](https://raymii.org/s/articles/Execute_a_command_and_get_both_output_and_exit_code.html)

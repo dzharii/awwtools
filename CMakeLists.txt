@@ -70,16 +70,27 @@ add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
 target_include_directories(${LIBRARY_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5
+    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/wintoast-5e441fd03543b999edb663caf8df7be37c0d575c/src
 )
 # we add the sub-directories that we want CMake to scan
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5)
+add_subdirectory(
+    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5
+    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/wintoast-5e441fd03543b999edb663caf8df7be37c0d575c
+)
 
 
 # There's also (probably) doctests within the library, so we need to see this as well.
-target_link_libraries(
+set(LINK_LIBS
     ${LIBRARY_NAME} PUBLIC
     doctest
-    clip)
+    clip
+)
+
+if(WIN32)
+#!!! TODO: FIX build configuration    list(APPEND LINK_LIBS wintoastlib)
+endif()
+
+target_link_libraries(${LINK_LIBS})
 
 # Set the compile options you want (change as needed).
 target_set_warnings(${LIBRARY_NAME} ENABLE ALL AS_ERROR ALL DISABLE Annoying)
