@@ -115,6 +115,13 @@ namespace aww::os::actions
       return std::make_tuple(false, "Argument message is empty");
     }
 
+    WinToastLib::WinToast::instance()->setAppName(L"aww");
+    WinToastLib::WinToast::instance()->setAppUserModelId(L"aww");
+
+    if (!WinToastLib::WinToast::instance()->initialize()) {
+        return std::make_tuple(false, "Error, your system in not compatible!");
+    }
+
     WinToastLib::WinToastTemplate templ =
         WinToastLib::WinToastTemplate(WinToastLib::WinToastTemplate::Text02);
 

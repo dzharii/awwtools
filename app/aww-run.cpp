@@ -15,7 +15,6 @@
 #include "example.hpp"
 #include "os-exec.hpp"
 #include "aww-common.hpp"
-#include "wintoastlib.h" // TODO
 
 int main(int argc, char **argv)
 {
@@ -66,6 +65,13 @@ int main(int argc, char **argv)
   auto end = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
   std::cout << "Command took " << duration.count() << "ms" << std::endl;
+
+  auto result =  aww::os::actions::showNotification("AwwTools", "Command finished");
+  if (aww::succeeded(result)) {
+    std::cout << "Notification sent" << std::endl;
+  } else {
+    std::cout << "Failed to send notification" << std::endl;
+  }
 
   return 0;
 }

@@ -91,7 +91,7 @@ target_link_libraries(
 )
 
 if(WIN32)
-    target_link_libraries(wintoastlib)
+    target_link_libraries(${LIBRARY_NAME} PUBLIC wintoastlib)
 endif()
 
 
