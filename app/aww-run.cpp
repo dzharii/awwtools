@@ -15,6 +15,7 @@
 #include "example.hpp"
 #include "os-exec.hpp"
 #include "aww-common.hpp"
+#include "wintoastlib.h" // TODO
 
 int main(int argc, char **argv)
 {

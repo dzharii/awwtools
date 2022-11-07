@@ -2,6 +2,7 @@
 
 #include "aww-common.hpp"
 #include "Windows.h"
+#include "wintoastlib.h"
 
 namespace aww::os::actions
 {
@@ -77,6 +78,59 @@ namespace aww::os::actions
     }
     return std::make_tuple(false, "ShellExecuteA failed: Unknown error.");
   }
+
+  class WinToastHandlerExample : public WinToastLib::IWinToastHandler
+  {
+  public:
+    WinToastHandlerExample() = default;
+    // Public interfaces
+    void toastActivated() const {
+
+    };
+
+    void toastActivated(int) const {
+
+    }
+
+    void toastDismissed(WinToastDismissalReason) const {
+
+    };
+    void toastFailed() const {
+
+    };
+  };
+
+  static WinToastHandlerExample _wintoastDefaultHandler;
+
+  aww::result_t showNotification(const std::string &title, const std::string &message)
+  {
+    // check title is null
+    if (title.empty())
+    {
+      return std::make_tuple(false, "Argument title is empty");
+    }
+    // check message is null
+    if (message.empty())
+    {
+      return std::make_tuple(false, "Argument message is empty");
+    }
+
+    WinToastLib::WinToastTemplate templ =
+        WinToastLib::WinToastTemplate(WinToastLib::WinToastTemplate::Text02);
+
+    templ.setTextField(
+        L"Do you think this feature is cool?",
+        WinToastLib::WinToastTemplate::FirstLine);
+
+    templ.setTextField(
+        L"Ofc,it is!",
+        WinToastLib::WinToastTemplate::SecondLine);
+
+    WinToastLib::WinToast::instance()->showToast(templ, &_wintoastDefaultHandler) ? 0 : 1;
+
+    return std::make_tuple(true, "");
+  }
+
 }
 
 namespace aww::fs

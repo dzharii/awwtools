@@ -61,6 +61,7 @@ namespace aww::os
 namespace aww::os::actions
 {
   aww::result_t launchFile(const std::string &);
+  aww::result_t showNotification(const std::string &, const std::string &);
 }
 
 namespace aww::string
