@@ -156,6 +156,15 @@ int __cdecl main()
 ```
 
 
+## Voice notification
+
+Prerecord some notifications, like "Done", "Failed", "Building"
+in a wav folder. Allow adding custom notifications just by creating files.
+
+
+## Notification configuration.
+
+It is time to start working on a configuration file for aww.
 
 
 
