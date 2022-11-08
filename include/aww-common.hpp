@@ -58,7 +58,7 @@ namespace aww::os
     static void defaultStdErrCallback(std::string);
     static void defaultExitCallback(int);
   };
-};
+}
 
 namespace aww::os::actions
 {
