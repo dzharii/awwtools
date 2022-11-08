@@ -100,9 +100,11 @@ namespace aww::os::actions
     };
   };
 
-  static WinToastHandlerExample _wintoastDefaultHandler;
 
-  aww::result_t showNotification(const std::string &title, const std::string &message)
+aww::result_t showNotification(
+    const std::string &title,
+    const std::string &message,
+    const int64_t milliseconds)
   {
     // check title is null
     if (title.empty())
@@ -114,6 +116,8 @@ namespace aww::os::actions
     {
       return std::make_tuple(false, "Argument message is empty");
     }
+
+    static WinToastHandlerExample _wintoastDefaultHandler;
 
     WinToastLib::WinToast::instance()->setAppName(L"aww");
     WinToastLib::WinToast::instance()->setAppUserModelId(L"aww");
@@ -133,8 +137,11 @@ namespace aww::os::actions
         L"Ofc,it is!",
         WinToastLib::WinToastTemplate::SecondLine);
 
-    WinToastLib::WinToast::instance()->showToast(templ, &_wintoastDefaultHandler) ? 0 : 1;
+    int64_t expiration = milliseconds;
+    templ.setExpiration(expiration);
 
+    WinToastLib::WinToast::instance()->showToast(templ, &_wintoastDefaultHandler) ? 0 : 1;
+    std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
     return std::make_tuple(true, "");
   }
 

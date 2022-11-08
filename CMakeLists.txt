@@ -70,16 +70,10 @@ add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
 target_include_directories(${LIBRARY_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5
-    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/wintoast-5e441fd03543b999edb663caf8df7be37c0d575c/src
 )
 # we add the sub-directories that we want CMake to scan
 add_subdirectory(
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5
-)
-
-# we add the sub-directories that we want CMake to scan
-add_subdirectory(
-     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/wintoast-5e441fd03543b999edb663caf8df7be37c0d575c
 )
 
 
@@ -91,6 +85,14 @@ target_link_libraries(
 )
 
 if(WIN32)
+    target_include_directories(${LIBRARY_NAME} PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/third-party/wintoast-5e441fd03543b999edb663caf8df7be37c0d575c/src
+    )
+
+    add_subdirectory(
+     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/wintoast-5e441fd03543b999edb663caf8df7be37c0d575c
+    )
+
     target_link_libraries(${LIBRARY_NAME} PUBLIC wintoastlib)
 endif()
 

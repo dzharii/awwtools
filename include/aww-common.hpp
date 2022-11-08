@@ -11,6 +11,8 @@
 #include <stdlib.h>
 #include <filesystem>
 #include <functional>
+#include <chrono>
+#include <thread>
 
 // Windows tricks for aww::os::Proccess
 #ifdef _WIN32
@@ -61,7 +63,7 @@ namespace aww::os
 namespace aww::os::actions
 {
   aww::result_t launchFile(const std::string &);
-  aww::result_t showNotification(const std::string &, const std::string &);
+  aww::result_t showNotification(const std::string &, const std::string &, const int64_t);
 }
 
 namespace aww::string

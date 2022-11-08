@@ -24,7 +24,10 @@ namespace aww::os::actions
     return std::make_tuple(false, "xdg-open failed");
   }
 
-  aww::result_t showNotification(const std::string &title, const std::string &message)
+  aww::result_t showNotification(
+    const std::string &title,
+    const std::string &message,
+    const int64_t milliseconds)
   {
     // check title is null
     if (title.empty())
@@ -38,11 +41,12 @@ namespace aww::os::actions
     }
     std::string command = "notify-send \"" + title + "\" \"" + message + "\"";
     int result = std::system(command.c_str());
-    if (result == 0)
+    if (result != 0)
     {
-      return std::make_tuple(true, "");
+      return std::make_tuple(false, "notify-send failed");
     }
-    return std::make_tuple(false, "notify-send failed");
+    std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+    return std::make_tuple(true, "");
   }
 }
 

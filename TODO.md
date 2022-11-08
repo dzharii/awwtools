@@ -114,6 +114,9 @@ HRESULT CoCreateGuid(
 );
 ```
 
+## Toast!
+- 2022-11-07 [Send a local toast notification from a C# app - Windows apps Microsoft Learn](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/send-local-toast?tabs=desktop)
+
 ## Colors
 
 - 2022-11-06 [Terminal colors in C/C++ - DEV Community](https://dev.to/tenry/terminal-colors-in-c-c-3dgc)
