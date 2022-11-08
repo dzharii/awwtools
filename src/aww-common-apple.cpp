@@ -24,8 +24,7 @@ namespace aww::os::actions
 
   aww::result_t showNotification(
     const std::string &title,
-    const std::string &message,
-    const int64_t milliseconds)
+    const std::string &message)
   {
     // check title is null
     if (title.empty())
@@ -43,7 +42,6 @@ namespace aww::os::actions
     {
       return std::make_tuple(false, "osascript failed");
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
     return std::make_tuple(true, "");
   }
 }

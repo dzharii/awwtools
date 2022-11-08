@@ -79,6 +79,7 @@ namespace aww::os::actions
     return std::make_tuple(false, "ShellExecuteA failed: Unknown error.");
   }
 
+  /* WinToast */
   class WinToastHandlerExample : public WinToastLib::IWinToastHandler
   {
   public:
@@ -103,8 +104,7 @@ namespace aww::os::actions
 
 aww::result_t showNotification(
     const std::string &title,
-    const std::string &message,
-    const int64_t milliseconds)
+    const std::string &message)
   {
     // check title is null
     if (title.empty())
@@ -117,12 +117,13 @@ aww::result_t showNotification(
       return std::make_tuple(false, "Argument message is empty");
     }
 
-    static WinToastHandlerExample _wintoastDefaultHandler;
+    auto wintoastDefaultHandler = new WinToastHandlerExample();
+    WinToastLib::WinToast toast;
 
-    WinToastLib::WinToast::instance()->setAppName(L"aww");
-    WinToastLib::WinToast::instance()->setAppUserModelId(L"aww");
+    toast.setAppName(L"aww");
+    toast.setAppUserModelId(L"aww");
 
-    if (!WinToastLib::WinToast::instance()->initialize()) {
+    if (!toast.initialize()) {
         return std::make_tuple(false, "Error, your system in not compatible!");
     }
 
@@ -137,14 +138,14 @@ aww::result_t showNotification(
         L"Ofc,it is!",
         WinToastLib::WinToastTemplate::SecondLine);
 
-    int64_t expiration = milliseconds;
-    templ.setExpiration(expiration);
+    const int64_t expirationMs = 5000;
+    templ.setExpiration(expirationMs);
 
-    WinToastLib::WinToast::instance()->showToast(templ, &_wintoastDefaultHandler) ? 0 : 1;
-    std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+    toast.showToast(templ, wintoastDefaultHandler) ? 0 : 1;
+    constexpr int64_t waitBeforeExit = expirationMs + 1000;
+    //std::this_thread::sleep_for(std::chrono::milliseconds(waitBeforeExit));
     return std::make_tuple(true, "");
   }
-
 }
 
 namespace aww::fs
