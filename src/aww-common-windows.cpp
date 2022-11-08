@@ -142,8 +142,6 @@ aww::result_t showNotification(
     templ.setExpiration(expirationMs);
 
     toast.showToast(templ, wintoastDefaultHandler) ? 0 : 1;
-    constexpr int64_t waitBeforeExit = expirationMs + 1000;
-    //std::this_thread::sleep_for(std::chrono::milliseconds(waitBeforeExit));
     return std::make_tuple(true, "");
   }
 }
