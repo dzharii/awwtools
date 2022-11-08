@@ -127,6 +127,35 @@ HRESULT CoCreateGuid(
 > Good example with _popen / _pclose
 
 
+- 2022-11-08 [CommandLineToArgvW function shellapi.h - Win32 apps Microsoft Learn](https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-commandlinetoargvw)
+```cpp
+#include <windows.h>
+#include <stdio.h>
+#include <shellapi.h>
+
+int __cdecl main()
+{
+   LPWSTR *szArglist;
+   int nArgs;
+   int i;
+
+   szArglist = CommandLineToArgvW(GetCommandLineW(), &nArgs);
+   if( NULL == szArglist )
+   {
+      wprintf(L"CommandLineToArgvW failed\n");
+      return 0;
+   }
+   else for( i=0; i<nArgs; i++) printf("%d: %ws\n", i, szArglist[i]);
+
+// Free memory allocated for CommandLineToArgvW arguments.
+
+   LocalFree(szArglist);
+
+   return(1);
+}
+```
+
+
 
 
 
