@@ -130,12 +130,15 @@ aww::result_t showNotification(
     WinToastLib::WinToastTemplate templ =
         WinToastLib::WinToastTemplate(WinToastLib::WinToastTemplate::Text02);
 
+
+    std::wstring wtitle(title.begin(), title.end());
     templ.setTextField(
-        L"Do you think this feature is cool?",
+        wtitle,
         WinToastLib::WinToastTemplate::FirstLine);
 
+    std::wstring wmessage(message.begin(), message.end());
     templ.setTextField(
-        L"Ofc,it is!",
+        wmessage,
         WinToastLib::WinToastTemplate::SecondLine);
 
     const int64_t expirationMs = 5000;

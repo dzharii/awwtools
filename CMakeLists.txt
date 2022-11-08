@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.14)
 # Set project name, version and laguages here. (change as needed)
 # Version numbers are available by including "exampleConfig.h" in
 # the source. See exampleConfig.h.in for some more details.
-project(CPP_BOILERPLATE VERSION 1.2.3.4 LANGUAGES CXX)
+project(AwwTools VERSION 1.2.3.4 LANGUAGES CXX)
 
 
 # Options: Things you can set via commandline options to cmake (e.g. -DENABLE_LTO=[ON|OFF])
@@ -55,7 +55,7 @@ endif()
 set(TESTFILES        # All .cpp files in tests/
     tests/aww.cpp
 )
-set(LIBRARY_NAME engine)  # Default name for the library built from src/*.cpp (change if you wish)
+set(LIBRARY_NAME awwlib)  # Default name for the library built from src/*.cpp (change if you wish)
 
 
 # --------------------------------------------------------------------------------
@@ -75,7 +75,6 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
 add_subdirectory(
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5
 )
-
 
 # There's also (probably) doctests within the library, so we need to see this as well.
 target_link_libraries(
@@ -126,6 +125,12 @@ target_link_libraries(aww-run PRIVATE ${LIBRARY_NAME})  # Link the executable to
 target_set_warnings(aww-run ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(aww-run optimized)  # enable link-time-optimization if available for non-debug configurations
 
+## Aww toast
+add_executable(aww-toast app/aww-toast.cpp)   # Name of exec. and location of file.
+target_link_libraries(aww-toast PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
+target_set_warnings(aww-toast ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_enable_lto(aww-toast optimized)  # enable link-time-optimization if available for non-debug configurations
+
 # Set the properties you require, e.g. what C++ standard to use. Here applied to library and aww (change as needed).
 set_target_properties(
     ${LIBRARY_NAME}
@@ -133,6 +138,7 @@ set_target_properties(
         aww-git-open
         aww-date
         aww-run
+        aww-toast
       PROPERTIES
         CXX_STANDARD 17
         CXX_STANDARD_REQUIRED YES
