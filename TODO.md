@@ -166,5 +166,10 @@ in a wav folder. Allow adding custom notifications just by creating files.
 
 It is time to start working on a configuration file for aww.
 
+## aww compress 
+
+- aww compress folder zip
+- aww compress file.txt gz
+
 
 
