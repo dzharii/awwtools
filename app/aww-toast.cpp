@@ -31,9 +31,11 @@ int main(int argc, char **argv)
 
   std::vector<std::string> cmdArgs(argv, argv + argc);
   cmdArgs.erase(cmdArgs.begin()); // remove first element
-
-  std::string message = aww::string::join(cmdArgs, " ");
-
+  std::string message = "Hey!";
+  if (cmdArgs.size() > 0)
+  {
+    message = aww::string::join(cmdArgs, " ");
+  }
   auto result =  aww::os::actions::showNotification("AwwTools", message);
   if (aww::succeeded(result)) {
     std::cout << "Notification sent" << std::endl;

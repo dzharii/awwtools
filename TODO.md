@@ -171,5 +171,27 @@ It is time to start working on a configuration file for aww.
 - aww compress folder zip
 - aww compress file.txt gz
 
+## - aww my XXX
+
+Programmable templates! 
+
+aww my date
+will find date.txt
+
+written is mustache 
+and execute template:
+
+{{YYYY-MM-DDDate}} and copy it to clipboard
+-  [no1msd/mstch: mstch is a complete implementation of {{mustache}} templates using modern C++](https://github.com/no1msd/mstch)
+
+
+
+
+
+
+
+
+
+
 
 
