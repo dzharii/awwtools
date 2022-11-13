@@ -51,3 +51,61 @@ namespace aww::string
     return out;
   }
 }
+
+namespace aww::os
+{
+  Proccess::Proccess()
+  {
+    this->onStdOutCallback = defaultStdOutCallback;
+    this->onStdErrCallback = defaultStdErrCallback;
+    this->onExitCallback = defaultExitCallback;
+  }
+
+  Proccess& Proccess::onStdOut(std::function<void(const std::string)> callback)
+  {
+    onStdOutCallback = callback;
+    return *this;
+  }
+
+  Proccess& Proccess::onStdErr(std::function<void(const std::string)> callback)
+  {
+    onStdErrCallback = callback;
+    return *this;
+  }
+
+  Proccess& Proccess::onExit(std::function<void(int)> callback)
+  {
+    onExitCallback = callback;
+    return *this;
+  }
+
+  int Proccess::run(const std::string &cmd)
+  {
+    FILE *fp = popen(cmd.c_str(), "r");
+    if (fp == nullptr)
+    {
+      throw std::runtime_error("Could not open pipe");
+    }
+    const size_t bufferSize = 1024;
+    char buffer[bufferSize];
+    while (fgets(buffer, bufferSize, fp) != nullptr)
+    {
+      onStdOutCallback(buffer);
+    }
+    int exitCode = pclose(fp);
+    onExitCallback(exitCode);
+    return exitCode;
+  }
+
+  void Proccess::defaultStdOutCallback(std::string)
+  {
+  }
+
+  void Proccess::defaultStdErrCallback(std::string)
+  {
+  }
+
+  void Proccess::defaultExitCallback(int)
+  {
+  }
+}

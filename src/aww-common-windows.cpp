@@ -2,6 +2,7 @@
 
 #include "aww-common.hpp"
 #include "Windows.h"
+#include "wintoastlib.h"
 
 namespace aww::os::actions
 {
@@ -76,6 +77,75 @@ namespace aww::os::actions
       return std::make_tuple(false, "ShellExecuteA failed: A sharing violation occurred.");
     }
     return std::make_tuple(false, "ShellExecuteA failed: Unknown error.");
+  }
+
+  /* WinToast */
+  class WinToastHandlerExample : public WinToastLib::IWinToastHandler
+  {
+  public:
+    WinToastHandlerExample() = default;
+    // Public interfaces
+    void toastActivated() const {
+
+    };
+
+    void toastActivated(int) const {
+
+    }
+
+    void toastDismissed(WinToastDismissalReason) const {
+
+    };
+    void toastFailed() const {
+
+    };
+  };
+
+
+aww::result_t showNotification(
+    const std::string &title,
+    const std::string &message)
+  {
+    // check title is null
+    if (title.empty())
+    {
+      return std::make_tuple(false, "Argument title is empty");
+    }
+    // check message is null
+    if (message.empty())
+    {
+      return std::make_tuple(false, "Argument message is empty");
+    }
+
+    auto wintoastDefaultHandler = new WinToastHandlerExample();
+    WinToastLib::WinToast toast;
+
+    toast.setAppName(L"aww");
+    toast.setAppUserModelId(L"aww");
+
+    if (!toast.initialize()) {
+        return std::make_tuple(false, "Error, your system in not compatible!");
+    }
+
+    WinToastLib::WinToastTemplate templ =
+        WinToastLib::WinToastTemplate(WinToastLib::WinToastTemplate::Text02);
+
+
+    std::wstring wtitle(title.begin(), title.end());
+    templ.setTextField(
+        wtitle,
+        WinToastLib::WinToastTemplate::FirstLine);
+
+    std::wstring wmessage(message.begin(), message.end());
+    templ.setTextField(
+        wmessage,
+        WinToastLib::WinToastTemplate::SecondLine);
+
+    const int64_t expirationMs = 5000;
+    templ.setExpiration(expirationMs);
+
+    toast.showToast(templ, wintoastDefaultHandler) ? 0 : 1;
+    return std::make_tuple(true, "");
   }
 }
 

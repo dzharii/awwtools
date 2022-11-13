@@ -6,7 +6,6 @@
 
 namespace aww::os::actions
 {
-
   aww::result_t launchFile(const std::string &path)
   {
     // check path is null
@@ -21,6 +20,29 @@ namespace aww::os::actions
       return std::make_tuple(true, "");
     }
     return std::make_tuple(false, "open failed");
+  }
+
+  aww::result_t showNotification(
+    const std::string &title,
+    const std::string &message)
+  {
+    // check title is null
+    if (title.empty())
+    {
+      return std::make_tuple(false, "Argument title is empty");
+    }
+    // check message is null
+    if (message.empty())
+    {
+      return std::make_tuple(false, "Argument message is empty");
+    }
+    std::string command = "osascript -e 'display notification \"" + message + "\" with title \"" + title + "\"'";
+    int result = std::system(command.c_str());
+    if (result != 0)
+    {
+      return std::make_tuple(false, "osascript failed");
+    }
+    return std::make_tuple(true, "");
   }
 }
 

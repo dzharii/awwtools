@@ -23,6 +23,29 @@ namespace aww::os::actions
     }
     return std::make_tuple(false, "xdg-open failed");
   }
+
+  aww::result_t showNotification(
+    const std::string &title,
+    const std::string &message)
+  {
+    // check title is null
+    if (title.empty())
+    {
+      return std::make_tuple(false, "Argument title is empty");
+    }
+    // check message is null
+    if (message.empty())
+    {
+      return std::make_tuple(false, "Argument message is empty");
+    }
+    std::string command = "notify-send \"" + title + "\" \"" + message + "\"";
+    int result = std::system(command.c_str());
+    if (result != 0)
+    {
+      return std::make_tuple(false, "notify-send failed");
+    }
+    return std::make_tuple(true, "");
+  }
 }
 
 namespace aww::fs
