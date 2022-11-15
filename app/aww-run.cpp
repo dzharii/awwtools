@@ -39,6 +39,7 @@ int main(int argc, char **argv)
   cmdArgs.erase(cmdArgs.begin()); // remove first element
 
   aww::os::Proccess proc;
+  int exitCode = 0;
   proc.onStdOut([](std::string line) {
     char &lastChar = line.back();
     std::string endl = lastChar == '\n' ? "" : "\n";
@@ -49,8 +50,9 @@ int main(int argc, char **argv)
     std::string endl = lastChar == '\n' ? "" : "\n";
     std::cout << line <<  endl;
   });
-  proc.onExit([](int code) {
+  proc.onExit([&](int code) {
     std::cout << "Exit code: " << code << std::endl;
+    exitCode = code;
   });
 
   std::string cmd = aww::string::join(cmdArgs, " ");
@@ -66,12 +68,10 @@ int main(int argc, char **argv)
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
   std::cout << "Command took " << duration.count() << "ms" << std::endl;
 
-  auto result =  aww::os::actions::showNotification("AwwTools", "Command finished");
-  if (aww::succeeded(result)) {
-    std::cout << "Notification sent" << std::endl;
-  } else {
-    std::cout << "Failed to send notification" << std::endl;
+  if (exitCode != 0) {
+    aww::os::actions::showNotification("aww run", "Failed to run command");
   }
+  aww::os::actions::showNotification("aww run", "The command finished successfully");
 
-  return 0;
+  return exitCode;
 }

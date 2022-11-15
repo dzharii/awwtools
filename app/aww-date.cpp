@@ -31,8 +31,10 @@ int main(int argc, char **argv)
   }
   if (clip::set_text(result)) {
     std::cout << "Copied to clipboard: " << result << std::endl;
+    aww::os::actions::showNotification("aww date", "The date has been copied to the clipboard");
   } else {
     std::cout << "Failed to copy to clipboard: " << result << std::endl;
+    aww::os::actions::showNotification("aww date", "Failed to copy the date to the clipboard");
   }
 
   std::cout << "Result:"
