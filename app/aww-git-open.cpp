@@ -36,7 +36,8 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  std::string optionalFileToOpen = "";
+  // this will open the current directory if no argument is provided
+  std::string optionalFileToOpen = ".";
   if (argc == 2)
   {
     optionalFileToOpen = argv[1];
