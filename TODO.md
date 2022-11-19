@@ -79,8 +79,9 @@ notify-send "who am i" "I am January"
 
 Windows
 
-Powershell.
+PowerShell.
 Or:
+
 - 2022-10-29 [An executable to popup a balloon tip in notification area on Windows, written in C++.](https://gist.github.com/wontoncc/8912875)
 - 2022-10-29 [Notifications and the Notification Area - Win32 apps Microsoft Learn](https://learn.microsoft.com/en-us/windows/win32/shell/notification-area?redirectedfrom=MSDN)
 
@@ -185,7 +186,24 @@ and execute template:
 -  [no1msd/mstch: mstch is a complete implementation of {{mustache}} templates using modern C++](https://github.com/no1msd/mstch)
 
 
+## aww run!
 
+What to add:
+aww run should be interactive!
+
+for instance, it can include some built-in grep or something. 
+
+Execute external scripts with `aww run`, now with aww.
+
+aww run script name ===> :
+
+- aww-run-script-name.sh
+- aww-run-script-name.ps1
+
+or from folder aww-run (in the current directory and global):
+
+- script-name.sh
+- script-name.ps1
 
 
 
