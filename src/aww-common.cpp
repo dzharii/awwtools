@@ -54,6 +54,20 @@ namespace aww::string
 
 namespace aww::os
 {
+  Platform getPlatform(void)
+  {
+    Platform platform = Platform::Unknown;
+
+#if defined(_WIN32)
+    platform = Platform::Windows;
+#elif defined(__linux__)
+    platform = Platform::Linux;
+#elif defined(__APPLE__)
+    platform = Platform::MacOS;
+#endif
+    return platform;
+  }
+
   Proccess::Proccess()
   {
     this->onStdOutCallback = defaultStdOutCallback;

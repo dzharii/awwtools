@@ -5,6 +5,14 @@
 #include <limits.h>
 
 
+namespace aww::os {
+  bool canExecute(const std::filesystem::path &path)
+  {
+    const bool isExecutable = std::filesystem::exists(path)
+                              && access(path.c_str(), X_OK) == 0;
+    return isExecutable;
+  }
+}
 
 namespace aww::os::actions
 {

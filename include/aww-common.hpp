@@ -42,6 +42,26 @@ namespace aww::date
 
 namespace aww::os
 {
+  enum class Platform
+  {
+    Unknown,
+    Windows,
+    Linux,
+    MacOS
+  };
+
+  /** Get the current platform
+  * @return Platform enum
+  */
+  Platform getPlatform(void);
+
+  /** Check if file is executable
+   * Returns false if file does not exist
+   * @param path Path to file
+   * @returns true if file is executable
+  */
+  bool canExecute(const std::filesystem::path &path);
+
   class Proccess {
   public:
     Proccess();

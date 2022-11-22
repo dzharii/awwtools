@@ -4,9 +4,29 @@
 #include "Windows.h"
 #include "wintoastlib.h"
 
+
+namespace aww::os {
+  bool canExecute(const std::filesystem::path &path)
+  {
+    const std::string fileExtension = path.extension().string();
+    // fileExtension to lower case
+
+
+    const bool isExecutable = std::filesystem::exists(path)
+                              && ( fileExtension == ".exe"
+                                  || fileExtension == ".EXE"
+                                  || fileExtension == ".bat"
+                                  || fileExtension == ".BAT"
+                                  || fileExtension == ".cmd"
+                                  || fileExtension == ".CMD"
+                                  || fileExtension == ".ps1"
+                                  || fileExtension == ".PS1");
+    return isExecutable;
+  }
+}
+
 namespace aww::os::actions
 {
-
   aww::result_t launchFile(const std::string &path)
   {
     // check path is null
