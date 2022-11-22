@@ -3,6 +3,7 @@
 #include "aww-common.hpp"
 #include <mach-o/dyld.h>
 
+namespace fs = std::filesystem;
 
 namespace aww::os {
   bool canExecute(const std::filesystem::path &path)
