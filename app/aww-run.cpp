@@ -85,7 +85,6 @@ int main(int argc, char **argv)
 }
 
 
-
 aww::result_t findScriptWindows(const std::string &scriptName, fs::path &outScriptPath) {
   const fs::path currentDir = fs::absolute(fs::current_path());
   const fs::path awwScriptsDir = currentDir / "aww-scripts";

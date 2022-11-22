@@ -250,7 +250,7 @@ bool tryConvertToGitUrl(const std::string &inputUrl, std::string &httpUrl)
     const std::string repo = match[3];
 
     httpUrl =
-      "https://" + user + ".visualstudio.com/DefaultCollection/" + project + "/_git/" + repo;;
+      "https://" + user + ".visualstudio.com/DefaultCollection/" + project + "/_git/" + repo;
 
     return true;
   }
