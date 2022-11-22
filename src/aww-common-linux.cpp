@@ -8,9 +8,20 @@
 namespace aww::os {
   bool canExecute(const std::filesystem::path &path)
   {
-    const bool isExecutable = std::filesystem::exists(path)
-                              && access(path.c_str(), X_OK) == 0;
-    return isExecutable;
+    if (!std::filesystem::exists(path)) {
+      return false;
+    }
+    if (std::filesystem::is_directory(path)) {
+      return false;
+    }
+
+    fs::perms perms = std::filesystem::status(path).permissions();
+
+    bool anyExecute = (perms & fs::perms::owner_exec) != fs::perms::none ||
+                      (perms & fs::perms::group_exec) != fs::perms::none ||
+                      (perms & fs::perms::others_exec) != fs::perms::none;
+
+    return anyExecute;
   }
 }
 
