@@ -38,6 +38,12 @@ git clone https://github.com/dzharii/awwtools
 <p>
   <a href="https://cmake.org/install/">Installing CMake</a> on Windows, Linux, and macOS.
 </p>
+<p>
+  CMake alternative Windows 11:
+</p>
+<pre><code>
+winget install -e --id Kitware.CMake
+</code></pre>
 
 <h3>C++ compiler</h3>
 
@@ -181,6 +187,12 @@ aww-run ffmpeg -i input.mp4 output.mp4
 
 </div>
 <script>
+  // trim first and last empty lines in code blocks
+  document.querySelectorAll('pre code').forEach(function (block) {
+    block.innerHTML = block.innerHTML.trim();
+  });
+
+
   // add copy button to code blocks
   document.querySelectorAll('pre').forEach((pre) => {
 
