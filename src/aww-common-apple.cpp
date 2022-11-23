@@ -15,11 +15,11 @@ namespace aww::os {
       return false;
     }
 
-    fs::perms perms = std::filesystem::status(path).permissions();
+    std::filesystem::perms perms = std::filesystem::status(path).permissions();
 
-    bool anyExecute = (perms & fs::perms::owner_exec) != fs::perms::none ||
-                      (perms & fs::perms::group_exec) != fs::perms::none ||
-                      (perms & fs::perms::others_exec) != fs::perms::none;
+    bool anyExecute = (perms & std::filesystem::perms::owner_exec) != std::filesystem::perms::none ||
+                      (perms & std::filesystem::perms::group_exec) != std::filesystem::perms::none ||
+                      (perms & std::filesystem::perms::others_exec) != std::filesystem::perms::none;
 
     return anyExecute;
   }
