@@ -107,7 +107,7 @@ namespace aww::os::actions
     // Public interfaces
     void toastActivated() const {
 
-    };
+    }
 
     void toastActivated(int) const {
 
@@ -115,10 +115,11 @@ namespace aww::os::actions
 
     void toastDismissed(WinToastDismissalReason) const {
 
-    };
+    }
+
     void toastFailed() const {
 
-    };
+    }
   };
 
 
