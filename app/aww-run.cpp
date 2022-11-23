@@ -20,6 +20,10 @@
 
 namespace fs = std::filesystem;
 
+aww::result_t findScriptWindows(const std::string&, fs::path&);
+aww::result_t findScriptLinux(const std::string&, fs::path&);
+aww::result_t findScriptMacOS(const std::string&, fs::path&);
+
 /* Attempt to find the path to the executable.
 */
 aww::result_t findScript(const std::string &, fs::path &);
