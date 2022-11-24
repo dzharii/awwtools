@@ -105,19 +105,19 @@ namespace aww::os::actions
   public:
     WinToastHandlerExample() = default;
     // Public interfaces
-    void toastActivated() const {
+    void toastActivated() const override {
 
     }
 
-    void toastActivated(int) const {
+    void toastActivated(int) const override {
 
     }
 
-    void toastDismissed(WinToastDismissalReason) const {
+    void toastDismissed(WinToastDismissalReason) const override {
 
     }
 
-    void toastFailed() const {
+    void toastFailed() const override {
 
     }
   };
