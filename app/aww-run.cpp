@@ -92,10 +92,6 @@ int main(int argc, char **argv)
         {
           awwCommand = "powershell.exe -executionpolicy unrestricted -File \"" + maybeScriptPath.string() + "\"";
         }
-        else if (isBash)
-        {
-          awwCommand = "bash.exe \"" + maybeScriptPath.string() + "\"";
-        }
         else
         {
           awwCommand = maybeScriptPath.string();
