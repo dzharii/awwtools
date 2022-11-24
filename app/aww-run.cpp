@@ -117,7 +117,6 @@ int main(int argc, char **argv)
         }
         break;
       case aww::os::Platform::Unknown:
-      default:
         std::cout << "Unknown platform" << std::endl;
         return 1;
     }
