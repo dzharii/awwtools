@@ -36,7 +36,8 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  std::string optionalFileToOpen = "";
+  // this will open the current directory if no argument is provided
+  std::string optionalFileToOpen = ".";
   if (argc == 2)
   {
     optionalFileToOpen = argv[1];
@@ -122,8 +123,10 @@ int main(int argc, char **argv)
   if (aww::failed(launchFileRes))
   {
     std::cout << aww::make_error("Failed to launch file", launchFileRes) << std::endl;
+    aww::os::actions::showNotification("aww git open", "Failed to open file in browser");
   }
   std::cout << "Launched file" << std::endl;
+  aww::os::actions::showNotification("aww git open", "The file was opened in browser");
   return 0;
 }
 
@@ -220,15 +223,36 @@ bool tryConvertToGitUrl(const std::string &inputUrl, std::string &httpUrl)
   {
     std::regex reGithubSsh("^git@github.com:([^/]+)/(\\S+)$");
     std::smatch match;
-    if (std::regex_search(inputUrl, match, reGithubSsh))
-    {
-      std::string user = match[1];
-      std::string repo = match[2];
-      std::string githubUrl = "https://github.com/" + user + "/" + repo;
-      httpUrl = githubUrl;
-      return true;
+
+    if (!std::regex_search(inputUrl, match, reGithubSsh)) {
+      return false;
     }
-    return false;
+
+    std::string user = match[1];
+    std::string repo = match[2];
+
+    httpUrl = "https://github.com/" + user + "/" + repo;
+    return true;
+  }
+  else if (inputUrl.find("@vs-ssh.visualstudio.com") > 0)
+  {
+    std::cout << "aaaa";
+
+    std::regex reGithubSsh("^.+?@vs-ssh.visualstudio.com:[^/]+/([^/]+)/([^/]+)/(.+)$");
+    std::smatch match;
+
+    if (!std::regex_search(inputUrl, match, reGithubSsh)) {
+      return false;
+    }
+
+    const std::string user = match[1];
+    const std::string project = match[2];
+    const std::string repo = match[3];
+
+    httpUrl =
+      "https://" + user + ".visualstudio.com/DefaultCollection/" + project + "/_git/" + repo;
+
+    return true;
   }
   return false;
 }

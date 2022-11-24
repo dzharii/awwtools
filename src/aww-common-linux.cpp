@@ -4,7 +4,25 @@
 #include <unistd.h>
 #include <limits.h>
 
+namespace aww::os {
+  bool canExecute(const std::filesystem::path &path)
+  {
+    if (!std::filesystem::exists(path)) {
+      return false;
+    }
+    if (std::filesystem::is_directory(path)) {
+      return false;
+    }
 
+    std::filesystem::perms perms = std::filesystem::status(path).permissions();
+
+    bool anyExecute = (perms & std::filesystem::perms::owner_exec) != std::filesystem::perms::none ||
+                      (perms & std::filesystem::perms::group_exec) != std::filesystem::perms::none ||
+                      (perms & std::filesystem::perms::others_exec) != std::filesystem::perms::none;
+
+    return anyExecute;
+  }
+}
 
 namespace aww::os::actions
 {
