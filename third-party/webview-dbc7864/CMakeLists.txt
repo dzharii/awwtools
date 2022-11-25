@@ -32,7 +32,7 @@ if (WIN32)
 
    target_include_directories(webview PRIVATE ${CMAKE_BINARY_DIR}/WebView2/build/native/include)
    target_link_directories(webview PRIVATE ${CMAKE_BINARY_DIR}/WebView2/build/native/x64)
-   target_link_libraries(webview PRIVATE WebView2LoaderStatic.lib)
+   target_link_libraries(webview PRIVATE ${CMAKE_BINARY_DIR}/WebView2/build/native/x64/WebView2LoaderStatic.lib)
 
 elseif(UNIX)
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
