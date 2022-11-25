@@ -70,10 +70,12 @@ add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
 target_include_directories(${LIBRARY_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5
+    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/webview-dbc7864
 )
 # we add the sub-directories that we want CMake to scan
 add_subdirectory(
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5
+    ${CMAKE_CURRENT_BINARY_DIR}/third-party/webview-dbc7864
 )
 
 # There's also (probably) doctests within the library, so we need to see this as well.
@@ -81,6 +83,7 @@ target_link_libraries(
     ${LIBRARY_NAME} PUBLIC
     doctest
     clip
+    webviewlib
 )
 
 if(WIN32)

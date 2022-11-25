@@ -10,6 +10,7 @@
 #include <string>
 
 #include "aww-common.hpp"
+#include "webview.h"
 
 int main(int argc, char **argv)
 {
@@ -17,6 +18,12 @@ int main(int argc, char **argv)
   cmdArgs.erase(cmdArgs.begin()); // remove first element
 
   std::cout << "Hello World!" << std::endl;
+
+  webview::webview w(false, nullptr);
+  w.set_title("Basic Example");
+  w.set_size(480, 320, WEBVIEW_HINT_NONE);
+  w.set_html("Thanks for using webview!");
+  w.run();
 
   return 0;
 }
