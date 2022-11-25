@@ -5,6 +5,12 @@ on:
   pull_request:
 
 jobs:
+  build-prepare-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install libwebkit2gtk-4.0-dev xvfb -y
+
   build-and-test:
 
     name: ${{ matrix.toolchain }}
