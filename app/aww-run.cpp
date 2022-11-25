@@ -204,14 +204,22 @@ aww::result_t findScriptLinux(const std::string &scriptName, fs::path &outScript
   const fs::path shAwwScriptsPath = awwScriptsDir / (scriptName + ".sh");
   const fs::path shAwwPath = awwDir / (scriptName + ".sh");
 
+  const fs::path ps1CurrentDirPath = currentDir / (scriptName + ".ps1");
+  const fs::path ps1AwwScriptsPath = awwScriptsDir / (scriptName + ".ps1");
+  const fs::path ps1AwwPath = awwDir / (scriptName + ".ps1");
+
   const fs::path emptyCurrentDirPath = currentDir / scriptName;
   const fs::path emptyAwwScriptsPath = awwScriptsDir / scriptName;
   const fs::path emptyPath = awwDir / scriptName;
 
-  const std::array<fs::path, 3> shLookupPath = {
+  const std::array<fs::path, 6> shLookupPath = {
     shCurrentDirPath,
     shAwwScriptsPath,
     shAwwPath,
+
+    ps1CurrentDirPath,
+    ps1AwwScriptsPath,
+    ps1AwwPath,
   };
 
   const std::array<fs::path, 3> emptyLookupPath = {
