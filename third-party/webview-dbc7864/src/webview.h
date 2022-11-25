@@ -183,7 +183,7 @@ inline int json_parse_c(const char *s, size_t sz, const char *key, size_t keysz,
   int utf8_bytes = 0;
 
   if (key == NULL) {
-    index = keysz;
+    index = static_cast<int>(keysz);
     keysz = 0;
   }
 
@@ -1181,18 +1181,18 @@ public:
     delete this;
     return 0;
   }
-  HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, LPVOID *ppv) {
+  HRESULT STDMETHODCALLTYPE QueryInterface(REFIID /* riid */, LPVOID *ppv) {
     if (!ppv) {
       return E_POINTER;
     }
     *ppv = nullptr;
     return E_NOINTERFACE;
   }
-  HRESULT STDMETHODCALLTYPE Invoke(HRESULT res, ICoreWebView2Environment *env) {
+  HRESULT STDMETHODCALLTYPE Invoke(HRESULT /* res */, ICoreWebView2Environment *env) {
     env->CreateCoreWebView2Controller(m_window, this);
     return S_OK;
   }
-  HRESULT STDMETHODCALLTYPE Invoke(HRESULT res,
+  HRESULT STDMETHODCALLTYPE Invoke(HRESULT /* res */,
                                    ICoreWebView2Controller *controller) {
     ICoreWebView2 *webview;
     ::EventRegistrationToken token;
@@ -1214,7 +1214,7 @@ public:
     return S_OK;
   }
   HRESULT STDMETHODCALLTYPE Invoke(
-      ICoreWebView2 *sender, ICoreWebView2PermissionRequestedEventArgs *args) {
+      ICoreWebView2* /* sender */, ICoreWebView2PermissionRequestedEventArgs *args) {
     COREWEBVIEW2_PERMISSION_KIND kind;
     args->get_PermissionKind(&kind);
     if (kind == COREWEBVIEW2_PERMISSION_KIND_CLIPBOARD_READ) {
