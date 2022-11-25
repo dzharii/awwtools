@@ -83,7 +83,7 @@ target_link_libraries(
     ${LIBRARY_NAME} PUBLIC
     doctest
     clip
-    webviewlib
+    webview
 )
 
 if(WIN32)
