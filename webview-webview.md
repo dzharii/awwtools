@@ -13,5 +13,9 @@ CmakeLists:
 - https://github.com/webview/webview/issues/131
 - https://alandefreitas.github.io/moderncpp/guis/webview/
 - https://stackoverflow.com/questions/66146868/how-do-you-build-webview-on-windows-using-cmake
-- 
 
+
+- 2022-11-25 [Github Actions: Run step on specific OS - Stack Overflow](https://stackoverflow.com/questions/57946173/github-actions-run-step-on-specific-os)
+```
+if: matrix.os == 'ubuntu-latest'
+```
