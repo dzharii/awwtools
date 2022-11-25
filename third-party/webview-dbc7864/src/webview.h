@@ -177,17 +177,17 @@ inline int json_parse_c(const char *s, size_t sz, const char *key, size_t keysz,
     JSON_STATE_ESCAPE,
     JSON_STATE_UTF8
   } state = JSON_STATE_VALUE;
-  const char *k = NULL;
+  const char *k = nullptr; // DZ CLANG FIX
   int index = 1;
   int depth = 0;
   int utf8_bytes = 0;
 
-  if (key == NULL) {
+  if (key == nullptr) { // DZ CLANG FIX
     index = static_cast<int>(keysz);
     keysz = 0;
   }
 
-  *value = NULL;
+  *value = nullptr;
   *valuesz = 0;
 
   for (; sz > 0; s++, sz--) {
@@ -198,7 +198,7 @@ inline int json_parse_c(const char *s, size_t sz, const char *key, size_t keysz,
       JSON_ACTION_START_STRUCT,
       JSON_ACTION_END_STRUCT
     } action = JSON_ACTION_NONE;
-    unsigned char c = *s;
+    unsigned char c = static_cast<unsigned char>(*s); // DZ CLANG FIX
     switch (state) {
     case JSON_STATE_VALUE:
       if (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == ',' ||
@@ -286,16 +286,16 @@ inline int json_parse_c(const char *s, size_t sz, const char *key, size_t keysz,
         }
       } else if (action == JSON_ACTION_END ||
                  action == JSON_ACTION_END_STRUCT) {
-        if (*value != NULL && index == 0) {
+        if (*value != nullptr && index == 0) { // DZ CLANG FIX
           *valuesz = (size_t)(s + 1 - *value);
           return 0;
-        } else if (keysz > 0 && k != NULL) {
+        } else if (keysz > 0 && k != nullptr) { // DZ CLANG FIX
           if (keysz == (size_t)(s - k - 1) && memcmp(key, k + 1, keysz) == 0) {
             index = 0;
           } else {
             index = 2;
           }
-          k = NULL;
+          k = nullptr; // DZ CLANG FIX
         }
       }
     }
