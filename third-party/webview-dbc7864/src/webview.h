@@ -177,17 +177,17 @@ inline int json_parse_c(const char *s, size_t sz, const char *key, size_t keysz,
     JSON_STATE_ESCAPE,
     JSON_STATE_UTF8
   } state = JSON_STATE_VALUE;
-  const char *k = nullptr; // DZ CLANG FIX
+  const char *k = NULL;
   int index = 1;
   int depth = 0;
   int utf8_bytes = 0;
 
-  if (key == nullptr) { // DZ CLANG FIX
+  if (key == NULL) {
     index = static_cast<int>(keysz);
     keysz = 0;
   }
 
-  *value = nullptr;
+  *value = NULL;
   *valuesz = 0;
 
   for (; sz > 0; s++, sz--) {
@@ -198,7 +198,7 @@ inline int json_parse_c(const char *s, size_t sz, const char *key, size_t keysz,
       JSON_ACTION_START_STRUCT,
       JSON_ACTION_END_STRUCT
     } action = JSON_ACTION_NONE;
-    unsigned char c = static_cast<unsigned char>(*s); // DZ CLANG FIX
+    unsigned char c = *s;
     switch (state) {
     case JSON_STATE_VALUE:
       if (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == ',' ||
@@ -286,16 +286,16 @@ inline int json_parse_c(const char *s, size_t sz, const char *key, size_t keysz,
         }
       } else if (action == JSON_ACTION_END ||
                  action == JSON_ACTION_END_STRUCT) {
-        if (*value != nullptr && index == 0) { // DZ CLANG FIX
+        if (*value != NULL && index == 0) {
           *valuesz = (size_t)(s + 1 - *value);
           return 0;
-        } else if (keysz > 0 && k != nullptr) { // DZ CLANG FIX
+        } else if (keysz > 0 && k != NULL) {
           if (keysz == (size_t)(s - k - 1) && memcmp(key, k + 1, keysz) == 0) {
             index = 0;
           } else {
             index = 2;
           }
-          k = nullptr; // DZ CLANG FIX
+          k = NULL;
         }
       }
     }
