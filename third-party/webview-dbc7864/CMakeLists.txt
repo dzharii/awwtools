@@ -32,7 +32,10 @@ if (WIN32)
 
    target_link_libraries(webview INTERFACE ${CMAKE_BINARY_DIR}/WebView2/build/native/x64/WebView2LoaderStatic.lib)
    target_include_directories(webview SYSTEM PUBLIC ${CMAKE_BINARY_DIR}/WebView2/build/native/include)
-
+elseif(APPLE)
+    find_library(COCOA_LIBRARY Cocoa)
+    target_link_libraries(webview ${COCOA_LIBRARY})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -framework WebKit")
 elseif(UNIX)
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
         target_compile_options(webview PRIVATE -Wall -Wextra -Werror -pedantic -Wno-unused-lambda-capture)
