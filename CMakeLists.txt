@@ -70,7 +70,7 @@ add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
 target_include_directories(${LIBRARY_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5
-    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/webview-dbc7864
+    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/webview-dbc7864/src
 )
 # we add the sub-directories that we want CMake to scan
 add_subdirectory(
