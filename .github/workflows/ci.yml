@@ -12,7 +12,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install libwebkit2gtk-4.0-dev xvfb -y
 
   build-and-test:
-
+    needs: build-prepare-linux
     name: ${{ matrix.toolchain }}
     runs-on: ${{ matrix.os }}
 
