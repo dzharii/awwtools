@@ -86,11 +86,11 @@ target_link_libraries(
 
 if(WIN32)
     target_include_directories(${LIBRARY_NAME} PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/third-party/wintoast-5e441fd03543b999edb663caf8df7be37c0d575c/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/third-party/wintoast-5e441fd/src
     )
 
     add_subdirectory(
-     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/wintoast-5e441fd03543b999edb663caf8df7be37c0d575c
+     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/wintoast-5e441fd
     )
 
     target_link_libraries(${LIBRARY_NAME} PUBLIC wintoastlib)
