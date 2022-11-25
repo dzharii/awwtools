@@ -131,6 +131,12 @@ target_link_libraries(aww-toast PRIVATE ${LIBRARY_NAME})  # Link the executable 
 target_set_warnings(aww-toast ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(aww-toast optimized)  # enable link-time-optimization if available for non-debug configurations
 
+## Aww app
+add_executable(aww-app app/aww-app.cpp)   # Name of exec. and location of file.
+target_link_libraries(aww-app PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
+target_set_warnings(aww-app ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_enable_lto(aww-app optimized)  # enable link-time-optimization if available for non-debug configurations
+
 # Set the properties you require, e.g. what C++ standard to use. Here applied to library and aww (change as needed).
 set_target_properties(
     ${LIBRARY_NAME}
@@ -139,6 +145,7 @@ set_target_properties(
         aww-date
         aww-run
         aww-toast
+        aww-app
       PROPERTIES
         CXX_STANDARD 17
         CXX_STANDARD_REQUIRED YES
