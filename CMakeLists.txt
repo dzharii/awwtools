@@ -73,7 +73,7 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
 )
 
 # mark webview.h as system header to suppress clang warnings
-target_include_directories(${LIBRARY_NAME} SYSTEM
+target_include_directories(${LIBRARY_NAME} SYSTEM PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/webview-dbc7864/src
 )
 # we add the sub-directories that we want CMake to scan
