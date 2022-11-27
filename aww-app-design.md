@@ -34,7 +34,15 @@ This definitely should be an explicit action and require user consent.
 
 No JavaScript minification is allowed, this should be clear source code. 
 
+## Consent for shell scripts
 
+The application developer must describe the purpose of the script in manifest, and `aww app` must ask users permission. 
+
+For instance: 
+
+The app wants to run:
+
+- shell command `rm -rf /`  to remove all system files? 
 
 
 
