@@ -18,9 +18,27 @@ What I think it should have:
 
 - managed and restricted file access, for instance, the application can read files only from specific folder. 
 - explicit permissions, defined in appmanifest.json
-- the app should not be able to harm the system: run executables, overload CPU, overflow disk with garbage. 
+- the app should not be able to harm the system: run unknown executables, overload CPU, overflow disk with garbage. 
 
 We may allows Open file and Save file triggered by user interactions, and it should be explicit which files the app reads and writes. 
+
+## Companion script
+
+This could be very useful and dangerous to allow aww app running shell scripts. 
+
+This definitely should be an explicit action and require user consent. 
+
+
+
+## Source code 
+
+No JavaScript minification is allowed, this should be clear source code. 
+
+
+
+
+
+
 
  
 
