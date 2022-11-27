@@ -86,6 +86,12 @@ namespace aww::os::actions
   aww::result_t showNotification(const std::string &, const std::string &);
 }
 
+namespace aww::os::env
+{
+  aww::result_t getUserHomeDir(std::filesystem::path &);
+  std::filesystem::path getAwwDotDir(void);
+}
+
 namespace aww::string
 {
   std::string join(const std::vector<std::string> &, const std::string &);

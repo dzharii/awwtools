@@ -152,6 +152,7 @@ aww::result_t findScriptWindows(const std::string &scriptName, fs::path &outScri
 
   const fs::path currentDir = fs::absolute(fs::current_path());
   const fs::path awwScriptsDir = currentDir / "aww-scripts";
+  const fs::path awwDotScriptsDir = aww::os::env::getAwwDotDir() / "aww-scripts";
   const fs::path awwDir = currentDir / "aww";
 
   const fs::path batCurrentDirPath = currentDir / (scriptName + ".bat");
@@ -162,11 +163,15 @@ aww::result_t findScriptWindows(const std::string &scriptName, fs::path &outScri
   const fs::path cmdAwwScriptsPath = awwScriptsDir / (scriptName + ".cmd");
   const fs::path ps1AwwScriptsPath = awwScriptsDir / (scriptName + ".ps1");
 
+  const fs::path batAwwDotScriptsPath = awwDotScriptsDir / (scriptName + ".bat");
+  const fs::path cmdAwwDotScriptsPath = awwDotScriptsDir / (scriptName + ".cmd");
+  const fs::path ps1AwwDotScriptsPath = awwDotScriptsDir / (scriptName + ".ps1");
+
   const fs::path batAwwPath = awwDir / (scriptName + ".bat");
   const fs::path cmdAwwPath = awwDir / (scriptName + ".cmd");
   const fs::path ps1AwwPath = awwDir / (scriptName + ".ps1");
 
-  const size_t totalDirItems = 3 * 3;
+  const size_t totalDirItems = 3 * 4;
 
   std::array<fs::path, totalDirItems> lookupPath = {
     batCurrentDirPath,
@@ -176,6 +181,10 @@ aww::result_t findScriptWindows(const std::string &scriptName, fs::path &outScri
     batAwwScriptsPath,
     cmdAwwScriptsPath,
     ps1AwwScriptsPath,
+
+    batAwwDotScriptsPath,
+    cmdAwwDotScriptsPath,
+    ps1AwwDotScriptsPath,
 
     batAwwPath,
     cmdAwwPath,
@@ -198,33 +207,40 @@ aww::result_t findScriptLinux(const std::string &scriptName, fs::path &outScript
 
   const fs::path currentDir = fs::absolute(fs::current_path());
   const fs::path awwScriptsDir = currentDir / "aww-scripts";
+  const fs::path awwDotScriptsDir = aww::os::env::getAwwDotDir() / "aww-scripts";
   const fs::path awwDir = currentDir / "aww";
 
   const fs::path shCurrentDirPath = currentDir / (scriptName + ".sh");
   const fs::path shAwwScriptsPath = awwScriptsDir / (scriptName + ".sh");
+  const fs::path shAwwDotScriptsPath = awwDotScriptsDir / (scriptName + ".sh");
   const fs::path shAwwPath = awwDir / (scriptName + ".sh");
 
   const fs::path ps1CurrentDirPath = currentDir / (scriptName + ".ps1");
   const fs::path ps1AwwScriptsPath = awwScriptsDir / (scriptName + ".ps1");
+  const fs::path ps1AwwDotScriptsPath = awwDotScriptsDir / (scriptName + ".ps1");
   const fs::path ps1AwwPath = awwDir / (scriptName + ".ps1");
 
   const fs::path emptyCurrentDirPath = currentDir / scriptName;
   const fs::path emptyAwwScriptsPath = awwScriptsDir / scriptName;
+  const fs::path emptyAwwDotScriptsPath = awwScriptsDir / scriptName;
   const fs::path emptyPath = awwDir / scriptName;
 
-  const std::array<fs::path, 6> shLookupPath = {
+  const std::array<fs::path, 8> shLookupPath = {
     shCurrentDirPath,
     shAwwScriptsPath,
+    shAwwDotScriptsPath,
     shAwwPath,
 
     ps1CurrentDirPath,
     ps1AwwScriptsPath,
+    ps1AwwDotScriptsPath,
     ps1AwwPath,
   };
 
-  const std::array<fs::path, 3> emptyLookupPath = {
+  const std::array<fs::path, 4> emptyLookupPath = {
     emptyCurrentDirPath,
     emptyAwwScriptsPath,
+    emptyAwwDotScriptsPath,
     emptyPath,
   };
 
