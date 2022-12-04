@@ -23,6 +23,32 @@ namespace aww::os {
                                   || fileExtension == ".PS1");
     return isExecutable;
   }
+  std::vector<std::string> getCommandLineArgs(void)
+  {
+    int argc;
+    LPWSTR *argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+
+    // Allocate a buffer to hold the converted strings
+    const int bufferSize = 1024;
+    char buffer[bufferSize];
+
+    // Convert each Unicode string to a std::string
+    std::vector<std::string> args;
+    for (int i = 0; i < argc; i++) {
+      // Convert the Unicode string to the specified character encoding
+      int length = WideCharToMultiByte(CP_UTF8, 0, argv[i], -1, buffer, bufferSize, NULL, NULL);
+
+      // Store the converted string in the vector
+      // note: "length - 1" to remove the null terminator
+      std::string myarg(buffer, length - 1);
+      std::cout << "arg: " << myarg << std::endl;
+      args.push_back(myarg);
+    }
+
+    // Free the memory allocated by CommandLineToArgvW
+    LocalFree(argv);
+    return args;
+  }
 }
 
 namespace aww::os::actions

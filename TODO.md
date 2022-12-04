@@ -205,6 +205,13 @@ or from folder aww-run (in the current directory and global):
 - script-name.sh
 - script-name.ps1
 
+- 2022-12-03 [Warp: The terminal for the 21st century](https://www.warp.dev/)
+- 2022-12-02 [Drag and drop from terminal](https://blog.meain.io/2022/terminal-drag-and-drop/)
+
+## Configuration
+
+- 2022-12-03 [toml++ TOML for C++](https://marzer.github.io/tomlplusplus/)
+- 2022-12-03 [ToruNiina/toml11: TOML for Modern C++](https://github.com/ToruNiina/toml11)
 
 
 

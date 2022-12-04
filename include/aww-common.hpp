@@ -78,6 +78,8 @@ namespace aww::os
     static void defaultStdErrCallback(std::string);
     static void defaultExitCallback(int);
   };
+
+  std::vector<std::string> getCommandLineArgs(void);
 }
 
 namespace aww::os::actions
@@ -91,6 +93,8 @@ namespace aww::os::env
   aww::result_t getUserHomeDir(std::filesystem::path &);
   std::filesystem::path getAwwDotDir(void);
 }
+
+
 
 namespace aww::string
 {
