@@ -1,4 +1,5 @@
 #include <filesystem>
+#include <fstream>
 #include <cstdlib>
 #include "aww-common.hpp"
 #include <mach-o/dyld.h>
