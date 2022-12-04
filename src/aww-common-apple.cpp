@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include "aww-common.hpp"
 #include <mach-o/dyld.h>
+#include <unistd.h>
 
 namespace fs = std::filesystem;
 
