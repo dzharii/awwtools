@@ -30,9 +30,6 @@ namespace aww::os {
     std::vector<std::string> args;
     std::string filename = "/proc/" + std::to_string(pid) + "/cmdline";
 
-
-
-    /*
     std::ifstream file(filename);
     if (file.is_open())
     {
@@ -43,7 +40,6 @@ namespace aww::os {
         }
     }
     return args;
-    */
   }
 }
 
