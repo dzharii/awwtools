@@ -40,7 +40,6 @@ find_lto(CXX)
 set(SOURCES          # All .cpp files in src/
     src/example.cpp
     src/aww-common.cpp
-    src/os-exec.cpp
 )
 if(WIN32)
     list(APPEND SOURCES src/aww-common-windows.cpp)
