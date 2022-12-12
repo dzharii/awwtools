@@ -15,7 +15,6 @@
 
 #include "exampleConfig.h"
 #include "example.hpp"
-#include "os-exec.hpp"
 #include "aww-common.hpp"
 
 namespace fs = std::filesystem;

@@ -188,6 +188,10 @@ and execute template:
 
 ## aww run!
 
+- [ ] Handle gracefull cancelation Ctrl+C for pipe
+
+- [ ] Consider: 2022-12-10 [Enable tab completion - .NET CLI Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/core/tools/enable-tab-autocomplete)
+
 What to add:
 aww run should be interactive!
 
