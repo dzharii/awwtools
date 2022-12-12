@@ -12,7 +12,6 @@
 #include <filesystem>
 
 #include "exampleConfig.h"
-#include "example.hpp"
 #include "aww-common.hpp"
 
 int main(int argc, char **argv)
@@ -23,8 +22,6 @@ int main(int argc, char **argv)
             << PROJECT_VERSION_MINOR
             << "."
             << PROJECT_VERSION_PATCH
-            << "."
-            << PROJECT_VERSION_TWEAK
             << std::endl;
   std::cout << "Embrace the Aww!" << std::endl;
 

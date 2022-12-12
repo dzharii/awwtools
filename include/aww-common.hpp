@@ -37,6 +37,10 @@ namespace aww
 
 namespace aww::date
 {
+
+  /** Get the current date in YYYY-MM-DD format
+   * @return Date string
+   */
   std::string getDateYYYYMMDD(void);
 }
 
