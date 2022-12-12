@@ -62,23 +62,23 @@ int main(int argc, char **argv)
     }
   }
 
-  if (isAwwExecutable)
+  if (!isAwwExecutable)
   {
-    // slice itCmdArg to end
-    ++itCmdArg;
-    std::vector<std::string> awwExecutableArgs(itCmdArg, cmdArgs.end());
-    std::string awwExecutableArgsStr = aww::string::join(awwExecutableArgs, " ");
-
-    std::filesystem::path executablePath(maybeAwwExecutable);
-    std::string cmd = std::filesystem::absolute(executablePath).string() +
-                      " " +
-                      awwExecutableArgsStr;
-    std::cout << "Executing: "
-              << cmd
-              << std::endl;
-
-    return system(cmd.c_str());
+      std::cout << "No aww executable found" << std::endl;
+      return 1;
   }
-  std::cout << "No aww executable found" << std::endl;
-  return 1;
+  // slice itCmdArg to end
+  ++itCmdArg;
+  std::vector<std::string> awwExecutableArgs(itCmdArg, cmdArgs.end());
+  std::string awwExecutableArgsStr = aww::string::join(awwExecutableArgs, " ");
+
+  std::filesystem::path executablePath(maybeAwwExecutable);
+  std::string cmd = std::filesystem::absolute(executablePath).string() +
+                    " " +
+                    awwExecutableArgsStr;
+  std::cout << "Executing: "
+            << cmd
+            << std::endl;
+
+  return system(cmd.c_str());
 }
