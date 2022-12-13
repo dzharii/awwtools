@@ -218,7 +218,9 @@ or from folder aww-run (in the current directory and global):
 - 2022-12-03 [ToruNiina/toml11: TOML for Modern C++](https://github.com/ToruNiina/toml11)
 
 
+## Logging 
 
+- [ ] Implement logging support
 
 
 

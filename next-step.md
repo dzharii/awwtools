@@ -8,3 +8,10 @@
   > xdotool lets you simulate keyboard input and mouse activity, move and resize windows, etc. It does this using X11’s XTEST extension and other Xlib functions.
 
 ## aww credits to show credits about project dependencies 
+
+## aww-app for time planning
+
+Quick planner for project / task estimation time... well can I do it better than MS Project?
+
+## Implement logging support
+
