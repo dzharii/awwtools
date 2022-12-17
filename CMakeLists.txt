@@ -55,6 +55,9 @@ set(TESTFILES        # All .cpp files in tests/
 )
 set(LIBRARY_NAME awwlib)  # Default name for the library built from src/*.cpp (change if you wish)
 
+## Third-party
+# https://github.com/nlohmann/json
+set(JSON_BuildTests OFF CACHE INTERNAL "")
 
 # --------------------------------------------------------------------------------
 #                            Build! (Change as needed)
@@ -68,7 +71,7 @@ add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
 target_include_directories(${LIBRARY_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5
-    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2/single_include
 )
 
 # mark webview.h as system header to suppress clang warnings
@@ -78,6 +81,7 @@ target_include_directories(${LIBRARY_NAME} SYSTEM PUBLIC
 # we add the sub-directories that we want CMake to scan
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/webview-dbc7864)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2)
 
 # There's also (probably) doctests within the library, so we need to see this as well.
 target_link_libraries(
@@ -99,6 +103,7 @@ if(WIN32)
     target_link_libraries(${LIBRARY_NAME} PUBLIC wintoastlib)
 endif()
 
+target_link_libraries(${LIBRARY_NAME} PRIVATE nlohmann_json::nlohmann_json)
 
 # Set the compile options you want (change as needed).
 target_set_warnings(${LIBRARY_NAME} ENABLE ALL AS_ERROR ALL DISABLE Annoying)

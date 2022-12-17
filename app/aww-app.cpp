@@ -12,7 +12,7 @@
 
 #include "aww-common.hpp"
 #include "webview.h"
-#include "nlohmann-json.hpp"
+#include "nlohmann/json.hpp"
 
 namespace fs = std::filesystem;
 
