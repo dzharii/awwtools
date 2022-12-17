@@ -41,10 +41,34 @@ int main() {
   std::string myCommandlineArgs = aww::string::join(aww::os::getCommandLineArgs(), "<br />");
   std::cout << "myCommandlineArgs: " << myCommandlineArgs << std::endl;
 
+  // TODO Create a class for this with default values
+  const std::string manifestAppDescription = appmanifestJson["description"] == nullptr ? "" : appmanifestJson["description"];
+  const std::string manifestAppTitle = appmanifestJson["title"] == nullptr ? "noname" : appmanifestJson["title"];
+
   webview::webview w(false, nullptr);
-  w.set_title("Basic Example");
+  w.set_title(manifestAppTitle);
   w.set_size(480, 320, WEBVIEW_HINT_NONE);
-  w.set_html("Thanks for using webview! <br/> " + myCommandlineArgs);
+
+  // html 5 default template with div id="app". Multiline + concat strings
+  w.set_html(aww::string::join(
+    {
+      "<!DOCTYPE html>",
+      "<html>",
+      "<head>",
+      "<meta charset=\"utf-8\">",
+      "<title>Basic Example</title>",
+      "</head>",
+      "<body>",
+      "<div id=\"app\">",
+      "<h1>Basic Example</h1>",
+      "<p>appmanifestJson[\"description\"]: " + manifestAppDescription + "</p>",
+      "<p>myCommandlineArgs: " + myCommandlineArgs + "</p>",
+      "</div>",
+      "</body>",
+      "</html>"
+    },
+    "\n"));
+
   w.run();
 
   return 0;

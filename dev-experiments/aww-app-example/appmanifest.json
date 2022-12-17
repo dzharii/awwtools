@@ -1,4 +1,4 @@
 {
-    "description": "This is the app manifest! Use package.json as example"
-
+    "description": "This is the app manifest! Use package.json as example", 
+    "title": "my secret app!"
 }
