@@ -39,6 +39,7 @@ find_lto(CXX)
 # --------------------------------------------------------------------------------
 set(SOURCES          # All .cpp files in src/
     src/aww-common.cpp
+    src/aww-app-manifest.cpp
 )
 if(WIN32)
     list(APPEND SOURCES src/aww-common-windows.cpp)
@@ -141,12 +142,7 @@ target_set_warnings(aww-toast ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set wa
 target_enable_lto(aww-toast optimized)  # enable link-time-optimization if available for non-debug configurations
 
 ## Aww app
-if(WIN32)
-    add_executable(aww-app WIN32 app/aww-app.cpp)   # Name of exec. and location of file.
-else()
-    add_executable(aww-app app/aww-app.cpp)   # Name of exec. and location of file.
-endif()
-
+add_executable(aww-app app/aww-app.cpp)   # Name of exec. and location of file.
 target_link_libraries(aww-app PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
 target_set_warnings(aww-app ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(aww-app optimized)  # enable link-time-optimization if available for non-debug configurations

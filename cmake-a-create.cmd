@@ -1,1 +1,1 @@
-cmake . -B cmake-build -DCMAKE_BUILD_TYPE=RELEASE
+cmake . -B cmake-build -DCMAKE_BUILD_TYPE=DEBUG

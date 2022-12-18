@@ -1,4 +1,5 @@
 {
     "description": "This is the app manifest! Use package.json as example", 
-    "title": "my secret app!"
+    "title": "my secret app!",
+    "mainJavascriptFile": "./app.js"
 }
