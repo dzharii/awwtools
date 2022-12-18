@@ -1,4 +1,5 @@
 #include "aww-common.hpp"
+#include <fstream>
 
 namespace aww {
 
@@ -155,5 +156,15 @@ namespace aww::os::env
       return std::filesystem::path(); // empty path
     }
     return homeDir / ".awwtools";
+  }
+}
+
+namespace aww::fs {
+
+  std::string readAsciiTextFile(const std::filesystem::path& path)
+  {
+    std::ifstream file(path);
+    std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    return content;
   }
 }

@@ -98,8 +98,6 @@ namespace aww::os::env
   std::filesystem::path getAwwDotDir(void);
 }
 
-
-
 namespace aww::string
 {
   std::string join(const std::vector<std::string> &, const std::string &);
@@ -107,6 +105,11 @@ namespace aww::string
 
 namespace aww::fs {
   std::filesystem::path getCurrentExecutablePath(void);
+
+  /// @brief reads a text file at the given path and returns its contents as a string.
+  /// @param path path to the file to read
+  /// @return file contents as a string
+  std::string readAsciiTextFile(const std::filesystem::path &);
 }
 
 #endif // AWW_COMMON_HPP

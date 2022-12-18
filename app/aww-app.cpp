@@ -72,12 +72,7 @@ int main()
 
     if (fs::exists(mainJavascriptFile))
     {
-      // read file into string
-      std::ifstream mainJavascriptFileContentsFile(mainJavascriptFile);
-      std::string mainJavascriptFileContents((std::istreambuf_iterator<char>(mainJavascriptFileContentsFile)),
-                                             std::istreambuf_iterator<char>());
-
-      // log mainJavascriptFileContents
+      std::string mainJavascriptFileContents = aww::fs::readAsciiTextFile(mainJavascriptFile);
       std::cout << "mainJavascriptFileContents: " << mainJavascriptFileContents << std::endl;
 
       w.eval(mainJavascriptFileContents);
