@@ -77,6 +77,7 @@ aww::app::manifest::mainJavascriptFile::mainJavascriptFile(
   {
     throw std::invalid_argument("mainJavascriptFile must be a child of appDirPath");
   }
+  value = filePath;
 }
 
 /// @brief Get the mainJavascriptFile
@@ -90,15 +91,15 @@ std::filesystem::path aww::app::manifest::mainJavascriptFile::get(void)
 /// @param json
 /// @param appDirPath
 aww::app::manifest::appmanifest::appmanifest(
-      const aww::app::manifest::title&,
-      const aww::app::manifest::description&,
-      const aww::app::manifest::version&,
-      const aww::app::manifest::mainJavascriptFile&)
+      const aww::app::manifest::title& appTitle,
+      const aww::app::manifest::description& appDescription,
+      const aww::app::manifest::version& appVersion,
+      const aww::app::manifest::mainJavascriptFile& appMainJavascriptFile)
 :
-  title(title),
-  description(description),
-  version(version),
-  mainJavascriptFile(mainJavascriptFile)
+  title(appTitle),
+  description(appDescription),
+  version(appVersion),
+  mainJavascriptFile(appMainJavascriptFile)
 {
 }
 
@@ -111,7 +112,7 @@ aww::app::manifest::appmanifest aww::app::manifest::appmanifest::fromJson(
 {
   std::string title = json.value("title", "");
   std::string description = json.value("description", "");
-  std::string version = json.value("version", "");
+  std::string version = json.value("version", "0.0.0");
   std::string mainJavascriptFile = json.value("mainJavascriptFile", "");
 
   aww::app::manifest::appmanifest appmanifest(

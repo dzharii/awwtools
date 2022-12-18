@@ -80,7 +80,7 @@ int main()
       // log mainJavascriptFileContents
       std::cout << "mainJavascriptFileContents: " << mainJavascriptFileContents << std::endl;
 
-      w.init(mainJavascriptFileContents);
+      w.eval(mainJavascriptFileContents);
     }
     else
     {
