@@ -222,6 +222,9 @@ or from folder aww-run (in the current directory and global):
 
 - [ ] Implement logging support
 
+## aww-clip
 
+copy stuff to clipboard from standard input and output.
+What else? Maybe path?
 
 
