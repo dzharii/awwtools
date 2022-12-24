@@ -227,4 +227,9 @@ or from folder aww-run (in the current directory and global):
 copy stuff to clipboard from standard input and output.
 What else? Maybe path?
 
+## aww-open
+
+same thing!
+just cross-platform opener
+
 
