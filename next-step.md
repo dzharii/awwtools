@@ -15,3 +15,8 @@ Quick planner for project / task estimation time... well can I do it better than
 
 ## Implement logging support
 
+## aww comm
+
+Fills template to message someone via chat email. 
+
+
