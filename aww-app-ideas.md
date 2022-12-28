@@ -24,3 +24,12 @@ markdown utility
 
 Context help/cheatsheet for the given application
 
+## Html form + powershell script.
+So I want to run a powershell script via webui. This is probably going to be the main 
+feature: to run script and get the output.
+
+What should I do?
+- Define form with the input parameters:
+  I can take [HTML::FormFu - HTML Form Creation, Rendering and Validation Framework - metacpan.org](https://metacpan.org/pod/HTML::FormFu) for the inspiration
+- Run script and get the output. Maybe in realtime (That would be cool)
+- Maybe I need to support a collection of scripts?
