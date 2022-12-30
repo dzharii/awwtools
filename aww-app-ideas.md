@@ -33,3 +33,8 @@ What should I do?
   I can take [HTML::FormFu - HTML Form Creation, Rendering and Validation Framework - metacpan.org](https://metacpan.org/pod/HTML::FormFu) for the inspiration
 - Run script and get the output. Maybe in realtime (That would be cool)
 - Maybe I need to support a collection of scripts?
+
+## aww open, aww term
+
+Open file.
+Open file in terminal
