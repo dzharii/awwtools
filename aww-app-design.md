@@ -1,3 +1,9 @@
+## Aww app disabled 2023-01-01
+
+So, I don't really know what to do next with aww app, regarding to security features and will disable it for now with a feature flag `ALLOW_AWW_APP`
+
+
+
 ## Aww app design considerations
 
 
