@@ -2,7 +2,6 @@
 #include "nlohmann/json.hpp"
 
 /// @brief Constructor for aww::app::manifest::description
-/// @param titleValue
 aww::app::manifest::title::title(const std::string& titleValue)
 {
   if (titleValue.length() > 255)
@@ -13,7 +12,6 @@ aww::app::manifest::title::title(const std::string& titleValue)
 }
 
 /// @brief Get the title
-/// @param  void
 std::string aww::app::manifest::title::get(void)
 {
   return std::string(value);
@@ -21,7 +19,6 @@ std::string aww::app::manifest::title::get(void)
 
 
 /// @brief Constructor for aww::app::manifest::description
-/// @param descriptionValue
 aww::app::manifest::description::description(const std::string& descriptionValue)
 {
   if (descriptionValue.length() > 2048)
@@ -33,14 +30,12 @@ aww::app::manifest::description::description(const std::string& descriptionValue
 }
 
 /// @brief Get the description
-/// @param  void
 std::string aww::app::manifest::description::get(void)
 {
   return std::string(value);
 }
 
 /// @brief Constructor for aww::app::manifest::version
-/// @param versionValue
 aww::app::manifest::version::version(const std::string& versionValue)
 {
   if (versionValue.length() > 255)
@@ -52,7 +47,6 @@ aww::app::manifest::version::version(const std::string& versionValue)
 }
 
 /// @brief Get the version
-/// @param  void
 std::string aww::app::manifest::version::get(void)
 {
   return std::string(value);
@@ -81,15 +75,12 @@ aww::app::manifest::mainJavascriptFile::mainJavascriptFile(
 }
 
 /// @brief Get the mainJavascriptFile
-/// @param  void
 std::filesystem::path aww::app::manifest::mainJavascriptFile::get(void)
 {
   return std::filesystem::path(value);
 }
 
 /// @brief Constructor for aww::app::manifest::appmanifest
-/// @param json
-/// @param appDirPath
 aww::app::manifest::appmanifest::appmanifest(
       const aww::app::manifest::title& appTitle,
       const aww::app::manifest::description& appDescription,
@@ -104,8 +95,6 @@ aww::app::manifest::appmanifest::appmanifest(
 }
 
 /// @brief Get the appmanifest from a json object
-/// @param json
-/// @param appDirPath
 aww::app::manifest::appmanifest aww::app::manifest::appmanifest::fromJson(
   const nlohmann::json& json,
   const std::filesystem::path& appDirPath)

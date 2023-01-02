@@ -61,7 +61,6 @@ namespace aww::os
 
   /** Check if file is executable
    * Returns false if file does not exist
-   * @param path Path to file
    * @returns true if file is executable
   */
   bool canExecute(const std::filesystem::path &path);
@@ -107,7 +106,6 @@ namespace aww::fs {
   std::filesystem::path getCurrentExecutablePath(void);
 
   /// @brief reads a text file at the given path and returns its contents as a string.
-  /// @param path path to the file to read
   /// @return file contents as a string
   std::string readAsciiTextFile(const std::filesystem::path &);
 }
