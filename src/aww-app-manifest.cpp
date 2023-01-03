@@ -53,7 +53,6 @@ std::string aww::app::manifest::version::get(void)
 }
 
 /// @brief Constructor for aww::app::manifest::mainJavascriptFile
-/// @param mainJavascriptFileValue
 aww::app::manifest::mainJavascriptFile::mainJavascriptFile(
   const std::filesystem::path& mainJavascriptFileValue,
   const std::filesystem::path& appDirPath)

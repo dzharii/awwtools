@@ -92,7 +92,10 @@ if(ALLOW_AWW_APP)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/webview-dbc7864)
 endif()
 
+## nlohmann-json
+set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2)
+## end of nlohmann-json
 
 # There's also (probably) doctests within the library, so we need to see this as well.
 target_link_libraries(
