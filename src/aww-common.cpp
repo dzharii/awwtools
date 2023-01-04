@@ -1,4 +1,5 @@
 #include "aww-common.hpp"
+#include <fstream>
 
 namespace aww {
 
@@ -121,5 +122,49 @@ namespace aww::os
 
   void Proccess::defaultExitCallback(int)
   {
+  }
+}
+
+namespace aww::os::env
+{
+  aww::result_t getUserHomeDir(std::filesystem::path& outHomeDir)
+  {
+    char *homeDir = nullptr;
+
+    homeDir = std::getenv("HOME");
+    if (homeDir != nullptr)
+    {
+      outHomeDir = std::filesystem::absolute(homeDir);
+      return std::make_tuple(true, "");
+    }
+
+    homeDir = std::getenv("USERPROFILE");
+    if (homeDir != nullptr)
+    {
+      outHomeDir = std::filesystem::absolute(homeDir);
+      return std::make_tuple(true, "");
+    }
+    return std::make_tuple(false, "Could not find user home directory");
+  }
+
+  std::filesystem::path getAwwDotDir(void)
+  {
+    std::filesystem::path homeDir;
+    auto result = getUserHomeDir(homeDir);
+    if (aww::failed(result))
+    {
+      return std::filesystem::path(); // empty path
+    }
+    return homeDir / ".awwtools";
+  }
+}
+
+namespace aww::fs {
+
+  std::string readAsciiTextFile(const std::filesystem::path& path)
+  {
+    std::ifstream file(path);
+    std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    return content;
   }
 }

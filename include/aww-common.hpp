@@ -37,6 +37,10 @@ namespace aww
 
 namespace aww::date
 {
+
+  /** Get the current date in YYYY-MM-DD format
+   * @return Date string
+   */
   std::string getDateYYYYMMDD(void);
 }
 
@@ -57,7 +61,6 @@ namespace aww::os
 
   /** Check if file is executable
    * Returns false if file does not exist
-   * @param path Path to file
    * @returns true if file is executable
   */
   bool canExecute(const std::filesystem::path &path);
@@ -78,12 +81,20 @@ namespace aww::os
     static void defaultStdErrCallback(std::string);
     static void defaultExitCallback(int);
   };
+
+  std::vector<std::string> getCommandLineArgs(void);
 }
 
 namespace aww::os::actions
 {
   aww::result_t launchFile(const std::string &);
   aww::result_t showNotification(const std::string &, const std::string &);
+}
+
+namespace aww::os::env
+{
+  aww::result_t getUserHomeDir(std::filesystem::path &);
+  std::filesystem::path getAwwDotDir(void);
 }
 
 namespace aww::string
@@ -93,6 +104,10 @@ namespace aww::string
 
 namespace aww::fs {
   std::filesystem::path getCurrentExecutablePath(void);
+
+  /// @brief reads a text file at the given path and returns its contents as a string.
+  /// @return file contents as a string
+  std::string readAsciiTextFile(const std::filesystem::path &);
 }
 
 #endif // AWW_COMMON_HPP

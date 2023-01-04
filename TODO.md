@@ -188,6 +188,10 @@ and execute template:
 
 ## aww run!
 
+- [ ] Handle gracefull cancelation Ctrl+C for pipe
+
+- [ ] Consider: 2022-12-10 [Enable tab completion - .NET CLI Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/core/tools/enable-tab-autocomplete)
+
 What to add:
 aww run should be interactive!
 
@@ -205,11 +209,27 @@ or from folder aww-run (in the current directory and global):
 - script-name.sh
 - script-name.ps1
 
+- 2022-12-03 [Warp: The terminal for the 21st century](https://www.warp.dev/)
+- 2022-12-02 [Drag and drop from terminal](https://blog.meain.io/2022/terminal-drag-and-drop/)
+
+## Configuration
+
+- 2022-12-03 [toml++ TOML for C++](https://marzer.github.io/tomlplusplus/)
+- 2022-12-03 [ToruNiina/toml11: TOML for Modern C++](https://github.com/ToruNiina/toml11)
 
 
+## Logging 
 
+- [ ] Implement logging support
 
+## aww-clip
 
+copy stuff to clipboard from standard input and output.
+What else? Maybe path?
 
+## aww-open
+
+same thing!
+just cross-platform opener
 
 

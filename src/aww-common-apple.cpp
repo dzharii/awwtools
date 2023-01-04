@@ -1,7 +1,9 @@
 #include <filesystem>
+#include <fstream>
 #include <cstdlib>
 #include "aww-common.hpp"
 #include <mach-o/dyld.h>
+#include <unistd.h>
 
 namespace fs = std::filesystem;
 
@@ -22,6 +24,23 @@ namespace aww::os {
                       (perms & std::filesystem::perms::others_exec) != std::filesystem::perms::none;
 
     return anyExecute;
+  }
+
+  std::vector<std::string> getCommandLineArgs(void)
+  {
+    pid_t pid = getpid();
+    std::vector<std::string> args;
+    std::string filename = "/proc/" + std::to_string(pid) + "/cmdline";
+    std::ifstream file(filename);
+    if (file.is_open())
+    {
+        std::string arg;
+        while (std::getline(file, arg, '\0'))
+        {
+            args.push_back(arg);
+        }
+    }
+    return args;
   }
 }
 

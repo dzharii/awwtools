@@ -23,6 +23,38 @@ namespace aww::os {
                                   || fileExtension == ".PS1");
     return isExecutable;
   }
+
+  std::vector<std::string> getCommandLineArgs(void)
+  {
+    int argc;
+    LPWSTR *argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+
+    // Allocate a buffer to hold the converted strings
+    const int bufferSize = 1024;
+    char buffer[bufferSize];
+
+    // Convert each Unicode string to a std::string
+    std::vector<std::string> args;
+    std::size_t length = 0;
+    for (int i = 0; i < argc; i++) {
+
+      // Convert the Unicode string to the specified character encoding
+      // The function returns 0 if it does not succeed.
+      length = static_cast<std::size_t>(
+          WideCharToMultiByte(CP_UTF8, 0, argv[i], -1, buffer, bufferSize, nullptr, nullptr)
+      );
+
+      // Store the converted string in the vector
+      // note: "length - 1" to remove the null terminator
+      std::string myarg(buffer, length - 1);
+      std::cout << "arg: " << myarg << std::endl;
+      args.push_back(myarg);
+    }
+
+    // Free the memory allocated by CommandLineToArgvW
+    LocalFree(argv);
+    return args;
+  }
 }
 
 namespace aww::os::actions
@@ -165,7 +197,10 @@ aww::result_t showNotification(
     const int64_t expirationMs = 5000;
     templ.setExpiration(expirationMs);
 
-    toast.showToast(templ, wintoastDefaultHandler) ? 0 : 1;
+    long long int toastId = toast.showToast(templ, wintoastDefaultHandler);
+    if (toastId < 0) {
+        return std::make_tuple(false, "Error, cannot show the toast notification");
+    }
     return std::make_tuple(true, "");
   }
 }

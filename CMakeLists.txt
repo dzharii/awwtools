@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.14)
 # Set project name, version and laguages here. (change as needed)
 # Version numbers are available by including "exampleConfig.h" in
 # the source. See exampleConfig.h.in for some more details.
-project(AwwTools VERSION 1.2.3.4 LANGUAGES CXX)
+project(AwwTools VERSION 0.0.1 LANGUAGES CXX)
 
 
 # Options: Things you can set via commandline options to cmake (e.g. -DENABLE_LTO=[ON|OFF])
@@ -22,6 +22,8 @@ option(ENABLE_DOCTESTS "Include tests in the library. Setting this to OFF will r
 
 # Include stuff. No change needed.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+option(ALLOW_AWW_APP "Allow the aww app to be built" OFF)
+
 include(ConfigSafeGuards)
 include(Colors)
 include(CTest)
@@ -38,9 +40,8 @@ find_lto(CXX)
 #                         Locate files (change as needed).
 # --------------------------------------------------------------------------------
 set(SOURCES          # All .cpp files in src/
-    src/example.cpp
     src/aww-common.cpp
-    src/os-exec.cpp
+    src/aww-app-manifest.cpp
 )
 if(WIN32)
     list(APPEND SOURCES src/aww-common-windows.cpp)
@@ -57,6 +58,9 @@ set(TESTFILES        # All .cpp files in tests/
 )
 set(LIBRARY_NAME awwlib)  # Default name for the library built from src/*.cpp (change if you wish)
 
+## Third-party
+# https://github.com/nlohmann/json
+set(JSON_BuildTests OFF CACHE INTERNAL "")
 
 # --------------------------------------------------------------------------------
 #                            Build! (Change as needed)
@@ -70,11 +74,28 @@ add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
 target_include_directories(${LIBRARY_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5
+    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2/single_include
 )
+
+if(ALLOW_AWW_APP)
+    # mark webview.h as system header to suppress clang warnings
+    target_include_directories(${LIBRARY_NAME} SYSTEM PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/third-party/webview-dbc7864/src
+    )
+endif()
+
+
 # we add the sub-directories that we want CMake to scan
-add_subdirectory(
-    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5
-)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5)
+
+if(ALLOW_AWW_APP)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/webview-dbc7864)
+endif()
+
+## nlohmann-json
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2)
+## end of nlohmann-json
 
 # There's also (probably) doctests within the library, so we need to see this as well.
 target_link_libraries(
@@ -83,18 +104,26 @@ target_link_libraries(
     clip
 )
 
+if(ALLOW_AWW_APP)
+    target_link_libraries(
+        ${LIBRARY_NAME} PUBLIC
+        webview
+    )
+endif()
+
 if(WIN32)
     target_include_directories(${LIBRARY_NAME} PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/third-party/wintoast-5e441fd03543b999edb663caf8df7be37c0d575c/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/third-party/wintoast-5e441fd/src
     )
 
     add_subdirectory(
-     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/wintoast-5e441fd03543b999edb663caf8df7be37c0d575c
+     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/wintoast-5e441fd
     )
 
     target_link_libraries(${LIBRARY_NAME} PUBLIC wintoastlib)
 endif()
 
+target_link_libraries(${LIBRARY_NAME} PRIVATE nlohmann_json::nlohmann_json)
 
 # Set the compile options you want (change as needed).
 target_set_warnings(${LIBRARY_NAME} ENABLE ALL AS_ERROR ALL DISABLE Annoying)
@@ -131,14 +160,31 @@ target_link_libraries(aww-toast PRIVATE ${LIBRARY_NAME})  # Link the executable 
 target_set_warnings(aww-toast ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(aww-toast optimized)  # enable link-time-optimization if available for non-debug configurations
 
+if(ALLOW_AWW_APP)
+    ## Aww app
+    add_executable(aww-app app/aww-app.cpp)   # Name of exec. and location of file.
+    target_link_libraries(aww-app PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
+    target_set_warnings(aww-app ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+    target_enable_lto(aww-app optimized)  # enable link-time-optimization if available for non-debug configurations
+endif()
 # Set the properties you require, e.g. what C++ standard to use. Here applied to library and aww (change as needed).
-set_target_properties(
+
+set(PROJECTS
     ${LIBRARY_NAME}
-        aww
-        aww-git-open
-        aww-date
-        aww-run
-        aww-toast
+    aww
+    aww-git-open
+    aww-date
+    aww-run
+    aww-toast
+)
+
+if(ALLOW_AWW_APP)
+    list(APPEND PROJECTS aww-app)
+endif()
+
+
+set_target_properties(
+        ${PROJECTS}
       PROPERTIES
         CXX_STANDARD 17
         CXX_STANDARD_REQUIRED YES
