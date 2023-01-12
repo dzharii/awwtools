@@ -35,7 +35,7 @@ int main(int argc, char **argv)
     launchTerm = "start cmd.exe @cmd /k " + escapedCommandLine;
   } else {
     // escape optionalCommandLine for bash
-    launchTerm = "x-terminal-emulator -e bash -c " + escapedCommandLine;
+    launchTerm = "x-terminal-emulator -e bash " + escapedCommandLine;
   }
   int retValue = std::system(launchTerm.c_str());
   if (retValue != 0)
