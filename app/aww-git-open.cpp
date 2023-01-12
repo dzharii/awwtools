@@ -124,6 +124,7 @@ int main(int argc, char **argv)
   {
     std::cout << aww::make_error("Failed to launch file", launchFileRes) << std::endl;
     aww::os::actions::showNotification("aww git open", "Failed to open file in browser");
+    return 1;
   }
   std::cout << "Launched file" << std::endl;
   aww::os::actions::showNotification("aww git open", "The file was opened in browser");

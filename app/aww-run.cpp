@@ -28,15 +28,6 @@ aww::result_t findScript(const std::string &, fs::path &);
 
 int main(int argc, char **argv)
 {
-  std::cout << "The AwwTools v"
-            << PROJECT_VERSION_MAJOR
-            << "."
-            << PROJECT_VERSION_MINOR
-            << "."
-            << PROJECT_VERSION_PATCH
-            << std::endl;
-  std::cout << "Embrace the Aww!" << std::endl;
-
   if (argc < 2)
   {
     std::cout << "No arguments provided" << std::endl;
