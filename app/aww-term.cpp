@@ -6,6 +6,7 @@
 #include "doctest/doctest.h"
 #endif
 
+#include <iostream>
 #include <string>
 #include <vector>
 #include <filesystem>
@@ -36,6 +37,11 @@ int main(int argc, char **argv)
     // escape optionalCommandLine for bash
     launchTerm = "x-terminal-emulator -e bash -c " + escapedCommandLine;
   }
-  std::system(launchTerm.c_str());
+  int retValue = std::system(launchTerm.c_str());
+  if (retValue != 0)
+  {
+    std::cerr << "Error: " << retValue << std::endl;
+  }
+  return retValue;
 }
 
