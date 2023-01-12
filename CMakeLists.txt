@@ -160,6 +160,12 @@ target_link_libraries(aww-toast PRIVATE ${LIBRARY_NAME})  # Link the executable 
 target_set_warnings(aww-toast ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(aww-toast optimized)  # enable link-time-optimization if available for non-debug configurations
 
+## Aww term
+add_executable(aww-term app/aww-term.cpp)   # Name of exec. and location of file.
+target_link_libraries(aww-term PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
+target_set_warnings(aww-term ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_enable_lto(aww-term optimized)  # enable link-time-optimization if available for non-debug configurations
+
 if(ALLOW_AWW_APP)
     ## Aww app
     add_executable(aww-app app/aww-app.cpp)   # Name of exec. and location of file.
@@ -176,6 +182,7 @@ set(PROJECTS
     aww-date
     aww-run
     aww-toast
+    aww-term
 )
 
 if(ALLOW_AWW_APP)

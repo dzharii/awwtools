@@ -8,6 +8,19 @@
 namespace fs = std::filesystem;
 
 namespace aww::os {
+
+  std::string escapeCommandLineArgs(const std::string args) {
+    std::string escapedArgs(args.size(), ' ');
+    for (char c : args) {
+      if (c == '"') {
+        escapedArgs += "\\\"";
+      } else {
+        escapedArgs += c;
+      }
+    }
+    return escapedArgs;
+  }
+
   bool canExecute(const std::filesystem::path &path)
   {
     if (!std::filesystem::exists(path)) {
