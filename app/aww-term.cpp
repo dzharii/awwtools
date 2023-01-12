@@ -18,24 +18,23 @@
 namespace fs = std::filesystem;
 
 
-int main(int argc, char **argv)
+int main(int, char**)
 {
-  std::vector<std::string> cmdArgs(argv, argv + argc);
-  cmdArgs.erase(cmdArgs.begin()); // remove first element
-
-  std::string optionalCommandLine = aww::string::join(cmdArgs, "-");
-  // current folder absolute path
-  fs::path currentFolder = fs::absolute(fs::current_path());
-
   // open new terminal with bash in new window
   std::string launchTerm;
-  std::string escapedCommandLine = aww::os::escapeCommandLineArgs(optionalCommandLine);
-  if (aww::os::getPlatform() == aww::os::Platform::Windows)
+
+  aww::os::Platform platform = aww::os::getPlatform();
+
+  if (platform == aww::os::Platform::Windows)
   {
-    launchTerm = "start cmd.exe @cmd /k " + escapedCommandLine;
+    launchTerm = "start cmd.exe @cmd /k";
+  } else if (platform == aww::os::Platform::MacOS){
+    launchTerm = "open -a Terminal \"`pwd`\"";
+  } else if (platform == aww::os::Platform::Linux){
+    launchTerm = "x-terminal-emulator -e bash";
   } else {
-    // escape optionalCommandLine for bash
-    launchTerm = "x-terminal-emulator -e bash " + escapedCommandLine;
+    std::cerr << "Error: Unsupported platform" << std::endl;
+    return 1;
   }
   int retValue = std::system(launchTerm.c_str());
   if (retValue != 0)
