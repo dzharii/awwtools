@@ -31,7 +31,7 @@ namespace aww
 
   bool failed(const result_t&);
   bool succeeded(const result_t&);
-  std::string make_error(const std::string&, const result_t&);
+  std::string makeError(const std::string&, const result_t&);
 
 } // namespace aww
 

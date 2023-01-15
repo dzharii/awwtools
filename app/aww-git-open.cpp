@@ -81,7 +81,7 @@ int main(int argc, char **argv)
   aww::result_t findUrlResult = tryFindRepositoryUrlInGitConfig(file, repoUrl);
   if (aww::failed(findUrlResult))
   {
-    std::cout << aww::make_error("Failed to find repository url in git config [tryFindRepositoryUrlInGitConfig]", findUrlResult)
+    std::cout << aww::makeError("Failed to find repository url in git config [tryFindRepositoryUrlInGitConfig]", findUrlResult)
               << std::endl;
     return 1;
   }
@@ -111,7 +111,7 @@ int main(int argc, char **argv)
 
     if (aww::failed(webPathConverted))
     {
-      std::cout << aww::make_error("Failed to convert path to web url", webPathConverted) << std::endl;
+      std::cout << aww::makeError("Failed to convert path to web url", webPathConverted) << std::endl;
       return 1;
     }
 
@@ -122,7 +122,7 @@ int main(int argc, char **argv)
   aww::result_t launchFileRes = aww::os::actions::launchFile(webUrl);
   if (aww::failed(launchFileRes))
   {
-    std::cout << aww::make_error("Failed to launch file", launchFileRes) << std::endl;
+    std::cout << aww::makeError("Failed to launch file", launchFileRes) << std::endl;
     aww::os::actions::showNotification("aww git open", "Failed to open file in browser");
     return 1;
   }

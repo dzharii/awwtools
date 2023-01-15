@@ -13,7 +13,7 @@ namespace aww {
     return std::get<aww::resultPos>(result);
   }
 
-  std::string make_error(const std::string& description, const aww::result_t& result)
+  std::string makeError(const std::string& description, const aww::result_t& result)
   {
     std::string msg = description + ": " + std::get<aww::errorPos>(result);
     return msg;

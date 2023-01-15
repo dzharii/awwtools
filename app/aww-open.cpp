@@ -35,7 +35,7 @@ int main(int argc, char **argv)
   aww::result_t launchFileRes = aww::os::actions::launchFile(fileToOpen);
   if (aww::failed(launchFileRes))
   {
-    std::cout << aww::make_error("Failed to launch file", launchFileRes) << std::endl;
+    std::cout << aww::makeError("Failed to launch file", launchFileRes) << std::endl;
     aww::os::actions::showNotification("aww open", "Failed to open file: " + fileToOpen);
     return 1;
   }
