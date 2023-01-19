@@ -203,14 +203,12 @@ if(ALLOW_AWW_APP)
     list(APPEND PROJECTS aww-app)
 endif()
 
-# Copy assets to build directory
 
-## Copy folder "aww-create-aww" to build directory
-file(COPY
-    ${CMAKE_CURRENT_SOURCE_DIR}/aww-create-aww
-    DESTINATION
-    ${CMAKE_BINARY_DIR}/bin)
-
+add_custom_target(copy-runtime-files ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/aww-create-aww
+    ${CMAKE_BINARY_DIR}/bin/aww-create-aww
+    DEPENDS ${MY_TARGET})
 
 
 set_target_properties(

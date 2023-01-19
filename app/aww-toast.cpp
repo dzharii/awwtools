@@ -16,15 +16,6 @@
 
 int main(int argc, char **argv)
 {
-  std::cout << "The AwwTools v"
-            << PROJECT_VERSION_MAJOR
-            << "."
-            << PROJECT_VERSION_MINOR
-            << "."
-            << PROJECT_VERSION_PATCH
-            << std::endl;
-  std::cout << "Embrace the Aww!" << std::endl;
-
   std::vector<std::string> cmdArgs(argv, argv + argc);
   cmdArgs.erase(cmdArgs.begin()); // remove first element
   std::string message = "Hey!";

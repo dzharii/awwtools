@@ -10,7 +10,7 @@
 
 namespace fs = std::filesystem;
 
-aww::result_t tryCreateFileByPath(const std::string&);
+aww::result_t tryCreateFileByPath(const fs::path&);
 
 int main(int argc, char **argv)
 {
@@ -22,22 +22,41 @@ int main(int argc, char **argv)
     return 1;
   }
 
+  const fs::path filePath = cmdArgs[0];
   if (cmdArgs.size() == 1) {
-    aww::result_t createResult = tryCreateFileByPath(cmdArgs[0]);
+    aww::result_t createResult = tryCreateFileByPath(filePath);
     if (aww::failed(createResult)) {
       std::cout << aww::makeError("Failed to create file", createResult) << "\n";
       return 1;
     }
   }
 
+  fs::path awwExecutablePath = aww::fs::getCurrentExecutablePath();
+  fs::path awwExecutableDir = std::filesystem::absolute(awwExecutablePath.parent_path());
+  fs::path awwCreateTemplates = awwExecutableDir / "aww-create-aww" / "templates";
+
+  // get file extension from filePath
+  std::string fileExtensionWithDot = filePath.extension().string();
+  fs::path templatePath = awwCreateTemplates / ("template" + fileExtensionWithDot);
+
+  std::cout << "templatePath: " << templatePath << "\n";
+
+  if (fs::exists(templatePath)) {
+    std::cout << "Creating file from template: " << filePath << "\n";
+    std::ifstream templateFile(templatePath);
+    std::ofstream file(filePath);
+    file << templateFile.rdbuf();
+    templateFile.close();
+    file.close();
+  } else {
+    std::cout << "No template found for file extension: " << fileExtensionWithDot << "\n";
+  }
+
   return 0;
 }
 
-aww::result_t tryCreateFileByPath(const std::string &path)
+aww::result_t tryCreateFileByPath(const fs::path &filePath)
 {
-
-  // check if path is valid path
-  fs::path filePath(path);
 
   // if file exists, return error
   if (fs::exists(filePath)) {
@@ -53,10 +72,10 @@ aww::result_t tryCreateFileByPath(const std::string &path)
   }
 
   if (filePathParts.size() == 0) {
-    return std::make_tuple(false, "Invalid path: '" + path + "'");
+    return std::make_tuple(false, "Invalid path: '" + filePath.string() + "'");
   } else if (filePathParts.size() == 1) {
     // create file
-    std::ofstream file(path);
+    std::ofstream file(filePath);
     file.close();
     return std::make_tuple(true, "");
   } else {

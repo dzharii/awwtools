@@ -28,8 +28,6 @@ aww::result_t getRelativeUrlPath(const fs::path &, const fs::path &, std::string
  */
 int main(int argc, char **argv)
 {
-  std::cout << "Embrace the Aww!" << std::endl;
-
   if (argc > 2)
   {
     std::cout << "Too many arguments provided" << std::endl;
