@@ -203,6 +203,15 @@ if(ALLOW_AWW_APP)
     list(APPEND PROJECTS aww-app)
 endif()
 
+# Copy assets to build directory
+
+## Copy folder "aww-create-aww" to build directory
+file(COPY
+    ${CMAKE_CURRENT_SOURCE_DIR}/aww-create-aww
+    DESTINATION
+    ${CMAKE_BINARY_DIR}/bin)
+
+
 
 set_target_properties(
         ${PROJECTS}
