@@ -233,3 +233,8 @@ same thing!
 just cross-platform opener
 
 
+## aww-remind
+
+Plays ticking sound and reminds about the timer expired. 
+Use SFML for this
+See: \dev-experiments\play_mp3_file.md
