@@ -1,6 +1,7 @@
 
 
 ## Play audio file for aww remind
+2023-01-20 [OpenAL: Cross Platform 3D Audio](https://www.openal.org/)
 
 2023-01-19 💖 [sf::Music Class Reference SFML / Learn / 2.0 Documentation](https://www.sfml-dev.org/documentation/2.0/classsf_1_1Music.php) 
 
