@@ -45,7 +45,69 @@ int main(int argc, char **argv)
     std::cout << "Creating file from template: " << filePath << "\n";
     std::ifstream templateFile(templatePath);
     std::ofstream file(filePath);
-    file << templateFile.rdbuf();
+
+    // read file line by line and output to file
+    std::string line;
+
+    // Here is a heuristic to determine if a line has a template variable
+    // an example is "___FILE_NAME___"
+    // has 3 underscores, at least 4 characters for reasonable name, 3 underscores
+    constexpr size_t MinLineLenWithVariableHeuristic = 10;
+    constexpr char VariableStartOrEndToken[] = "___";
+    constexpr size_t StartStopTokenLen = 3;
+
+    constexpr char TOKEN_FILE_NAME[] = "FILE_NAME";
+    constexpr char CURRENT_DATE[] = "CURRENT_DATE";
+
+    while (std::getline(templateFile, line)) {
+
+      if (line.length() >= MinLineLenWithVariableHeuristic) {
+        // search VariableStartOrEndToken in line
+
+        size_t offsetPos = 0;
+        size_t variablePos = 0;
+        size_t nextTokenPos = 0;
+
+        size_t tokenPos = line.find(VariableStartOrEndToken, offsetPos);
+
+        while (tokenPos  != std::string::npos) {
+          variablePos = tokenPos + StartStopTokenLen;
+          nextTokenPos = line.find(VariableStartOrEndToken, variablePos);
+
+          // if there is no end token, set the offset to where the start token
+          // ends and continue
+          if (nextTokenPos == std::string::npos) {
+            offsetPos = tokenPos + StartStopTokenLen;
+            tokenPos = line.find(VariableStartOrEndToken, offsetPos);
+            continue;
+          }
+          // here we maybe have a variable name between the start and end tokens
+          // get the variable name as a substring
+          std::string variableName = line.substr(variablePos, nextTokenPos - variablePos);
+
+          if (variableName == TOKEN_FILE_NAME) {
+            // replace ___FILE_NAME___ with the file name
+            const std::string replacement = filePath.stem().string();
+            line.replace(
+              tokenPos,
+              nextTokenPos + StartStopTokenLen - tokenPos,
+              replacement);
+          } else if (variableName == CURRENT_DATE) {
+            // replace ___CURRENT_DATE___ with the current date in YYYYMMDD format
+            const std::string replacement = aww::date::getDateYYYYMMDD();
+            line.replace(
+              tokenPos,
+              nextTokenPos + StartStopTokenLen - tokenPos,
+              replacement);
+          }
+          tokenPos = line.find(VariableStartOrEndToken, offsetPos);
+        }
+      }
+
+      file << line << "\n";
+    }
+
+    // file << templateFile.rdbuf();
     templateFile.close();
     file.close();
   } else {
