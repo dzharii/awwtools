@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 
   fs::path templatePath;
   if (hasTemplateModifier) {
-    templatePath = awwCreateTemplates / (templateModifier + fileExtensionWithDot);
+    templatePath = awwCreateTemplates / ("template-" + templateModifier + fileExtensionWithDot);
     if (!fs::exists(templatePath)) {
       templatePath = awwCreateTemplates / ("template" + fileExtensionWithDot);
     }
