@@ -23,13 +23,20 @@ int main(int argc, char **argv)
   }
 
   const fs::path filePath = cmdArgs[0];
-  if (cmdArgs.size() == 1) {
-    aww::result_t createResult = tryCreateFileByPath(filePath);
-    if (aww::failed(createResult)) {
-      std::cout << aww::makeError("Failed to create file", createResult) << "\n";
-      return 1;
-    }
+  aww::result_t createResult = tryCreateFileByPath(filePath);
+  if (aww::failed(createResult)) {
+    std::cout << aww::makeError("Failed to create file", createResult) << "\n";
+    return 1;
   }
+
+  bool hasTemplateModifier = false;
+  std::string templateModifier;
+
+  if (cmdArgs.size() == 2) {
+    hasTemplateModifier = true;
+    templateModifier = cmdArgs[1];
+  }
+
 
   fs::path awwExecutablePath = aww::fs::getCurrentExecutablePath();
   fs::path awwExecutableDir = std::filesystem::absolute(awwExecutablePath.parent_path());
@@ -37,7 +44,17 @@ int main(int argc, char **argv)
 
   // get file extension from filePath
   std::string fileExtensionWithDot = filePath.extension().string();
-  fs::path templatePath = awwCreateTemplates / ("template" + fileExtensionWithDot);
+
+  fs::path templatePath;
+  if (hasTemplateModifier) {
+    templatePath = awwCreateTemplates / (templateModifier + fileExtensionWithDot);
+    if (!fs::exists(templatePath)) {
+      templatePath = awwCreateTemplates / ("template" + fileExtensionWithDot);
+    }
+  }
+  else {
+    templatePath = awwCreateTemplates / ("template" + fileExtensionWithDot);
+  }
 
   std::cout << "templatePath: " << templatePath << "\n";
 
