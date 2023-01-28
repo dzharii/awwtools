@@ -64,7 +64,8 @@ namespace aww::inspiration
 
   std::string getInspiration(void) {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
-    const size_t randomIndex = static_cast<size_t>(std::rand() % quotesLen);
+    const std::size_t randomIndex = static_cast<std::size_t>(
+      static_cast<unsigned int>(std::rand()) % quotesLen);
     return quotes[randomIndex];
   }
 }
