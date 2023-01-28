@@ -8,6 +8,8 @@
 
 #include "aww-common.hpp"
 
+#include "aww-inspiration.hpp"
+
 namespace fs = std::filesystem;
 
 aww::result_t tryCreateFileByPath(const fs::path&);
@@ -75,6 +77,7 @@ int main(int argc, char **argv)
 
     constexpr char TOKEN_FILE_NAME[] = "FILE_NAME";
     constexpr char CURRENT_DATE[] = "CURRENT_DATE";
+    constexpr char RANDOM_INSPIRATION[] = "RANDOM_INSPIRATION";
 
     while (std::getline(templateFile, line)) {
 
@@ -112,6 +115,13 @@ int main(int argc, char **argv)
           } else if (variableName == CURRENT_DATE) {
             // replace ___CURRENT_DATE___ with the current date in YYYYMMDD format
             const std::string replacement = aww::date::getDateYYYYMMDD();
+            line.replace(
+              tokenPos,
+              nextTokenPos + StartStopTokenLen - tokenPos,
+              replacement);
+          } else if (variableName == RANDOM_INSPIRATION) {
+            // replace ___RANDOM_INSPIRATION___ with a random inspiration
+            const std::string replacement = aww::inspiration::getInspiration();
             line.replace(
               tokenPos,
               nextTokenPos + StartStopTokenLen - tokenPos,

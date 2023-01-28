@@ -42,6 +42,7 @@ find_lto(CXX)
 set(SOURCES          # All .cpp files in src/
     src/aww-common.cpp
     src/aww-app-manifest.cpp
+    src/aww-inspiration.cpp
 )
 if(WIN32)
     list(APPEND SOURCES src/aww-common-windows.cpp)
