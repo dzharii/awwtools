@@ -227,3 +227,68 @@ Hope this fully answers perfectly your question.
 
 
 
+## ChatGPT Generated
+
+Here's an example of C++ code for playing a sound notification using SFML library in a separate thread and allowing the user to stop the audio by pressing `Ctrl+C`:
+
+```cpp
+#include <SFML/Audio.hpp>
+#include <iostream>
+#include <thread>
+#include <csignal>
+
+std::thread soundThread;
+bool running = true;
+
+void signalHandler(int signum) {
+    running = false;
+    soundThread.join();
+    std::cout << "Interrupt signal (" << signum << ") received.\n";
+    exit(signum);
+}
+
+void playSound(const std::string &soundFile) {
+    sf::SoundBuffer buffer;
+    if (!buffer.loadFromFile(soundFile))
+    {
+        std::cout << "Error loading sound file" << std::endl;
+        return;
+    }
+
+    sf::Sound sound;
+    sound.setBuffer(buffer);
+    sound.play();
+
+    while (sound.getStatus() == sf::Sound::Playing && running)
+    {
+        // Wait for the sound to finish playing
+    }
+}
+
+int main()
+{
+    std::string soundFile = "notification.wav";
+
+    signal(SIGINT, signalHandler);
+
+    soundThread = std::thread(playSound, soundFile);
+    soundThread.detach();
+
+    while(running) {
+        // Do nothing, waiting for the user to press Ctrl+C
+    }
+
+    return 0;
+}
+```
+
+
+
+This code uses SFML library to load the sound file and play it in a separate thread using `std::thread`. The `playSound` function is used to play the sound. The `getStatus` function is used to check if the sound is still playing. The `signal` function is used to handle the `SIGINT` signal (`Ctrl+C`) to stop the audio and exit the program.
+
+When the user press `Ctrl+C`, the `signalHandler` function is called, and it sets the `running` variable to false, which will stop the sound thread and exit the program.
+
+Also, the `detach()` method is used to detach the thread from the main thread, so it can run independently and the program doesn't wait for it to finish.
+
+Please note that this is a general example, you might need to adjust it based on your specific project's structure and requirements.
+
