@@ -238,3 +238,9 @@ just cross-platform opener
 Plays ticking sound and reminds about the timer expired. 
 Use SFML for this
 See: \dev-experiments\play_mp3_file.md
+
+## aww-cat 
+This one may have a repository with recommended software to view the file in console.
+Type aww cat  -- and it will recommend a tool to view the file. 
+
+
