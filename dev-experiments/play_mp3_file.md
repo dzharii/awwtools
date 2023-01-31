@@ -1,4 +1,12 @@
 
+## 2023-01-30 Check 
+
+2023-01-30 [thestk/rtaudio: A set of C++ classes that provide a common API for realtime audio input/output across Linux native ALSA, JACK, PulseAudio and OSS , Macintosh OS X CoreAudio and JACK , and Windows DirectSound, ASIO, and WASAPI operating systems.](https://github.com/thestk/rtaudio)
+  >  A set of C++ classes that provide a common API for realtime audio input/output across Linux (native ALSA, JACK, PulseAudio and OSS), Macintosh OS X (CoreAudio and JACK), and Windows (DirectSound, ASIO and WASAPI)
+
+
+2023-01-30 [PortAudio/portaudio: PortAudio is a cross-platform, open-source C language library for real-time audio input and output.](https://github.com/PortAudio/portaudio)
+  > PortAudio is a free, cross-platform, open-source, audio I/O library.  It lets you write simple audio programs in 'C' or C++ that will compile and run on many platforms including Windows, Macintosh OS X, and Unix (OSS/ALSA). It is intended to promote the exchange of audio software between developers on different platforms. Many applications use PortAudio for Audio I/O.
 
 ## Play audio file for aww remind
 2023-01-20 [OpenAL: Cross Platform 3D Audio](https://www.openal.org/)
