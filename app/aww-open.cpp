@@ -20,18 +20,16 @@ namespace fs = std::filesystem;
 
 int main(int argc, char **argv)
 {
-  if (argc < 2)
-  {
-    std::cout << "No arguments provided" << std::endl;
-    return 1;
-  }
+
+  bool useDefaultInput = argc < 2;
 
   if (argc > 2) {
     std::cout << "Too many arguments provided. Expected 1: file to open" << std::endl;
     return 1;
   }
 
-  std::string fileToOpen = argv[1];
+  std::string fileToOpen = useDefaultInput ? "." : argv[1];
+
   aww::result_t launchFileRes = aww::os::actions::launchFile(fileToOpen);
   if (aww::failed(launchFileRes))
   {
