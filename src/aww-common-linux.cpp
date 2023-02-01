@@ -3,7 +3,6 @@
 #include <cstdlib>
 #include "aww-common.hpp"
 #include <unistd.h>
-#include <uuid/uuid.h>
 #include <limits.h>
 
 namespace aww::os {
@@ -111,17 +110,14 @@ namespace aww::fs
 
 namespace aww::util
 {
+  // Implements GUID generations for linux using /proc/sys/kernel/random/uuid
   aww::result_t getGuid(std::string &out) {
-  srand(time(NULL));
-
-  sprintf(strUuid, "%x%x-%x-%x-%x-%x%x%x",
-    rand(), rand(),                 // Generates a 64-bit Hex number
-    rand(),                         // Generates a 32-bit Hex number
-    ((rand() & 0x0fff) | 0x4000),   // Generates a 32-bit Hex number of the form 4xxx (4 indicates the UUID version)
-    rand() % 0x3fff + 0x8000,       // Generates a 32-bit Hex number in the range [0x8000, 0xbfff]
-    rand(), rand(), rand());        // Generates a 96-bit Hex number
-
-    out = str;
-    return std::make_tuple(true, "");
+    std::ifstream file("/proc/sys/kernel/random/uuid");
+    if (file.is_open())
+    {
+        std::getline(file, out);
+        return std::make_tuple(true, "");
+    }
+    return std::make_tuple(false, "Failed to open /proc/sys/kernel/random/uuid");
   }
 }
