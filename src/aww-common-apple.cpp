@@ -117,8 +117,8 @@ namespace aww::fs
 namespace aww::util
 {
   aww::result_t getGuid(std::string &out) {
-    CFUUIDRef uuid = CFUUIDCreate(NULL);
-    CFStringRef str = CFUUIDCreateString(NULL, uuid);
+    CFUUIDRef uuid = CFUUIDCreate(nullptr);
+    CFStringRef str = CFUUIDCreateString(nullptr, uuid);
 
     char buf[37];
     CFStringGetCString(str, buf, sizeof(buf), kCFStringEncodingUTF8);
