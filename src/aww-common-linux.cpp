@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include "aww-common.hpp"
 #include <unistd.h>
+#include <uuid/uuid.h>
 #include <limits.h>
 
 namespace aww::os {
@@ -106,4 +107,18 @@ namespace aww::fs
       ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
       return std::filesystem::path(std::string(result, (count > 0) ? count : 0));
     }
+}
+
+namespace aww::util
+{
+  aww::result_t getGuid(std::string &out) {
+    uuid_t guid;
+    uuid_generate(guid);
+
+    char str[37];
+    uuid_unparse(guid, str);
+
+    out = str;
+    return std::make_tuple(true, "");
+  }
 }

@@ -4,6 +4,7 @@
 #include "aww-common.hpp"
 #include <mach-o/dyld.h>
 #include <unistd.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 namespace fs = std::filesystem;
 
@@ -111,4 +112,22 @@ namespace aww::fs
       }
       return std::filesystem::path();
     }
+}
+
+namespace aww::util
+{
+  aww::result_t getGuid(std::string &out) {
+    CFUUIDRef uuid = CFUUIDCreate(NULL);
+    CFStringRef str = CFUUIDCreateString(NULL, uuid);
+
+    char buf[37];
+    CFStringGetCString(str, buf, sizeof(buf), kCFStringEncodingUTF8);
+
+    out = buf;
+
+    CFRelease(str);
+    CFRelease(uuid);
+
+    return std::make_tuple(true, "");
+  }
 }

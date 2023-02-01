@@ -1,4 +1,5 @@
 #include <filesystem>
+#include <sstream>
 
 #include "aww-common.hpp"
 #include "Windows.h"
@@ -230,5 +231,25 @@ namespace aww::fs
       return std::filesystem::path("");
     }
     return std::filesystem::path(buffer);
+  }
+}
+
+namespace aww::util
+{
+  aww::result_t getGuid(std::string &out)
+  {
+    GUID guid;
+    HRESULT hres = CoCreateGuid(&guid);
+    if (FAILED(hres))
+    {
+      return std::make_tuple(false, "Windows: CoCreateGuid failed. Unable to generate GUID.");
+    }
+    std::stringstream stream;
+    stream << std::hex << guid.Data1 << '-' << guid.Data2 << '-' << guid.Data3 << '-' <<
+        (int)guid.Data4[0] << (int)guid.Data4[1] << '-' << (int)guid.Data4[2] << (int)guid.Data4[3] <<
+        (int)guid.Data4[4] << (int)guid.Data4[5] << (int)guid.Data4[6] << (int)guid.Data4[7];
+
+    out = stream.str();
+    return std::make_tuple(true, "");
   }
 }

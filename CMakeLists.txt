@@ -104,6 +104,13 @@ target_link_libraries(
     clip
 )
 
+if(APPLE)
+    target_link_libraries(
+        ${LIBRARY_NAME} PUBLIC
+        "-framework CoreFoundation"
+    )
+endif()
+
 if(ALLOW_AWW_APP)
     target_link_libraries(
         ${LIBRARY_NAME} PUBLIC
@@ -178,6 +185,12 @@ target_link_libraries(aww-create PRIVATE ${LIBRARY_NAME})  # Link the executable
 target_set_warnings(aww-create ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(aww-create optimized)  # enable link-time-optimization if available for non-debug configurations
 
+## aww-guid
+add_executable(aww-guid app/aww-guid.cpp)   # Name of exec. and location of file.
+target_link_libraries(aww-guid PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
+target_set_warnings(aww-guid ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_enable_lto(aww-guid optimized)  # enable link-time-optimization if available for non-debug configurations
+
 if(ALLOW_AWW_APP)
     ## Aww app
     add_executable(aww-app app/aww-app.cpp)   # Name of exec. and location of file.
@@ -197,6 +210,7 @@ set(PROJECTS
     aww-term
     aww-open
     aww-create
+    aww-guid
 )
 
 if(ALLOW_AWW_APP)

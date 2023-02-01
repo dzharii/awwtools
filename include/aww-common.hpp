@@ -113,4 +113,9 @@ namespace aww::fs {
   std::string readAsciiTextFile(const std::filesystem::path &);
 }
 
+namespace aww::util
+{
+   aww::result_t getGuid(std::string &);
+}
+
 #endif // AWW_COMMON_HPP
