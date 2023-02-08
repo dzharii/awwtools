@@ -23,14 +23,14 @@ int main(int, char**)
   // open new terminal with bash in new window
   std::string launchTerm;
 
-  aww::os::Platform platform = aww::os::getPlatform();
+  const aww::os::Platform platform = aww::os::OSPlatform;
 
-  if (platform == aww::os::Platform::Windows)
+  if constexpr (platform == aww::os::Platform::Windows)
   {
     launchTerm = "start cmd.exe @cmd /k";
-  } else if (platform == aww::os::Platform::MacOS){
+  } else if constexpr (platform == aww::os::Platform::MacOS){
     launchTerm = "open -a Terminal \"`pwd`\"";
-  } else if (platform == aww::os::Platform::Linux){
+  } else if constexpr (platform == aww::os::Platform::Linux){
     launchTerm = "x-terminal-emulator -e bash";
   } else {
     std::cerr << "Error: Unsupported platform" << std::endl;

@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 
     bool isPowerShell = scriptExtension == ".ps1" || scriptExtension == ".PS1";
     bool isBash = scriptExtension == ".sh" || scriptExtension == ".SH";
-    aww::os::Platform platform = aww::os::getPlatform();
+    const aww::os::Platform platform = aww::os::OSPlatform;
 
     switch (platform)
     {
@@ -260,7 +260,7 @@ aww::result_t findScript(const std::string &scriptName, fs::path &outScriptPath)
     return std::make_tuple(false, "Script name is empty");
   }
 
-  aww::os::Platform platform = aww::os::getPlatform();
+  const aww::os::Platform platform = aww::os::OSPlatform;
 
   switch (platform) {
     case aww::os::Platform::Windows:

@@ -30,6 +30,8 @@ int main(int argc, char **argv)
 
   std::string fileToOpen = useDefaultInput ? "." : argv[1];
 
+  fileToOpen = aww::fs::normalizeFilePath(fileToOpen);
+
   aww::result_t launchFileRes = aww::os::actions::launchFile(fileToOpen);
   if (aww::failed(launchFileRes))
   {

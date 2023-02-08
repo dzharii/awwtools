@@ -57,10 +57,16 @@ namespace aww::os
     MacOS
   };
 
-  /** Get the current platform
-  * @return Platform enum
-  */
-  Platform getPlatform(void);
+  // OSPlatform
+#if defined(_WIN32)
+    const Platform OSPlatform = Platform::Windows;
+#elif defined(__linux__)
+    const Platform OSPlatform = Platform::Linux;
+#elif defined(__APPLE__)
+    const Platform OSPlatform = Platform::MacOS;
+#else
+    const Platform OSPlatform = Platform::Unknown;
+#endif
 
   /** Check if file is executable
    * Returns false if file does not exist
@@ -111,6 +117,8 @@ namespace aww::fs {
   /// @brief reads a text file at the given path and returns its contents as a string.
   /// @return file contents as a string
   std::string readAsciiTextFile(const std::filesystem::path &);
+
+  std::string normalizeFilePath(const std::string &);
 }
 
 namespace aww::util

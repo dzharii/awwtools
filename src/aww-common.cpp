@@ -54,20 +54,6 @@ namespace aww::string
 
 namespace aww::os
 {
-  Platform getPlatform(void)
-  {
-    Platform platform = Platform::Unknown;
-
-#if defined(_WIN32)
-    platform = Platform::Windows;
-#elif defined(__linux__)
-    platform = Platform::Linux;
-#elif defined(__APPLE__)
-    platform = Platform::MacOS;
-#endif
-    return platform;
-  }
-
   Proccess::Proccess()
   {
     this->onStdOutCallback = defaultStdOutCallback;
@@ -165,5 +151,13 @@ namespace aww::fs {
     std::ifstream file(path);
     std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     return content;
+  }
+
+  std::string normalizeFilePath(const std::string& inputPath)
+  {
+    std::filesystem::path path(inputPath);
+    std::filesystem::path canonicalPath = std::filesystem::weakly_canonical(path);
+    std::string normalizedPath = canonicalPath.make_preferred().string();
+    return normalizedPath;
   }
 }
