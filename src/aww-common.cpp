@@ -50,6 +50,18 @@ namespace aww::string
     }
     return out;
   }
+
+  std::string leftPadding(const std::string &inp, const char &padChar, const size_t &padLength)
+  {
+    const size_t inpLength = inp.length();
+    if (inpLength >= padLength)
+    {
+      return inp;
+    }
+    const size_t paddingLength = padLength - inpLength;
+    std::string padding(paddingLength, padChar);
+    return padding + inp;
+  }
 }
 
 namespace aww::os

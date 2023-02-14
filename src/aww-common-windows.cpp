@@ -1,5 +1,10 @@
 #include <filesystem>
 #include <sstream>
+#include <locale>
+#include <codecvt>
+#include <string>
+#include <algorithm>
+#include <cctype>
 
 #include "aww-common.hpp"
 #include "Windows.h"
@@ -244,12 +249,42 @@ namespace aww::util
     {
       return std::make_tuple(false, "Windows: CoCreateGuid failed. Unable to generate GUID.");
     }
-    std::stringstream stream;
-    stream << std::hex << guid.Data1 << '-' << guid.Data2 << '-' << guid.Data3 << '-' <<
-        (int)guid.Data4[0] << (int)guid.Data4[1] << '-' << (int)guid.Data4[2] << (int)guid.Data4[3] <<
-        (int)guid.Data4[4] << (int)guid.Data4[5] << (int)guid.Data4[6] << (int)guid.Data4[7];
+    const int bufferSize = 40;
+    char buffer[bufferSize];
 
-    out = stream.str();
+    wchar_t guidStr[bufferSize];
+    int sfgCount = StringFromGUID2(guid, guidStr, bufferSize);
+    if (sfgCount == 0)
+    {
+      return std::make_tuple(false, "Windows: StringFromGUID2 failed. Unable to generate GUID.");
+    }
+
+
+    size_t length = static_cast<std::size_t>(
+      WideCharToMultiByte(CP_UTF8, 0, guidStr, -1, buffer, bufferSize, nullptr, nullptr)
+    );
+    if (length == 0)
+    {
+      return std::make_tuple(false, "Windows: WideCharToMultiByte failed. Unable to generate GUID.");
+    }
+
+    std::string guidStrResult(buffer, length - 1);
+    // make lowercase
+    std::transform(guidStrResult.begin(), guidStrResult.end(), guidStrResult.begin(),
+        [](unsigned char c){ return static_cast<unsigned char>(std::tolower(c)); });
+
+    // if the first character is a '{' remove it
+    if (guidStrResult[0] == '{')
+    {
+      guidStrResult.erase(0, 1);
+    }
+    // if the last character is a '}' remove it
+    if (guidStrResult[guidStrResult.length() - 1] == '}')
+    {
+      guidStrResult.erase(guidStrResult.length() - 1, 1);
+    }
+
+    out = guidStrResult;
     return std::make_tuple(true, "");
   }
 }

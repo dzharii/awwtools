@@ -109,6 +109,7 @@ namespace aww::os::env
 namespace aww::string
 {
   std::string join(const std::vector<std::string> &, const std::string &);
+  std::string leftPadding(const std::string &, const char &, const size_t &);
 }
 
 namespace aww::fs {
