@@ -13,13 +13,12 @@ namespace aww {
     return std::get<aww::resultPos>(result);
   }
 
-  std::string make_error(const std::string& description, const aww::result_t& result)
+  std::string makeError(const std::string& description, const aww::result_t& result)
   {
     std::string msg = description + ": " + std::get<aww::errorPos>(result);
     return msg;
   }
 }
-
 namespace aww::date
 {
   // TODO: - 2022-10-18 [Exploring C++11, part 2 localtime and time again Kjellkod's Blog](https://kjellkod.wordpress.com/2013/01/22/exploring-c11-part-2-localtime-and-time-again/)
@@ -51,24 +50,22 @@ namespace aww::string
     }
     return out;
   }
+
+  std::string leftPadding(const std::string &inp, const char &padChar, const size_t &padLength)
+  {
+    const size_t inpLength = inp.length();
+    if (inpLength >= padLength)
+    {
+      return inp;
+    }
+    const size_t paddingLength = padLength - inpLength;
+    std::string padding(paddingLength, padChar);
+    return padding + inp;
+  }
 }
 
 namespace aww::os
 {
-  Platform getPlatform(void)
-  {
-    Platform platform = Platform::Unknown;
-
-#if defined(_WIN32)
-    platform = Platform::Windows;
-#elif defined(__linux__)
-    platform = Platform::Linux;
-#elif defined(__APPLE__)
-    platform = Platform::MacOS;
-#endif
-    return platform;
-  }
-
   Proccess::Proccess()
   {
     this->onStdOutCallback = defaultStdOutCallback;
@@ -166,5 +163,13 @@ namespace aww::fs {
     std::ifstream file(path);
     std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     return content;
+  }
+
+  std::string normalizeFilePath(const std::string& inputPath)
+  {
+    std::filesystem::path path(inputPath);
+    std::filesystem::path canonicalPath = std::filesystem::weakly_canonical(path);
+    std::string normalizedPath = canonicalPath.make_preferred().string();
+    return normalizedPath;
   }
 }

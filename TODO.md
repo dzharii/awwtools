@@ -233,3 +233,15 @@ same thing!
 just cross-platform opener
 
 
+## aww-remind
+
+Plays ticking sound and reminds about the timer expired. 
+Use SFML for this
+See: \dev-experiments\play_mp3_file.md
+- 2023-01-22 [24:46 - zxzx](https://pomofocus.io/)
+
+## aww-cat 
+This one may have a repository with recommended software to view the file in console.
+Type aww cat  -- and it will recommend a tool to view the file. 
+
+

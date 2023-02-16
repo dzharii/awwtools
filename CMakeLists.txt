@@ -28,7 +28,6 @@ include(ConfigSafeGuards)
 include(Colors)
 include(CTest)
 include(Doctest)
-include(Documentation)
 include(LTO)
 include(Misc)
 include(Warnings)
@@ -42,6 +41,7 @@ find_lto(CXX)
 set(SOURCES          # All .cpp files in src/
     src/aww-common.cpp
     src/aww-app-manifest.cpp
+    src/aww-inspiration.cpp
 )
 if(WIN32)
     list(APPEND SOURCES src/aww-common-windows.cpp)
@@ -104,6 +104,13 @@ target_link_libraries(
     clip
 )
 
+if(APPLE)
+    target_link_libraries(
+        ${LIBRARY_NAME} PUBLIC
+        "-framework CoreFoundation"
+    )
+endif()
+
 if(ALLOW_AWW_APP)
     target_link_libraries(
         ${LIBRARY_NAME} PUBLIC
@@ -160,6 +167,30 @@ target_link_libraries(aww-toast PRIVATE ${LIBRARY_NAME})  # Link the executable 
 target_set_warnings(aww-toast ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(aww-toast optimized)  # enable link-time-optimization if available for non-debug configurations
 
+## Aww term
+add_executable(aww-term app/aww-term.cpp)   # Name of exec. and location of file.
+target_link_libraries(aww-term PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
+target_set_warnings(aww-term ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_enable_lto(aww-term optimized)  # enable link-time-optimization if available for non-debug configurations
+
+## Aww open
+add_executable(aww-open app/aww-open.cpp)   # Name of exec. and location of file.
+target_link_libraries(aww-open PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
+target_set_warnings(aww-open ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_enable_lto(aww-open optimized)  # enable link-time-optimization if available for non-debug configurations
+
+## aww-create
+add_executable(aww-create app/aww-create.cpp)   # Name of exec. and location of file.
+target_link_libraries(aww-create PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
+target_set_warnings(aww-create ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_enable_lto(aww-create optimized)  # enable link-time-optimization if available for non-debug configurations
+
+## aww-guid
+add_executable(aww-guid app/aww-guid.cpp)   # Name of exec. and location of file.
+target_link_libraries(aww-guid PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
+target_set_warnings(aww-guid ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_enable_lto(aww-guid optimized)  # enable link-time-optimization if available for non-debug configurations
+
 if(ALLOW_AWW_APP)
     ## Aww app
     add_executable(aww-app app/aww-app.cpp)   # Name of exec. and location of file.
@@ -176,11 +207,22 @@ set(PROJECTS
     aww-date
     aww-run
     aww-toast
+    aww-term
+    aww-open
+    aww-create
+    aww-guid
 )
 
 if(ALLOW_AWW_APP)
     list(APPEND PROJECTS aww-app)
 endif()
+
+
+add_custom_target(copy-runtime-files ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/aww-create-aww
+    ${CMAKE_BINARY_DIR}/bin/aww-create-aww
+    DEPENDS ${MY_TARGET})
 
 
 set_target_properties(

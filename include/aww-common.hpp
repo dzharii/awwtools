@@ -31,7 +31,7 @@ namespace aww
 
   bool failed(const result_t&);
   bool succeeded(const result_t&);
-  std::string make_error(const std::string&, const result_t&);
+  std::string makeError(const std::string&, const result_t&);
 
 } // namespace aww
 
@@ -46,6 +46,9 @@ namespace aww::date
 
 namespace aww::os
 {
+
+  std::string escapeCommandLineArgs(const std::string);
+
   enum class Platform
   {
     Unknown,
@@ -54,10 +57,16 @@ namespace aww::os
     MacOS
   };
 
-  /** Get the current platform
-  * @return Platform enum
-  */
-  Platform getPlatform(void);
+  // OSPlatform
+#if defined(_WIN32)
+    const Platform OSPlatform = Platform::Windows;
+#elif defined(__linux__)
+    const Platform OSPlatform = Platform::Linux;
+#elif defined(__APPLE__)
+    const Platform OSPlatform = Platform::MacOS;
+#else
+    const Platform OSPlatform = Platform::Unknown;
+#endif
 
   /** Check if file is executable
    * Returns false if file does not exist
@@ -100,6 +109,7 @@ namespace aww::os::env
 namespace aww::string
 {
   std::string join(const std::vector<std::string> &, const std::string &);
+  std::string leftPadding(const std::string &, const char &, const size_t &);
 }
 
 namespace aww::fs {
@@ -108,6 +118,13 @@ namespace aww::fs {
   /// @brief reads a text file at the given path and returns its contents as a string.
   /// @return file contents as a string
   std::string readAsciiTextFile(const std::filesystem::path &);
+
+  std::string normalizeFilePath(const std::string &);
+}
+
+namespace aww::util
+{
+   aww::result_t getGuid(std::string &);
 }
 
 #endif // AWW_COMMON_HPP

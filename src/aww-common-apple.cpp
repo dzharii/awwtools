@@ -4,10 +4,24 @@
 #include "aww-common.hpp"
 #include <mach-o/dyld.h>
 #include <unistd.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 namespace fs = std::filesystem;
 
 namespace aww::os {
+
+  std::string escapeCommandLineArgs(const std::string args) {
+    std::string escapedArgs(args.size(), ' ');
+    for (char c : args) {
+      if (c == '"') {
+        escapedArgs += "\\\"";
+      } else {
+        escapedArgs += c;
+      }
+    }
+    return escapedArgs;
+  }
+
   bool canExecute(const std::filesystem::path &path)
   {
     if (!std::filesystem::exists(path)) {
@@ -98,4 +112,22 @@ namespace aww::fs
       }
       return std::filesystem::path();
     }
+}
+
+namespace aww::util
+{
+  aww::result_t getGuid(std::string &out) {
+    CFUUIDRef uuid = CFUUIDCreate(nullptr);
+    CFStringRef str = CFUUIDCreateString(nullptr, uuid);
+
+    char buf[37];
+    CFStringGetCString(str, buf, sizeof(buf), kCFStringEncodingUTF8);
+
+    out = buf;
+
+    CFRelease(str);
+    CFRelease(uuid);
+
+    return std::make_tuple(true, "");
+  }
 }

@@ -6,6 +6,19 @@
 #include <limits.h>
 
 namespace aww::os {
+
+  std::string escapeCommandLineArgs(const std::string args) {
+    std::string escapedArgs(args.size(), ' ');
+    for (char c : args) {
+      if (c == '"') {
+        escapedArgs += "\\\"";
+      } else {
+        escapedArgs += c;
+      }
+    }
+    return escapedArgs;
+  }
+
   bool canExecute(const std::filesystem::path &path)
   {
     if (!std::filesystem::exists(path)) {
@@ -93,4 +106,18 @@ namespace aww::fs
       ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
       return std::filesystem::path(std::string(result, (count > 0) ? count : 0));
     }
+}
+
+namespace aww::util
+{
+  // Implements GUID generations for linux using /proc/sys/kernel/random/uuid
+  aww::result_t getGuid(std::string &out) {
+    std::ifstream file("/proc/sys/kernel/random/uuid");
+    if (file.is_open())
+    {
+        std::getline(file, out);
+        return std::make_tuple(true, "");
+    }
+    return std::make_tuple(false, "Failed to open /proc/sys/kernel/random/uuid");
+  }
 }
