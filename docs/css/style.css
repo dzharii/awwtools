@@ -44,3 +44,12 @@ hr:after {
     text-transform: uppercase;
     color: darkviolet;
 }
+
+.text-date-added {
+    font-size: 0.8em;
+    color: #999;
+}
+
+.text-date-added::before {
+    content: "Added: ";
+}

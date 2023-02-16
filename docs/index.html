@@ -102,7 +102,9 @@ cmake --build cmake-build
 
 <h2>Aww tools!</h2>
 
+<!-- ========= aww git open =========== -->
 <h3>aww git open</h2>
+  <div class="text-date-added">2022-01-01</div>
 <pre><code>
 aww git open
 aww-git-open
@@ -123,7 +125,9 @@ aww-git-open [optional file or folder path]
   The file path is optional and, when launched without parameters -- attempts to open the current directory.
 </p>
 
+<!-- ========= aww date =========== -->
 <h3>aww date</h2>
+  <div class="text-date-added">2022-01-01</div>
 <pre><code>
 # returns current date as YYYY-MM-DD:
 aww date
@@ -150,8 +154,9 @@ This tool copies the current date to the clipboard. It is useful when you want t
 If any text is provided as a command line argument, it will be appended to the date.
 The unsafe filename characters will be replaced with "-".
 </p>
-
+<!-- ========= aww toast =========== -->
 <h3>aww toast</h2>
+  <div class="text-date-added">2022-01-01</div>
 <pre><code>
 aww toast [message]
 aww toast Hello, World!
@@ -169,8 +174,9 @@ sudo apt-get install -y cowsay && aww toast Installed! || aww toast Installation
 <p>
   Shows a simple operating system "toast" notification with the message provided as the command line arguments.
 </p>
-
+<!-- ========= aww run =========== -->
 <h3>aww run</h2>
+  <div class="text-date-added">2022-01-01</div>
 <pre><code>
 aww run [command line]
 
@@ -186,7 +192,7 @@ aww-run ffmpeg -i input.mp4 output.mp4
 <p>
   Wraps input command line and executes it as a child process. Echoes command line output and shows a notification when the command has finished. Measures execution time.
 </p>
-
+<!-- ========= aww open =========== -->
 <h3>aww open</h2>
   <div class="text-date-added">2023-02-15</div>
   <pre><code>
@@ -204,6 +210,76 @@ aww open          # opens current directory in the default system file manager
     No need to remember that "explorer file.jpg" on Windows, "open file.jpg" on MacOS, and "xdg-open file.jpg" on Linux <br />
     do same thing. Just use "aww open file.jpg" and it will work on those environments.
   </p>
+<!-- ========= aww term =========== -->
+<h3>aww term</h2>
+  <div class="text-date-added">2023-02-15</div>
+  <pre><code>
+aww term # opens terminal in the current directory
+aww-term
+  </code></pre>
+
+  <p>
+    Source code: <a href="https://github.com/dzharii/awwtools/blob/main/app/aww-term.cpp">/main/app/aww-term.cpp</a>
+  </p>
+
+  <p>
+    Opens new terminal window in the current directory.
+  </p>
+
+<!-- ========= aww guid =========== -->
+<h3>aww guid</h2>
+  <div class="text-date-added">2023-02-15</div>
+  <pre><code>
+aww guid # generates new GUID and copies it to the clipboard
+aww-guid
+  </code></pre>
+
+  <p>
+    Source code: <a href="https://github.com/dzharii/awwtools/blob/main/app/aww-guid.cpp">/main/app/aww-guid.cpp</a>
+  </p>
+
+  <p>
+    True cross-platform GUID generator. Generates new GUID and copies it to the clipboard.
+  </p>
+
+<!-- ========= aww create =========== -->
+<h3>aww create</h2>
+  <div class="text-date-added">2023-02-15</div>
+  <pre><code>
+aww create [filename] [template-modifier] # creates new file using template
+
+# creates new file with the name "filename.md" in the current directory
+# uses template template.md
+aww create filename.md
+
+# creates new file with the name "filename.md" in the folder "parent01/parent02"
+# uses template template.md
+aww create parent01/parent02/filename.md
+
+# creates new file with the name "myclass.cpp" in the current directory using
+# the template "template.cpp"
+aww create myclass.cpp
+
+# creates new file with the name "myprogram.cpp" in the current directory using
+# the template "template-main.cpp"
+aww-create myprogram.cpp main
+
+# Unknown file name. Will create an empty file with the name "secret.xxx"
+aww-create secret.xxx
+  </code></pre>
+
+  <p>
+    Source code: <a href="https://github.com/dzharii/awwtools/blob/main/app/aww-create.cpp">/main/app/aww-create.cpp</a>
+  </p>
+
+  <p>
+    Check folder <a href="https://github.com/dzharii/awwtools/blob/main/aww-create-aww"><b>aww-create-aww</b></a> <br />
+    Creates new file in the current directory or in the relative subfolder. <br />
+    Uses template file (if exists) to fill the new file with the content. <br />
+    Otherwise, creates an empty text file. <br />
+    Alternative to "mkdir -p parent01/parent02" + "touch" command on Linux/Mac. <br />
+  </p>
+
 
 <h2>Q&A</h2>
 
