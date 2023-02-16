@@ -171,6 +171,24 @@ aww-run ffmpeg -i input.mp4 output.mp4
   Wraps input command line and executes it as a child process. Echoes command line output and shows a notification when the command has finished. Measures execution time.
 </p>
 
+<h3>aww open</h2>
+  <div class="text-date-added">2023-02-15</div>
+  <pre><code>
+aww open file.jpg # opens file.jpg in the default system application
+aww-open .        # same as "aww open" (without parameters)
+aww open          # opens current directory in the default system file manager
+  </code></pre>
+
+  <p>
+    Source code: <a href="https://github.com/dzharii/awwtools/blob/main/app/aww-open.cpp">/main/app/aww-open.cpp</a>
+  </p>
+
+  <p>
+    Opens file or folder in the default system "opener" - application associated with the file type. <br />
+    No need to remember that "explorer file.jpg" on Windows, "open file.jpg" on MacOS, and "xdg-open file.jpg" on Linux <br />
+    do same thing. Just use "aww open file.jpg" and it will work on those environments.
+  </p>
+
 <h2>Q&A</h2>
 
 <h3>Q: Why C++?</h3>
