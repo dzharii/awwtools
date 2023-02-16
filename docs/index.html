@@ -16,6 +16,22 @@
   <p>A collection of productivity tools</p>
   <p>Embrace the aww!</p>
 
+  <h2>We have
+    <span class="zoo-zoom">such sights</span> to show you!</h2>
+  <p>
+    But, don't get your hopes too high. How many times have you found a simple code snippet that was helpful?
+    Aww tools aim to collect such snippets and make them handy and easy to use when you need them.
+    Most of aww tools are very simple and minimalist projects. For example, you may need a new GUID once in a while...
+    not very often… but when you do, <b>aww guid</b> is there for you!
+  </p>
+  <p>
+    Want to know how it was implemented on Windows, Linux, and Mac?
+  </p>
+  <p>
+    Ha-ha. Spoiler alert! It was a mix of pain and pleasure!
+    Please, enjoy aww tools as a bunch of useful and fun samples, and don't expect too much ;)
+  </p>
+
   <h2>Installation</h2>
 
   <p>One of the core ideas of aww tools is to make the contribution process as convenient as possible. This is why aww tools are distributed as a git repo. You are encouraged to open the github repository and fork the project: </p>
@@ -213,6 +229,23 @@ aww-run ffmpeg -i input.mp4 output.mp4
     });
     pre.appendChild(button);
   });
+
+// Zoo-zoom
+document.querySelectorAll('.zoo-zoom').forEach((span) => {
+  if (!span) return;
+  const text = span.innerText;
+  const letters = text.split('');
+  const spanForEachLetter = letters.map((letter) => {
+    const letterSpan = document.createElement('span');
+    letterSpan.innerText = letter;
+    return letterSpan;
+  });
+
+  span.innerHTML = '';
+  span.append.apply(span, spanForEachLetter);
+
+
+});
 </script>
 </body>
 </html>
