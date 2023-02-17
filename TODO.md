@@ -1,5 +1,8 @@
 # The Plan
 
+2023-02-17: aww run: when full name for ps1 .cmd or .sh file is provided -- execute that file
+
+
 ## User configuration
 
 - [ ] Should definitely support  dot files, like `.awwtools` but also would be great to support a separate git repository for the configuration, like `my-awwtools`. The  awwtools can provide commands to manage configuration, like `aww config push` `aww config pull`
