@@ -17,15 +17,21 @@ int main(int argc, char **argv)
 {
 
   size_t length = 11;
+  int userInput = 0;
   bool useDefaultInput = argc < 2;
   if (!useDefaultInput) {
     try {
-      length = std::stoul(argv[1]);
-    } catch (const std::invalid_argument& e) {
-      std::cout << "Invalid argument: " << e.what() << "\n";
+      userInput = std::stoi(argv[1]);
+      if (userInput < 1) {
+        std::cout << "Invalid argument: '" << userInput << "', must be a positive number\n";
+        return 1;
+      }
+      length = static_cast<size_t>(userInput);
+    } catch (const std::invalid_argument&) {
+      std::cout << "Invalid argument, not a number\n";
       return 1;
-    } catch (const std::out_of_range& e) {
-      std::cout << "Out of range: " << e.what() << "\n";
+    } catch (const std::out_of_range&) {
+      std::cout << "Invalid argument, the number is too big\n";
       return 1;
     }
   }
