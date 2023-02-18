@@ -42,6 +42,7 @@ set(SOURCES          # All .cpp files in src/
     src/aww-common.cpp
     src/aww-app-manifest.cpp
     src/aww-inspiration.cpp
+    src/aww-inernal-aww-tag.cpp
 )
 if(WIN32)
     list(APPEND SOURCES src/aww-common-windows.cpp)
@@ -191,6 +192,12 @@ target_link_libraries(aww-guid PRIVATE ${LIBRARY_NAME})  # Link the executable t
 target_set_warnings(aww-guid ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(aww-guid optimized)  # enable link-time-optimization if available for non-debug configurations
 
+## aww-tag
+add_executable(aww-tag app/aww-tag.cpp)   # Name of exec. and location of file.
+target_link_libraries(aww-tag PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
+target_set_warnings(aww-tag ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_enable_lto(aww-tag optimized)  # enable link-time-optimization if available for non-debug configurations
+
 if(ALLOW_AWW_APP)
     ## Aww app
     add_executable(aww-app app/aww-app.cpp)   # Name of exec. and location of file.
@@ -211,6 +218,7 @@ set(PROJECTS
     aww-open
     aww-create
     aww-guid
+    aww-tag
 )
 
 if(ALLOW_AWW_APP)
