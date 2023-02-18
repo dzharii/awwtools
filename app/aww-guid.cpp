@@ -16,25 +16,25 @@ int main(void)
 {
 
   std::string guid;
-  aww::result_t result = aww::util::getGuid(guid);
+  aww::Result result = aww::util::getGuid(guid);
 
-  if (aww::failed(result)) {
-    std::cout << aww::makeError("Failed to get GUID", result) << std::endl;
+  if (result.isFailed()) {
+    std::cout << "Failed to get GUID" <<  result.error() << "\n";
     return 1;
   }
 
   if (clip::set_text(guid)) {
-    std::cout << "Copied to clipboard: " << guid << std::endl;
+    std::cout << "Copied to clipboard: " << guid << "\n";
     aww::os::actions::showNotification("aww guid", "The guid has been copied to the clipboard");
   } else {
-    std::cout << "Failed to copy to clipboard: " << guid << std::endl;
+    std::cout << "Failed to copy to clipboard: " << guid << "\n";
     aww::os::actions::showNotification("aww guid", "Failed to copy the guid to the clipboard");
   }
 
   std::cout << "Result:"
-            << std::endl
+            << "\n"
             << guid
-            << std::endl;
+            << "\n";
 
   return 0;
 }

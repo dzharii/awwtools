@@ -63,7 +63,7 @@ namespace aww::os::actions
     // check path is null
     if (path.empty())
     {
-      return aww::Result::failed("Argument path is empty");
+      return aww::Result::fail("Argument path is empty");
     }
     std::string command = "xdg-open " + path;
     int result = std::system(command.c_str());
@@ -71,30 +71,30 @@ namespace aww::os::actions
     {
       return aww::Result::ok();
     }
-    return aww::Result::failed("xdg-open failed");
+    return aww::Result::fail("xdg-open failed");
   }
 
-  aww::result_t showNotification(
+  aww::Result showNotification(
     const std::string &title,
     const std::string &message)
   {
     // check title is null
     if (title.empty())
     {
-      return std::make_tuple(false, "Argument title is empty");
+      return aww::Result::fail("Argument title is empty");
     }
     // check message is null
     if (message.empty())
     {
-      return std::make_tuple(false, "Argument message is empty");
+      return aww::Result::fail("Argument message is empty");
     }
     std::string command = "notify-send \"" + title + "\" \"" + message + "\"";
     int result = std::system(command.c_str());
     if (result != 0)
     {
-      return std::make_tuple(false, "notify-send failed");
+      return aww::Result::fail("notify-send failed");
     }
-    return std::make_tuple(true, "");
+    return aww::Result::ok();
   }
 }
 
@@ -111,13 +111,14 @@ namespace aww::fs
 namespace aww::util
 {
   // Implements GUID generations for linux using /proc/sys/kernel/random/uuid
-  aww::result_t getGuid(std::string &out) {
-    std::ifstream file("/proc/sys/kernel/random/uuid");
+  aww::Result getGuid(std::string &out) {
+    const static std::string uuidFile = "/proc/sys/kernel/random/uuid";
+    std::ifstream file(uuidFile);
     if (file.is_open())
     {
         std::getline(file, out);
-        return std::make_tuple(true, "");
+        return aww::Result::ok();
     }
-    return std::make_tuple(false, "Failed to open /proc/sys/kernel/random/uuid");
+    return aww::Result::fail("Failed to open " + uuidFile);
   }
 }

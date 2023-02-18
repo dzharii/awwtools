@@ -33,13 +33,13 @@ int main(int, char**)
   } else if constexpr (platform == aww::os::Platform::Linux){
     launchTerm = "x-terminal-emulator -e bash";
   } else {
-    std::cerr << "Error: Unsupported platform" << std::endl;
+    std::cerr << "Error: Unsupported platform" << "\n";
     return 1;
   }
   int retValue = std::system(launchTerm.c_str());
   if (retValue != 0)
   {
-    std::cerr << "Error: " << retValue << std::endl;
+    std::cerr << "Error: " << retValue << "\n";
   }
   return retValue;
 }

@@ -30,17 +30,17 @@ int main(int argc, char **argv)
     result = result + "-" + safeFileName;
   }
   if (clip::set_text(result)) {
-    std::cout << "Copied to clipboard: " << result << std::endl;
+    std::cout << "Copied to clipboard: " << result << "\n";
     aww::os::actions::showNotification("aww date", "The date has been copied to the clipboard");
   } else {
-    std::cout << "Failed to copy to clipboard: " << result << std::endl;
+    std::cout << "Failed to copy to clipboard: " << result << "\n";
     aww::os::actions::showNotification("aww date", "Failed to copy the date to the clipboard");
   }
 
   std::cout << "Result:"
-            << std::endl
+            << "\n"
             << result
-            << std::endl;
+            << "\n";
 
   return 0;
 }

@@ -23,11 +23,11 @@ int main(int argc, char **argv)
   {
     message = aww::string::join(cmdArgs, " ");
   }
-  auto result =  aww::os::actions::showNotification("AwwTools", message);
-  if (aww::succeeded(result)) {
-    std::cout << "Notification sent" << std::endl;
+  aww::Result result = aww::os::actions::showNotification("AwwTools", message);
+  if (result.isOk()) {
+    std::cout << "Notification sent" << "\n";
   } else {
-    std::cout << "Failed to send notification" << std::endl;
+    std::cout << "Failed to send notification" << "\n";
   }
 
   return 0;

@@ -65,7 +65,7 @@ namespace aww::os::actions
     // check path is null
     if (path.empty())
     {
-      return aww::Result::failed("Argument path is empty");
+      return aww::Result::fail("Argument path is empty");
     }
     std::string command = "open " + path;
     int result = std::system(command.c_str());
@@ -73,30 +73,30 @@ namespace aww::os::actions
     {
       return aww::Result::ok();
     }
-    return aww::Result::failed("open failed");
+    return aww::Result::fail("open failed");
   }
 
-  aww::result_t showNotification(
+  aww::Result showNotification(
     const std::string &title,
     const std::string &message)
   {
     // check title is null
     if (title.empty())
     {
-      return std::make_tuple(false, "Argument title is empty");
+      return aww::Result::fail("Argument title is empty");
     }
     // check message is null
     if (message.empty())
     {
-      return std::make_tuple(false, "Argument message is empty");
+      return aww::Result::fail("Argument message is empty");
     }
     std::string command = "osascript -e 'display notification \"" + message + "\" with title \"" + title + "\"'";
     int result = std::system(command.c_str());
     if (result != 0)
     {
-      return std::make_tuple(false, "osascript failed");
+      return aww::Result::fail("osascript failed");
     }
-    return std::make_tuple(true, "");
+    return aww::Result::ok();
   }
 }
 
@@ -116,7 +116,7 @@ namespace aww::fs
 
 namespace aww::util
 {
-  aww::result_t getGuid(std::string &out) {
+  aww::Result getGuid(std::string &out) {
     CFUUIDRef uuid = CFUUIDCreate(nullptr);
     CFStringRef str = CFUUIDCreateString(nullptr, uuid);
 
@@ -128,6 +128,6 @@ namespace aww::util
     CFRelease(str);
     CFRelease(uuid);
 
-    return std::make_tuple(true, "");
+    return aww::Result::ok();
   }
 }

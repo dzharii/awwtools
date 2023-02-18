@@ -26,7 +26,7 @@ int main(int argc, char **argv)
 
   const fs::path filePath = cmdArgs[0];
   aww::Result createResult = tryCreateFileByPath(filePath);
-  if (createResult.failed()) {
+  if (createResult.isFailed()) {
     std::cout << "Failed to create file: " << createResult.error() << "\n";
     return 1;
   }
@@ -148,7 +148,7 @@ aww::Result tryCreateFileByPath(const fs::path &filePath)
 
   // if file exists, return error
   if (fs::exists(filePath)) {
-    return aww::Result::failed("File already exists: '" + filePath.string() + "'");
+    return aww::Result::fail("File already exists: '" + filePath.string() + "'");
   }
 
   std::vector<std::string> filePathParts;
@@ -160,7 +160,7 @@ aww::Result tryCreateFileByPath(const fs::path &filePath)
   }
 
   if (filePathParts.size() == 0) {
-    return aww::Result::failed(
+    return aww::Result::fail(
       "Invalid path: '" + filePath.string() + "'");
   } else if (filePathParts.size() == 1) {
     // create file
@@ -173,7 +173,7 @@ aww::Result tryCreateFileByPath(const fs::path &filePath)
       parentPath /= filePathParts[i];
       if (!fs::exists(parentPath)) {
         if (!fs::create_directory(parentPath)) {
-          return aww::Result::failed("Failed to create directory: '" + parentPath.string() + "'");
+          return aww::Result::fail("Failed to create directory: '" + parentPath.string() + "'");
         }
       }
     }

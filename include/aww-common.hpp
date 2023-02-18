@@ -23,16 +23,6 @@
 
 namespace aww
 {
-
-  const int resultPos = 0;
-  const int errorPos = 1;
-
-  typedef std::tuple<bool, std::string> result_t;
-
-  bool failed(const result_t&);
-  bool succeeded(const result_t&);
-  std::string makeError(const std::string&, const result_t&);
-
   class Result {
   public:
 
@@ -42,16 +32,16 @@ namespace aww
     }
 
     /* Create a failed result */
-    static Result failed(const std::string& error) {
+    static Result fail(const std::string& error) {
       return Result(false, error);
     }
 
-    bool success() const {
+    bool isOk() const {
       return m_success;
     }
 
     /* Use hasValue to check if there is an error */
-    bool failed() const {
+    bool isFailed() const {
       return !m_success;
     }
     std::string error() const {
@@ -129,13 +119,13 @@ namespace aww::os
 
 namespace aww::os::actions
 {
-  aww::result_t launchFile(const std::string &);
-  aww::result_t showNotification(const std::string &, const std::string &);
+  aww::Result launchFile(const std::string &);
+  aww::Result showNotification(const std::string &, const std::string &);
 }
 
 namespace aww::os::env
 {
-  aww::result_t getUserHomeDir(std::filesystem::path &);
+  aww::Result getUserHomeDir(std::filesystem::path &);
   std::filesystem::path getAwwDotDir(void);
 }
 
@@ -157,7 +147,7 @@ namespace aww::fs {
 
 namespace aww::util
 {
-   aww::result_t getGuid(std::string &);
+   aww::Result getGuid(std::string &);
 }
 
 #endif // AWW_COMMON_HPP

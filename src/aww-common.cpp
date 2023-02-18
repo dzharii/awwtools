@@ -1,24 +1,6 @@
 #include "aww-common.hpp"
 #include <fstream>
 
-namespace aww {
-
-  bool failed(const aww::result_t& result)
-  {
-    return !std::get<aww::resultPos>(result);
-  }
-
-  bool succeeded(const aww::result_t& result)
-  {
-    return std::get<aww::resultPos>(result);
-  }
-
-  std::string makeError(const std::string& description, const aww::result_t& result)
-  {
-    std::string msg = description + ": " + std::get<aww::errorPos>(result);
-    return msg;
-  }
-}
 namespace aww::date
 {
   // TODO: - 2022-10-18 [Exploring C++11, part 2 localtime and time again Kjellkod's Blog](https://kjellkod.wordpress.com/2013/01/22/exploring-c11-part-2-localtime-and-time-again/)
@@ -124,7 +106,7 @@ namespace aww::os
 
 namespace aww::os::env
 {
-  aww::result_t getUserHomeDir(std::filesystem::path& outHomeDir)
+  aww::Result getUserHomeDir(std::filesystem::path& outHomeDir)
   {
     char *homeDir = nullptr;
 
@@ -132,23 +114,23 @@ namespace aww::os::env
     if (homeDir != nullptr)
     {
       outHomeDir = std::filesystem::absolute(homeDir);
-      return std::make_tuple(true, "");
+      return aww::Result::ok();
     }
 
     homeDir = std::getenv("USERPROFILE");
     if (homeDir != nullptr)
     {
       outHomeDir = std::filesystem::absolute(homeDir);
-      return std::make_tuple(true, "");
+      return aww::Result::ok();
     }
-    return std::make_tuple(false, "Could not find user home directory");
+    return aww::Result::fail("Could not find user home directory");
   }
 
   std::filesystem::path getAwwDotDir(void)
   {
     std::filesystem::path homeDir;
-    auto result = getUserHomeDir(homeDir);
-    if (aww::failed(result))
+    aww::Result result = getUserHomeDir(homeDir);
+    if (result.isFailed())
     {
       return std::filesystem::path(); // empty path
     }
