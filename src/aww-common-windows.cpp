@@ -78,7 +78,7 @@ namespace aww::os {
 
 namespace aww::os::actions
 {
-  aww::result_t launchFile(const std::string &path)
+  aww::Result launchFile(const std::string &path)
   {
     // check path is null
     if (path.empty())
@@ -90,64 +90,64 @@ namespace aww::os::actions
 
     if (execResult >= Success)
     {
-      return std::make_tuple(true, "");
+      return aww::Result::ok();
     }
 
     unsigned long errorCode = GetLastError();
 
     if (errorCode == 0)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The operating system is out of memory or resources.");
+      return aww::Result::failed("ShellExecuteA failed: The operating system is out of memory or resources.");
     }
     else if (errorCode == ERROR_FILE_NOT_FOUND)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The specified file was not found.");
+      return aww::Result::failed("ShellExecuteA failed: The specified file was not found.");
     }
     else if (errorCode == ERROR_PATH_NOT_FOUND)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The specified path was not found.");
+      return aww::Result::failed("ShellExecuteA failed: The specified path was not found.");
     }
     else if (errorCode == ERROR_BAD_FORMAT)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The .exe file is invalid (non-Win32 .exe or error in .exe image).");
+      return aww::Result::failed("ShellExecuteA failed: The .exe file is invalid (non-Win32 .exe or error in .exe image).");
     }
     else if (errorCode == SE_ERR_ACCESSDENIED)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The operating system denied access to the specified file.");
+      return aww::Result::failed("ShellExecuteA failed: The operating system denied access to the specified file.");
     }
     else if (errorCode == SE_ERR_ASSOCINCOMPLETE)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The file name association is incomplete or invalid.");
+      return aww::Result::failed("ShellExecuteA failed: The file name association is incomplete or invalid.");
     }
     else if (errorCode == SE_ERR_DDEBUSY)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The DDE transaction could not be completed because other DDE transactions were being processed.");
+      return aww::Result::failed("ShellExecuteA failed: The DDE transaction could not be completed because other DDE transactions were being processed.");
     }
     else if (errorCode == SE_ERR_DDEFAIL)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The DDE transaction failed.");
+      return aww::Result::failed("ShellExecuteA failed: The DDE transaction failed.");
     }
     else if (errorCode == SE_ERR_DDETIMEOUT)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The DDE transaction could not be completed because the request timed out.");
+      return aww::Result::failed("ShellExecuteA failed: The DDE transaction could not be completed because the request timed out.");
     }
     else if (errorCode == SE_ERR_DLLNOTFOUND)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The specified DLL was not found.");
+      return aww::Result::failed("ShellExecuteA failed: The specified DLL was not found.");
     }
     else if (errorCode == SE_ERR_NOASSOC)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: There is no application associated with the given file name extension.");
+      return aww::Result::failed("ShellExecuteA failed: There is no application associated with the given file name extension.");
     }
     else if (errorCode == SE_ERR_OOM)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: There was not enough memory to complete the operation.");
+      return aww::Result::failed("ShellExecuteA failed: There was not enough memory to complete the operation.");
     }
     else if (errorCode == SE_ERR_SHARE)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: A sharing violation occurred.");
+      return aww::Result::failed("ShellExecuteA failed: A sharing violation occurred.");
     }
-    return std::make_tuple(false, "ShellExecuteA failed: Unknown error.");
+    return aww::Result::failed("ShellExecuteA failed: Unknown error.");
   }
 
   /* WinToast */
