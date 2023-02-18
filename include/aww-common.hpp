@@ -69,9 +69,10 @@ namespace aww
     std::string error() const {
       return m_errorMessage;
     }
+
   private:
-    T m_value;
     bool m_hasError;
+    T m_value;
     std::string m_errorMessage;
 
     Result(const bool hasError, const T& value, const std::string& error) :
