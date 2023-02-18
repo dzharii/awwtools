@@ -12,7 +12,7 @@
 
 namespace fs = std::filesystem;
 
-aww::Result<bool> tryCreateFileByPath(const fs::path&);
+aww::Result tryCreateFileByPath(const fs::path&);
 
 int main(int argc, char **argv)
 {
@@ -25,8 +25,8 @@ int main(int argc, char **argv)
   }
 
   const fs::path filePath = cmdArgs[0];
-  aww::Result<bool> createResult = tryCreateFileByPath(filePath);
-  if (createResult.hasError()) {
+  aww::Result createResult = tryCreateFileByPath(filePath);
+  if (createResult.failed()) {
     std::cout << "Failed to create file: " << createResult.error() << "\n";
     return 1;
   }
@@ -143,12 +143,12 @@ int main(int argc, char **argv)
   return 0;
 }
 
-aww::Result<bool> tryCreateFileByPath(const fs::path &filePath)
+aww::Result tryCreateFileByPath(const fs::path &filePath)
 {
 
   // if file exists, return error
   if (fs::exists(filePath)) {
-    return aww::Result<bool>::failed("File already exists: '" + filePath.string() + "'");
+    return aww::Result::failed("File already exists: '" + filePath.string() + "'");
   }
 
   std::vector<std::string> filePathParts;
@@ -160,19 +160,20 @@ aww::Result<bool> tryCreateFileByPath(const fs::path &filePath)
   }
 
   if (filePathParts.size() == 0) {
-    return aww::Result<bool>::failed("Invalid path: '" + filePath.string() + "'");
+    return aww::Result::failed(
+      "Invalid path: '" + filePath.string() + "'");
   } else if (filePathParts.size() == 1) {
     // create file
     std::ofstream file(filePath);
     file.close();
-    return aww::Result<bool>::ok(true);
+    return aww::Result::ok();
   } else {
     // create directories
     for (std::size_t i = 0; i < filePathParts.size() - 1; i++) {
       parentPath /= filePathParts[i];
       if (!fs::exists(parentPath)) {
         if (!fs::create_directory(parentPath)) {
-          return aww::Result<bool>::failed("Failed to create directory: '" + parentPath.string() + "'");
+          return aww::Result::failed("Failed to create directory: '" + parentPath.string() + "'");
         }
       }
     }
@@ -182,5 +183,5 @@ aww::Result<bool> tryCreateFileByPath(const fs::path &filePath)
     file.close();
   }
 
-  return aww::Result<bool>::ok(true);
+  return aww::Result::ok();
 }

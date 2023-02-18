@@ -33,52 +33,38 @@ namespace aww
   bool succeeded(const result_t&);
   std::string makeError(const std::string&, const result_t&);
 
-  template<typename T>
   class Result {
   public:
 
     /* Create a successful result */
-    static Result<T> ok(const T& value) {
-      return Result<T>(false, value, "");
+    static Result ok() {
+      return Result(true, std::string());
     }
 
     /* Create a failed result */
     static Result failed(const std::string& error) {
-      return Result(true, T(), error);
+      return Result(false, error);
     }
 
-    /* Use hasValue to check if the result was successful */
-    bool hasValue() const {
-      return !m_hasError;
+    bool success() const {
+      return m_success;
     }
 
     /* Use hasValue to check if there is an error */
-    bool hasError() const {
-      return m_hasError;
+    bool failed() const {
+      return !m_success;
     }
-
-    /* Retrieves the value */
-    T value() const {
-      if (m_hasError) {
-        throw std::runtime_error(
-          "aww::result_t Cannot get value. Error occurred: " + m_errorMessage);
-      }
-      return m_value;
-    }
-
     std::string error() const {
       return m_errorMessage;
     }
 
   private:
-    bool m_hasError;
-    T m_value;
+    bool m_success;
     std::string m_errorMessage;
 
-    Result(const bool hasError, const T& value, const std::string& error) :
-      m_hasError(hasError), m_value(value), m_errorMessage(error) {}
+    Result(const bool isSuccess, const std::string& errorMessage) :
+      m_success(isSuccess), m_errorMessage(errorMessage) {}
   };
-
 
 } // namespace aww
 
