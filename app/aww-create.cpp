@@ -12,7 +12,7 @@
 
 namespace fs = std::filesystem;
 
-aww::result_t tryCreateFileByPath(const fs::path&);
+aww::Result<bool> tryCreateFileByPath(const fs::path&);
 
 int main(int argc, char **argv)
 {
@@ -25,9 +25,9 @@ int main(int argc, char **argv)
   }
 
   const fs::path filePath = cmdArgs[0];
-  aww::result_t createResult = tryCreateFileByPath(filePath);
-  if (aww::failed(createResult)) {
-    std::cout << aww::makeError("Failed to create file", createResult) << "\n";
+  aww::Result<bool> createResult = tryCreateFileByPath(filePath);
+  if (createResult.hasError()) {
+    std::cout << "Failed to create file: " << createResult.error() << "\n";
     return 1;
   }
 
@@ -38,7 +38,6 @@ int main(int argc, char **argv)
     hasTemplateModifier = true;
     templateModifier = cmdArgs[1];
   }
-
 
   fs::path awwExecutablePath = aww::fs::getCurrentExecutablePath();
   fs::path awwExecutableDir = std::filesystem::absolute(awwExecutablePath.parent_path());
@@ -90,7 +89,7 @@ int main(int argc, char **argv)
 
         size_t tokenPos = line.find(VariableStartOrEndToken, offsetPos);
 
-        while (tokenPos  != std::string::npos) {
+        while (tokenPos != std::string::npos) {
           variablePos = tokenPos + StartStopTokenLen;
           nextTokenPos = line.find(VariableStartOrEndToken, variablePos);
 
@@ -144,12 +143,12 @@ int main(int argc, char **argv)
   return 0;
 }
 
-aww::result_t tryCreateFileByPath(const fs::path &filePath)
+aww::Result<bool> tryCreateFileByPath(const fs::path &filePath)
 {
 
   // if file exists, return error
   if (fs::exists(filePath)) {
-    return std::make_tuple(false, "File already exists");
+    return aww::Result<bool>::failed("File already exists: '" + filePath.string() + "'");
   }
 
   std::vector<std::string> filePathParts;
@@ -161,21 +160,19 @@ aww::result_t tryCreateFileByPath(const fs::path &filePath)
   }
 
   if (filePathParts.size() == 0) {
-    return std::make_tuple(false, "Invalid path: '" + filePath.string() + "'");
+    return aww::Result<bool>::failed("Invalid path: '" + filePath.string() + "'");
   } else if (filePathParts.size() == 1) {
     // create file
     std::ofstream file(filePath);
     file.close();
-    return std::make_tuple(true, "");
+    return aww::Result<bool>::ok(true);
   } else {
     // create directories
     for (std::size_t i = 0; i < filePathParts.size() - 1; i++) {
       parentPath /= filePathParts[i];
       if (!fs::exists(parentPath)) {
         if (!fs::create_directory(parentPath)) {
-          return std::make_tuple(
-            false,
-            "Failed to create directory: '" + parentPath.string() + "'");
+          return aww::Result<bool>::failed("Failed to create directory: '" + parentPath.string() + "'");
         }
       }
     }
@@ -185,6 +182,5 @@ aww::result_t tryCreateFileByPath(const fs::path &filePath)
     file.close();
   }
 
-  // std::cout << "Creating file: " << path << "\n";
-  return std::make_tuple(true, "");
+  return aww::Result<bool>::ok(true);
 }

@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.14)
 set(TESTFILES        # All .cpp files in tests/
     aww.cpp
     test-aww-common--aww-date.cpp
+    test-aww-common--aww-Result.cpp
 )
 
 set(TEST_MAIN unit_tests)   # Default name for test executable (change if you wish).
