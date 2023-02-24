@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <algorithm>
+#include <cctype>
+
 
 
 #include "aww-common.hpp"
@@ -77,7 +80,13 @@ int main(int argc, char **argv)
     constexpr char TOKEN_FILE_NAME[] = "FILE_NAME";
     constexpr char CURRENT_DATE[] = "CURRENT_DATE";
     constexpr char RANDOM_INSPIRATION[] = "RANDOM_INSPIRATION";
+    constexpr char CPP_HEADER_FILE_NAME[] = "CPP_HEADER_FILE_NAME";
 
+    const std::string TargetFileName = filePath.stem().string();
+
+    // Capitalized TargetFileName
+    const std::string CapitalizedTargetFileName = aww::string::toupper(TargetFileName);
+    
     while (std::getline(templateFile, line)) {
 
       if (line.length() >= MinLineLenWithVariableHeuristic) {
@@ -106,7 +115,14 @@ int main(int argc, char **argv)
 
           if (variableName == TOKEN_FILE_NAME) {
             // replace ___FILE_NAME___ with the file name
-            const std::string replacement = filePath.stem().string();
+            const std::string replacement = TargetFileName;
+            line.replace(
+              tokenPos,
+              nextTokenPos + StartStopTokenLen - tokenPos,
+              replacement);
+          }  else if (variableName == CPP_HEADER_FILE_NAME) {
+            // replace ___CPP_HEADER_FILE_NAME___ with the file name
+            const std::string replacement = CapitalizedTargetFileName;
             line.replace(
               tokenPos,
               nextTokenPos + StartStopTokenLen - tokenPos,

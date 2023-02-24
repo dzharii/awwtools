@@ -1,5 +1,7 @@
 #include "aww-common.hpp"
 #include <fstream>
+#include <algorithm>
+#include <cctype>
 
 namespace aww::date
 {
@@ -43,6 +45,16 @@ namespace aww::string
     const size_t paddingLength = padLength - inpLength;
     std::string padding(paddingLength, padChar);
     return padding + inp;
+  }
+
+  std::string toupper(const std::string &inp)
+  {
+    std::string out(inp);
+    for (char &c : out)
+    {
+      c = static_cast<char>(std::toupper(c));
+    }
+    return out;
   }
 }
 
