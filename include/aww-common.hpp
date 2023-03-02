@@ -69,9 +69,7 @@ namespace aww::date
 
 namespace aww::os
 {
-
-  std::string escapeCommandLineArgs(const std::string);
-
+  
   enum class Platform
   {
     Unknown,
