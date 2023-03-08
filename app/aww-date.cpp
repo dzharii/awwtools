@@ -11,10 +11,12 @@
 #include <regex>
 
 #include "clip.h"
+#include "spdlog/spdlog.h"
 #include "aww-common.hpp"
 
 int main(int argc, char **argv)
 {
+  spdlog::info("Hello spdlog");
   std::string currentDate = aww::date::getDateYYYYMMDD();
 
   std::vector<std::string> cmdArgs(argv, argv + argc);

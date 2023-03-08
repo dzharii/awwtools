@@ -76,6 +76,7 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2/single_include
+    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/spdlog-1.11.0/include
 )
 
 if(ALLOW_AWW_APP)
