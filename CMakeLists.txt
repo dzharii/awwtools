@@ -77,6 +77,7 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2/single_include
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/spdlog-1.11.0/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt-9.1.0/include
 )
 
 if(ALLOW_AWW_APP)
@@ -98,6 +99,10 @@ endif()
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2)
 ## end of nlohmann-json
+
+## fmt
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt-9.1.0)
+## end of fmt
 
 # There's also (probably) doctests within the library, so we need to see this as well.
 target_link_libraries(

@@ -13,10 +13,13 @@
 #include "clip.h"
 #include "spdlog/spdlog.h"
 #include "aww-common.hpp"
+#include "fmt/core.h"
 
 int main(int argc, char **argv)
 {
   spdlog::info("Hello spdlog");
+  fmt::print("Hello, world from fmt PLEASE REMOVE THIS \b!\n");
+
   std::string currentDate = aww::date::getDateYYYYMMDD();
 
   std::vector<std::string> cmdArgs(argv, argv + argc);
