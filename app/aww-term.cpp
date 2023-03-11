@@ -31,7 +31,7 @@ int main(int, char**)
   } else if constexpr (platform == aww::os::Platform::MacOS){
     launchTerm = "open -a Terminal \"`pwd`\"";
   } else if constexpr (platform == aww::os::Platform::Linux){
-    launchTerm = "x-terminal-emulator -e bash";
+    launchTerm = "x-terminal-emulator -e bash &";
   } else {
     std::cerr << "Error: Unsupported platform" << "\n";
     return 1;
