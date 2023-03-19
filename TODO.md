@@ -1,5 +1,67 @@
 # The Plan
 
+
+2023-02-25 aww calendar
+The best calendar in the world!
+
+
+2023-02-17 TODO: aww TAG DONE
+
+
+2023-02-17 DONE
+I am not going to replace aww::result_t everywhere, but instead
+create aww::Result and partially try it in aww::create.
+```cpp
+  template<typename T>
+  class Result {
+  public:
+
+    /* Create a successful result */
+    static result_t<T> ok(const T& value) {
+      return result_t<T>(false, value, "");
+    }
+
+    /* Create a failed result */
+    static result_t<T> error(const std::string& error) {
+      return result_t<T>(true, T(), error);
+    }
+
+    /* Use hasValue to check if the result was successful */
+    bool hasValue() const {
+      return !hasError;
+    }
+
+    bool hasError() const {
+      return hasError;
+    }
+
+    /* Retrieves the value */
+    T& value() const {
+      if (hasError) {
+        throw std::runtime_error(
+          "aww::result_t Cannot get value. Error occurred: " + error);
+      }
+      return value;
+    }
+
+    std::string& error() const {
+      return error;
+    }
+  private:
+    T value;
+    bool hasError;
+    std::string error;
+
+    result_t(const bool hasError, const T& value, const std::string& error) :
+      hasError(hasError), value(value), error(error) {}
+
+  };
+
+```
+
+2023-02-17: aww run: when full name for ps1 .cmd or .sh file is provided -- execute that file
+
+
 ## User configuration
 
 - [ ] Should definitely support  dot files, like `.awwtools` but also would be great to support a separate git repository for the configuration, like `my-awwtools`. The  awwtools can provide commands to manage configuration, like `aww config push` `aww config pull`
@@ -167,19 +229,19 @@ in a wav folder. Allow adding custom notifications just by creating files.
 
 It is time to start working on a configuration file for aww.
 
-## aww compress 
+## aww compress
 
 - aww compress folder zip
 - aww compress file.txt gz
 
 ## - aww my XXX
 
-Programmable templates! 
+Programmable templates!
 
 aww my date
 will find date.txt
 
-written is mustache 
+written is mustache
 and execute template:
 
 {{YYYY-MM-DDDate}} and copy it to clipboard
@@ -195,7 +257,7 @@ and execute template:
 What to add:
 aww run should be interactive!
 
-for instance, it can include some built-in grep or something. 
+for instance, it can include some built-in grep or something.
 
 Execute external scripts with `aww run`, now with aww.
 
@@ -218,7 +280,7 @@ or from folder aww-run (in the current directory and global):
 - 2022-12-03 [ToruNiina/toml11: TOML for Modern C++](https://github.com/ToruNiina/toml11)
 
 
-## Logging 
+## Logging
 
 - [ ] Implement logging support
 
@@ -235,13 +297,13 @@ just cross-platform opener
 
 ## aww-remind
 
-Plays ticking sound and reminds about the timer expired. 
+Plays ticking sound and reminds about the timer expired.
 Use SFML for this
 See: \dev-experiments\play_mp3_file.md
 - 2023-01-22 [24:46 - zxzx](https://pomofocus.io/)
 
-## aww-cat 
+## aww-cat
 This one may have a repository with recommended software to view the file in console.
-Type aww cat  -- and it will recommend a tool to view the file. 
+Type aww cat  -- and it will recommend a tool to view the file.
 
 

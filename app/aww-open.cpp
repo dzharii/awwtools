@@ -24,7 +24,7 @@ int main(int argc, char **argv)
   bool useDefaultInput = argc < 2;
 
   if (argc > 2) {
-    std::cout << "Too many arguments provided. Expected 1: file to open" << std::endl;
+    std::cout << "Too many arguments provided. Expected 1: file to open" << "\n";
     return 1;
   }
 
@@ -32,14 +32,14 @@ int main(int argc, char **argv)
 
   fileToOpen = aww::fs::normalizeFilePath(fileToOpen);
 
-  aww::result_t launchFileRes = aww::os::actions::launchFile(fileToOpen);
-  if (aww::failed(launchFileRes))
+  aww::Result launchFileRes = aww::os::actions::launchFile(fileToOpen);
+  if (launchFileRes.isFailed())
   {
-    std::cout << aww::makeError("Failed to launch file", launchFileRes) << std::endl;
+    std::cout << "Failed to launch file " <<  launchFileRes.error() << "\n";
     aww::os::actions::showNotification("aww open", "Failed to open file: " + fileToOpen);
     return 1;
   }
-  std::cout << "Launched file" << std::endl;
+  std::cout << "Launched file" << "\n";
   aww::os::actions::showNotification("aww open", "The file was opened");
   return 0;
 }

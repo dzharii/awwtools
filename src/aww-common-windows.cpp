@@ -12,19 +12,7 @@
 
 
 namespace aww::os {
-
-  std::string escapeCommandLineArgs(const std::string args) {
-    std::string escapedArgs(args.size(), ' ');
-    for (char c : args) {
-      if (c == '"') {
-        escapedArgs += "\"\"";
-      } else {
-        escapedArgs += c;
-      }
-    }
-    return escapedArgs;
-  }
-
+  
   bool canExecute(const std::filesystem::path &path)
   {
     const std::string fileExtension = path.extension().string();
@@ -66,7 +54,7 @@ namespace aww::os {
       // Store the converted string in the vector
       // note: "length - 1" to remove the null terminator
       std::string myarg(buffer, length - 1);
-      std::cout << "arg: " << myarg << std::endl;
+      std::cout << "arg: " << myarg << "\n";
       args.push_back(myarg);
     }
 
@@ -78,76 +66,76 @@ namespace aww::os {
 
 namespace aww::os::actions
 {
-  aww::result_t launchFile(const std::string &path)
+  aww::Result launchFile(const std::string &path)
   {
     // check path is null
     if (path.empty())
     {
-      return std::make_tuple(false, "Argument path is empty");
+      return aww::Result::fail("Argument path is empty");
     }
     HINSTANCE execResult = ShellExecuteA(nullptr, "open", path.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
     const HINSTANCE Success = reinterpret_cast<HINSTANCE>(33);
 
     if (execResult >= Success)
     {
-      return std::make_tuple(true, "");
+      return aww::Result::ok();
     }
 
     unsigned long errorCode = GetLastError();
 
     if (errorCode == 0)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The operating system is out of memory or resources.");
+      return aww::Result::fail("ShellExecuteA failed: The operating system is out of memory or resources.");
     }
     else if (errorCode == ERROR_FILE_NOT_FOUND)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The specified file was not found.");
+      return aww::Result::fail("ShellExecuteA failed: The specified file was not found.");
     }
     else if (errorCode == ERROR_PATH_NOT_FOUND)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The specified path was not found.");
+      return aww::Result::fail("ShellExecuteA failed: The specified path was not found.");
     }
     else if (errorCode == ERROR_BAD_FORMAT)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The .exe file is invalid (non-Win32 .exe or error in .exe image).");
+      return aww::Result::fail("ShellExecuteA failed: The .exe file is invalid (non-Win32 .exe or error in .exe image).");
     }
     else if (errorCode == SE_ERR_ACCESSDENIED)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The operating system denied access to the specified file.");
+      return aww::Result::fail("ShellExecuteA failed: The operating system denied access to the specified file.");
     }
     else if (errorCode == SE_ERR_ASSOCINCOMPLETE)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The file name association is incomplete or invalid.");
+      return aww::Result::fail("ShellExecuteA failed: The file name association is incomplete or invalid.");
     }
     else if (errorCode == SE_ERR_DDEBUSY)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The DDE transaction could not be completed because other DDE transactions were being processed.");
+      return aww::Result::fail("ShellExecuteA failed: The DDE transaction could not be completed because other DDE transactions were being processed.");
     }
     else if (errorCode == SE_ERR_DDEFAIL)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The DDE transaction failed.");
+      return aww::Result::fail("ShellExecuteA failed: The DDE transaction failed.");
     }
     else if (errorCode == SE_ERR_DDETIMEOUT)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The DDE transaction could not be completed because the request timed out.");
+      return aww::Result::fail("ShellExecuteA failed: The DDE transaction could not be completed because the request timed out.");
     }
     else if (errorCode == SE_ERR_DLLNOTFOUND)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: The specified DLL was not found.");
+      return aww::Result::fail("ShellExecuteA failed: The specified DLL was not found.");
     }
     else if (errorCode == SE_ERR_NOASSOC)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: There is no application associated with the given file name extension.");
+      return aww::Result::fail("ShellExecuteA failed: There is no application associated with the given file name extension.");
     }
     else if (errorCode == SE_ERR_OOM)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: There was not enough memory to complete the operation.");
+      return aww::Result::fail("ShellExecuteA failed: There was not enough memory to complete the operation.");
     }
     else if (errorCode == SE_ERR_SHARE)
     {
-      return std::make_tuple(false, "ShellExecuteA failed: A sharing violation occurred.");
+      return aww::Result::fail("ShellExecuteA failed: A sharing violation occurred.");
     }
-    return std::make_tuple(false, "ShellExecuteA failed: Unknown error.");
+    return aww::Result::fail("ShellExecuteA failed: Unknown error.");
   }
 
   /* WinToast */
@@ -174,19 +162,19 @@ namespace aww::os::actions
   };
 
 
-aww::result_t showNotification(
+aww::Result showNotification(
     const std::string &title,
     const std::string &message)
   {
     // check title is null
     if (title.empty())
     {
-      return std::make_tuple(false, "Argument title is empty");
+      return aww::Result::fail("Argument title is empty");
     }
     // check message is null
     if (message.empty())
     {
-      return std::make_tuple(false, "Argument message is empty");
+      return aww::Result::fail("Argument message is empty");
     }
 
     auto wintoastDefaultHandler = new WinToastHandlerExample();
@@ -196,7 +184,7 @@ aww::result_t showNotification(
     toast.setAppUserModelId(L"aww");
 
     if (!toast.initialize()) {
-        return std::make_tuple(false, "Error, your system in not compatible!");
+        return aww::Result::fail("Error, your system in not compatible!");
     }
 
     WinToastLib::WinToastTemplate templ =
@@ -218,9 +206,9 @@ aww::result_t showNotification(
 
     long long int toastId = toast.showToast(templ, wintoastDefaultHandler);
     if (toastId < 0) {
-        return std::make_tuple(false, "Error, cannot show the toast notification");
+        return aww::Result::fail("Error, cannot show the toast notification");
     }
-    return std::make_tuple(true, "");
+    return aww::Result::ok();
   }
 }
 
@@ -241,13 +229,13 @@ namespace aww::fs
 
 namespace aww::util
 {
-  aww::result_t getGuid(std::string &out)
+  aww::Result getGuid(std::string &out)
   {
     GUID guid;
     HRESULT hres = CoCreateGuid(&guid);
     if (FAILED(hres))
     {
-      return std::make_tuple(false, "Windows: CoCreateGuid failed. Unable to generate GUID.");
+      return aww::Result::fail("Windows: CoCreateGuid failed. Unable to generate GUID.");
     }
     const int bufferSize = 40;
     char buffer[bufferSize];
@@ -256,16 +244,15 @@ namespace aww::util
     int sfgCount = StringFromGUID2(guid, guidStr, bufferSize);
     if (sfgCount == 0)
     {
-      return std::make_tuple(false, "Windows: StringFromGUID2 failed. Unable to generate GUID.");
+      return aww::Result::fail("Windows: StringFromGUID2 failed. Unable to generate GUID.");
     }
-
 
     size_t length = static_cast<std::size_t>(
       WideCharToMultiByte(CP_UTF8, 0, guidStr, -1, buffer, bufferSize, nullptr, nullptr)
     );
     if (length == 0)
     {
-      return std::make_tuple(false, "Windows: WideCharToMultiByte failed. Unable to generate GUID.");
+      return aww::Result::fail("Windows: WideCharToMultiByte failed. Unable to generate GUID.");
     }
 
     std::string guidStrResult(buffer, length - 1);
@@ -285,6 +272,6 @@ namespace aww::util
     }
 
     out = guidStrResult;
-    return std::make_tuple(true, "");
+    return aww::Result::ok();
   }
 }

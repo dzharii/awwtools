@@ -24,7 +24,7 @@ int main()
 
   if (!fs::exists(appmanifestJsonFile))
   {
-    std::cout << "appmanifest.json not found" << std::endl;
+    std::cout << "appmanifest.json not found" << "\n";
     return 1;
   }
 
@@ -34,10 +34,10 @@ int main()
     nlohmann::json appmanifestJson = nlohmann::json::parse(appmanifestFile);
 
     // log appmanifestJson["description"]
-    std::cout << "appmanifestJson[\"description\"]: " << appmanifestJson["description"] << std::endl;
+    std::cout << "appmanifestJson[\"description\"]: " << appmanifestJson["description"] << "\n";
 
     std::string myCommandlineArgs = aww::string::join(aww::os::getCommandLineArgs(), "<br />");
-    std::cout << "myCommandlineArgs: " << myCommandlineArgs << std::endl;
+    std::cout << "myCommandlineArgs: " << myCommandlineArgs << "\n";
 
     // TODO Create a class for this with default values
     const std::string manifestAppDescription = appmanifestJson["description"] == nullptr ? "" : appmanifestJson["description"];
@@ -68,18 +68,18 @@ int main()
     fs::path mainJavascriptFile = appmanifest.mainJavascriptFile.get();
 
     // log mainJavascriptFile
-    std::cout << "mainJavascriptFile: " << mainJavascriptFile << std::endl;
+    std::cout << "mainJavascriptFile: " << mainJavascriptFile << "\n";
 
     if (fs::exists(mainJavascriptFile))
     {
       std::string mainJavascriptFileContents = aww::fs::readAsciiTextFile(mainJavascriptFile);
-      std::cout << "mainJavascriptFileContents: " << mainJavascriptFileContents << std::endl;
+      std::cout << "mainJavascriptFileContents: " << mainJavascriptFileContents << "\n";
 
       w.eval(mainJavascriptFileContents);
     }
     else
     {
-      std::cout << "mainJavascriptFile not found" << std::endl;
+      std::cout << "mainJavascriptFile not found" << "\n";
       return 1;
     }
 
@@ -87,7 +87,7 @@ int main()
   }
   catch (const std::exception &e)
   {
-    std::cout << "Exception: " << e.what() << std::endl;
+    std::cout << "Exception: " << e.what() << "\n";
     return 1;
   }
 

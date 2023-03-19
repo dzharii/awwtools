@@ -18,7 +18,7 @@ int main(int argc, char **argv)
 {
   if (argc < 2)
   {
-    std::cout << "No arguments provided" << std::endl;
+    std::cout << "No arguments provided" << "\n";
     return 1;
   }
 
@@ -27,8 +27,8 @@ int main(int argc, char **argv)
   std::filesystem::path awwExecutablePath = aww::fs::getCurrentExecutablePath();
   std::filesystem::path awwExecutableDir = std::filesystem::absolute(awwExecutablePath.parent_path());
 
-  std::cout << "awwExecutablePath: " << awwExecutablePath << std::endl;
-  std::cout << "awwExecutableDir: " << awwExecutableDir << std::endl;
+  std::cout << "awwExecutablePath: " << awwExecutablePath << "\n";
+  std::cout << "awwExecutableDir: " << awwExecutableDir << "\n";
 
   std::string maybeAwwExecutable = (awwExecutableDir / "aww").string();
   bool isAwwExecutable = false;
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 
   if (!isAwwExecutable)
   {
-      std::cout << "No aww executable found" << std::endl;
+      std::cout << "No aww executable found" << "\n";
       return 1;
   }
   // slice itCmdArg to end
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
                     awwExecutableArgsStr;
   std::cout << "Executing: "
             << cmd
-            << std::endl;
+            << "\n";
 
   return system(cmd.c_str());
 }

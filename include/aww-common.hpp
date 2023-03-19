@@ -23,15 +23,38 @@
 
 namespace aww
 {
+  class Result {
+  public:
 
-  const int resultPos = 0;
-  const int errorPos = 1;
+    /* Create a successful result */
+    static Result ok() {
+      return Result(true, std::string());
+    }
 
-  typedef std::tuple<bool, std::string> result_t;
+    /* Create a failed result */
+    static Result fail(const std::string& error) {
+      return Result(false, error);
+    }
 
-  bool failed(const result_t&);
-  bool succeeded(const result_t&);
-  std::string makeError(const std::string&, const result_t&);
+    bool isOk() const {
+      return m_success;
+    }
+
+    /* Use hasValue to check if there is an error */
+    bool isFailed() const {
+      return !m_success;
+    }
+    std::string error() const {
+      return m_errorMessage;
+    }
+
+  private:
+    bool m_success;
+    std::string m_errorMessage;
+
+    Result(const bool isSuccess, const std::string& errorMessage) :
+      m_success(isSuccess), m_errorMessage(errorMessage) {}
+  };
 
 } // namespace aww
 
@@ -46,15 +69,12 @@ namespace aww::date
 
 namespace aww::os
 {
-
-  std::string escapeCommandLineArgs(const std::string);
-
+  
   enum class Platform
   {
     Unknown,
     Windows,
     Linux,
-    MacOS
   };
 
   // OSPlatform
@@ -62,8 +82,6 @@ namespace aww::os
     const Platform OSPlatform = Platform::Windows;
 #elif defined(__linux__)
     const Platform OSPlatform = Platform::Linux;
-#elif defined(__APPLE__)
-    const Platform OSPlatform = Platform::MacOS;
 #else
     const Platform OSPlatform = Platform::Unknown;
 #endif
@@ -96,13 +114,13 @@ namespace aww::os
 
 namespace aww::os::actions
 {
-  aww::result_t launchFile(const std::string &);
-  aww::result_t showNotification(const std::string &, const std::string &);
+  aww::Result launchFile(const std::string &);
+  aww::Result showNotification(const std::string &, const std::string &);
 }
 
 namespace aww::os::env
 {
-  aww::result_t getUserHomeDir(std::filesystem::path &);
+  aww::Result getUserHomeDir(std::filesystem::path &);
   std::filesystem::path getAwwDotDir(void);
 }
 
@@ -110,6 +128,7 @@ namespace aww::string
 {
   std::string join(const std::vector<std::string> &, const std::string &);
   std::string leftPadding(const std::string &, const char &, const size_t &);
+  std::string toupper(const std::string &);
 }
 
 namespace aww::fs {
@@ -124,7 +143,7 @@ namespace aww::fs {
 
 namespace aww::util
 {
-   aww::result_t getGuid(std::string &);
+   aww::Result getGuid(std::string &);
 }
 
 #endif // AWW_COMMON_HPP

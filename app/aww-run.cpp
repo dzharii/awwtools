@@ -18,19 +18,19 @@
 
 namespace fs = std::filesystem;
 
-aww::result_t findScriptWindows(const std::string&, fs::path&);
-aww::result_t findScriptLinux(const std::string&, fs::path&);
-aww::result_t findScriptMacOS(const std::string&, fs::path&);
+aww::Result findScriptWindows(const std::string&, fs::path&);
+aww::Result findScriptLinux(const std::string&, fs::path&);
+aww::Result findScriptMacOS(const std::string&, fs::path&);
 
 /* Attempt to find the path to the executable.
 */
-aww::result_t findScript(const std::string &, fs::path &);
+aww::Result findScript(const std::string &, fs::path &);
 
 int main(int argc, char **argv)
 {
   if (argc < 2)
   {
-    std::cout << "No arguments provided" << std::endl;
+    std::cout << "No arguments provided" << "\n";
     return 1;
   }
 
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     std::cout << line <<  endl;
   });
   proc.onExit([&](int code) {
-    std::cout << "Exit code: " << code << std::endl;
+    std::cout << "Exit code: " << code << "\n";
     exitCode = code;
   });
 
@@ -62,10 +62,10 @@ int main(int argc, char **argv)
   std::string& awwCommand = cmdArgs[0];
   fs::path maybeScriptPath;
 
-  aww::result_t scriptFound = findScript(awwCommand, maybeScriptPath);
-  if (aww::succeeded(scriptFound))
+  aww::Result scriptFound = findScript(awwCommand, maybeScriptPath);
+  if (scriptFound.isOk())
   {
-    std::cout << "Found script: " << maybeScriptPath << std::endl;
+    std::cout << "Found script: " << maybeScriptPath << "\n";
     std::string scriptExtension = maybeScriptPath.extension().string();
 
     bool isPowerShell = scriptExtension == ".ps1" || scriptExtension == ".PS1";
@@ -84,7 +84,6 @@ int main(int argc, char **argv)
           awwCommand = maybeScriptPath.string();
         }
         break;
-      case aww::os::Platform::MacOS:
       case aww::os::Platform::Linux:
         if (isPowerShell)
         {
@@ -100,17 +99,17 @@ int main(int argc, char **argv)
         }
         break;
       case aww::os::Platform::Unknown:
-        std::cout << "Unknown platform" << std::endl;
+        std::cout << "Unknown platform" << "\n";
         return 1;
     }
   }
   else
   {
-    std::cout << "Aww command was not found: " << awwCommand << std::endl;
+    std::cout << "Aww command was not found: " << awwCommand << "\n";
   }
 
   std::string cmd = aww::string::join(cmdArgs, " ");
-  std::cout << "Running command: " << cmd << std::endl;
+  std::cout << "Running command: " << cmd << "\n";
 
   // measure time
   auto start = std::chrono::high_resolution_clock::now();
@@ -120,7 +119,7 @@ int main(int argc, char **argv)
   // print time
   auto end = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  std::cout << "Command took " << duration.count() << "ms" << std::endl;
+  std::cout << "Command took " << duration.count() << "ms" << "\n";
 
   if (exitCode != 0) {
     aww::os::actions::showNotification("aww run", "Failed to run command");
@@ -131,10 +130,10 @@ int main(int argc, char **argv)
 }
 
 
-aww::result_t findScriptWindows(const std::string &scriptName, fs::path &outScriptPath) {
+aww::Result findScriptWindows(const std::string &scriptName, fs::path &outScriptPath) {
   // check if scriptName is not empty
   if (scriptName.empty()) {
-    return std::make_tuple(false, "Script name is empty");
+    return aww::Result::fail("Script name is empty");
   }
 
   const fs::path currentDir = fs::absolute(fs::current_path());
@@ -181,15 +180,15 @@ aww::result_t findScriptWindows(const std::string &scriptName, fs::path &outScri
   for (const fs::path &path : lookupPath) {
     if (fs::exists(path)) {
       outScriptPath = path;
-      return std::make_tuple(true, "");
+      return aww::Result::ok();
     }
   }
-  return std::make_tuple(false, "Script not found");
+  return aww::Result::fail("Script not found");
 }
 
-aww::result_t findScriptLinux(const std::string &scriptName, fs::path &outScriptPath) {
+aww::Result findScriptLinux(const std::string &scriptName, fs::path &outScriptPath) {
   if (scriptName.empty()) {
-    return std::make_tuple(false, "Script name is empty");
+    return aww::Result::fail("Script name is empty");
   }
 
   const fs::path currentDir = fs::absolute(fs::current_path());
@@ -234,30 +233,23 @@ aww::result_t findScriptLinux(const std::string &scriptName, fs::path &outScript
   for (const fs::path &path : shLookupPath) {
     if (fs::exists(path)) {
       outScriptPath = path;
-      return std::make_tuple(true, "");
+      return aww::Result::ok();
     }
   }
 
   for (const fs::path &path : emptyLookupPath) {
     if (fs::exists(path) && aww::os::canExecute(path)) {
       outScriptPath = path;
-      return std::make_tuple(true, "");
+      return aww::Result::ok();
     }
   }
 
-  return std::make_tuple(false, "Script not found");
+  return aww::Result::fail("Script not found");
 }
 
-aww::result_t findScriptMacOS(const std::string &scriptName, fs::path &outScriptPath) {
+aww::Result findScript(const std::string &scriptName, fs::path &outScriptPath) {
   if (scriptName.empty()) {
-    return std::make_tuple(false, "Script name is empty");
-  }
-  return findScriptLinux(scriptName, outScriptPath);
-}
-
-aww::result_t findScript(const std::string &scriptName, fs::path &outScriptPath) {
-  if (scriptName.empty()) {
-    return std::make_tuple(false, "Script name is empty");
+    return aww::Result::fail("Script name is empty");
   }
 
   const aww::os::Platform platform = aww::os::OSPlatform;
@@ -267,10 +259,8 @@ aww::result_t findScript(const std::string &scriptName, fs::path &outScriptPath)
       return findScriptWindows(scriptName, outScriptPath);
     case aww::os::Platform::Linux:
       return findScriptLinux(scriptName, outScriptPath);
-    case aww::os::Platform::MacOS:
-      return findScriptMacOS(scriptName, outScriptPath);
     default:
-      return std::make_tuple(false, "Unknown platform");
+      return aww::Result::fail("Unknown platform");
   }
 }
 
