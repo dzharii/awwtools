@@ -84,7 +84,6 @@ int main(int argc, char **argv)
           awwCommand = maybeScriptPath.string();
         }
         break;
-      case aww::os::Platform::MacOS:
       case aww::os::Platform::Linux:
         if (isPowerShell)
         {
@@ -248,13 +247,6 @@ aww::Result findScriptLinux(const std::string &scriptName, fs::path &outScriptPa
   return aww::Result::fail("Script not found");
 }
 
-aww::Result findScriptMacOS(const std::string &scriptName, fs::path &outScriptPath) {
-  if (scriptName.empty()) {
-    return aww::Result::fail("Script name is empty");
-  }
-  return findScriptLinux(scriptName, outScriptPath);
-}
-
 aww::Result findScript(const std::string &scriptName, fs::path &outScriptPath) {
   if (scriptName.empty()) {
     return aww::Result::fail("Script name is empty");
@@ -267,8 +259,6 @@ aww::Result findScript(const std::string &scriptName, fs::path &outScriptPath) {
       return findScriptWindows(scriptName, outScriptPath);
     case aww::os::Platform::Linux:
       return findScriptLinux(scriptName, outScriptPath);
-    case aww::os::Platform::MacOS:
-      return findScriptMacOS(scriptName, outScriptPath);
     default:
       return aww::Result::fail("Unknown platform");
   }

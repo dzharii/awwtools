@@ -75,7 +75,6 @@ namespace aww::os
     Unknown,
     Windows,
     Linux,
-    MacOS
   };
 
   // OSPlatform
@@ -83,8 +82,6 @@ namespace aww::os
     const Platform OSPlatform = Platform::Windows;
 #elif defined(__linux__)
     const Platform OSPlatform = Platform::Linux;
-#elif defined(__APPLE__)
-    const Platform OSPlatform = Platform::MacOS;
 #else
     const Platform OSPlatform = Platform::Unknown;
 #endif

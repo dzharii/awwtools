@@ -28,8 +28,6 @@ int main(int, char**)
   if constexpr (platform == aww::os::Platform::Windows)
   {
     launchTerm = "start cmd.exe @cmd /k";
-  } else if constexpr (platform == aww::os::Platform::MacOS){
-    launchTerm = "open -a Terminal \"`pwd`\"";
   } else if constexpr (platform == aww::os::Platform::Linux){
     launchTerm = "x-terminal-emulator -e bash &";
   } else {

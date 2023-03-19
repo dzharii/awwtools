@@ -46,6 +46,8 @@ set(SOURCES          # All .cpp files in src/
 )
 if(WIN32)
     list(APPEND SOURCES src/aww-common-windows.cpp)
+elseif(APPLE)
+    list(APPEND SOURCES src/aww-common-apple.cpp)
 elseif(UNIX)
     list(APPEND SOURCES src/aww-common-linux.cpp)
 else()
@@ -108,6 +110,13 @@ target_link_libraries(
     doctest
     clip
 )
+
+if(APPLE)
+    target_link_libraries(
+        ${LIBRARY_NAME} PUBLIC
+        "-framework CoreFoundation"
+    )
+endif()
 
 if(ALLOW_AWW_APP)
     target_link_libraries(

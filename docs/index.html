@@ -25,7 +25,7 @@
     not very often… but when you do, <b>aww guid</b> is there for you!
   </p>
   <p>
-    Want to know how it was implemented on Windows, Linux, and Mac?
+    Want to know how it was implemented on Windows and Linux?
   </p>
   <p>
     Ha-ha. Spoiler alert! It was a mix of pain and pleasure!
@@ -52,7 +52,7 @@ git clone https://github.com/dzharii/awwtools
 
 <h3>CMake</h3>
 <p>
-  <a href="https://cmake.org/install/">Installing CMake</a> on Windows, Linux, and macOS.
+  <a href="https://cmake.org/install/">Installing CMake</a> on Windows and Linux.
 </p>
 <p>
   CMake alternative Windows 11:
@@ -70,20 +70,7 @@ winget install -e --id Kitware.CMake
 </p>
 
 <h4>On GNU/Linux</h4>
-<p>You can use GCC</p>
-
-<h4>On MacOS</h4>
-<p>Not supported, cuz I do not have a Mac.</p>
-<p>
-  I've tried <a href="https://www.darlinghq.org/">Darling</a> (translation layer that lets you run macOS software on Linux);
-</p>
-<p>
-  But, unfortunately, its xcode (v9) is too outdated to compile awwtools.(problem with #include &lt;filesystem&gt;) :(
-</p>
-<p>
-  Meaning... I am still planning to support clang, and theoretical ways to get things done on Mac...
-  but since I do not have an easy way to test it on Mac.. this is all only theoretical for now. No guarantees.
-</p>
+<p>Use GCC</p>
 
 <hr />
 
@@ -207,7 +194,7 @@ aww open          # opens current directory in the default system file manager
 
   <p>
     Opens file or folder in the default system "opener" - application associated with the file type. <br />
-    No need to remember that "explorer file.jpg" on Windows, "open file.jpg" on MacOS, and "xdg-open file.jpg" on Linux <br />
+    No need to remember that "explorer file.jpg" on Windows and "xdg-open file.jpg" on Linux <br />
     do same thing. Just use "aww open file.jpg" and it will work on those environments.
   </p>
 <!-- ========= aww term =========== -->
@@ -277,7 +264,7 @@ aww-create secret.xxx
     Creates new file in the current directory or in the relative subfolder. <br />
     Uses template file (if exists) to fill the new file with the content. <br />
     Otherwise, creates an empty text file. <br />
-    Alternative to "mkdir -p parent01/parent02" + "touch" command on Linux/Mac. <br />
+    Alternative to "mkdir -p parent01/parent02" + "touch" command on Linux. <br />
   </p>
 
 
