@@ -27,12 +27,7 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  const fs::path filePath = cmdArgs[0];
-  aww::Result createResult = tryCreateFileByPath(filePath);
-  if (createResult.isFailed()) {
-    std::cout << "Failed to create file: " << createResult.error() << "\n";
-    return 1;
-  }
+  fs::path filePath = cmdArgs[0];
 
   bool hasTemplateModifier = false;
   std::string templateModifier;
@@ -40,6 +35,35 @@ int main(int argc, char **argv)
   if (cmdArgs.size() == 2) {
     hasTemplateModifier = true;
     templateModifier = cmdArgs[1];
+  }
+
+  // special case for pseudo modifiers.
+  // Like "date" will create a file with the current date prepending filename
+  if (templateModifier == "date") {
+    std::string date = aww::date::getDateYYYYMMDD();
+    std::string fileName = filePath.filename().string();
+    std::string newFileName = date + "-" + fileName;
+    filePath.replace_filename(newFileName);
+
+    // processed the pseudo modifier, so set hasTemplateModifier to false
+    hasTemplateModifier = false;
+    templateModifier = "";
+  }
+
+  // check if file has extension. If not create a directory instead
+  if (filePath.extension().string().empty()) {
+    std::cout << "Creating directory: " << filePath << "\n";
+    if (!fs::exists(filePath)) {
+      fs::create_directories(filePath);
+      std::cout << "Created directory: " << filePath << "\n";
+    }
+    return 0;
+  }
+
+  aww::Result createResult = tryCreateFileByPath(filePath);
+  if (createResult.isFailed()) {
+    std::cout << "Failed to create file: " << createResult.error() << "\n";
+    return 1;
   }
 
   fs::path awwExecutablePath = aww::fs::getCurrentExecutablePath();
@@ -86,7 +110,7 @@ int main(int argc, char **argv)
 
     // Capitalized TargetFileName
     const std::string CapitalizedTargetFileName = aww::string::toupper(TargetFileName);
-    
+
     while (std::getline(templateFile, line)) {
 
       if (line.length() >= MinLineLenWithVariableHeuristic) {
