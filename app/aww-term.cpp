@@ -18,8 +18,13 @@
 namespace fs = std::filesystem;
 
 
-int main(int, char**)
+int main(int argc, char **argv)
 {
+  std::vector<std::string> cmdArgs(argv, argv + argc);
+  cmdArgs.erase(cmdArgs.begin()); // remove first element
+
+  std::string cmdArgsArgsAsString = aww::string::join(cmdArgs, " ");
+
   // open new terminal with bash in new window
   std::string launchTerm;
 
@@ -27,9 +32,9 @@ int main(int, char**)
 
   if constexpr (platform == aww::os::Platform::Windows)
   {
-    launchTerm = "start cmd.exe @cmd /k";
+    launchTerm = "start cmd.exe /k " + cmdArgsArgsAsString;
   } else if constexpr (platform == aww::os::Platform::Linux){
-    launchTerm = "x-terminal-emulator -e bash &";
+    launchTerm = "x-terminal-emulator -e bash -c \"" + cmdArgsArgsAsString + "\"&";
   } else {
     std::cerr << "Error: Unsupported platform" << "\n";
     return 1;
