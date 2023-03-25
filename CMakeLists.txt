@@ -43,6 +43,7 @@ set(SOURCES          # All .cpp files in src/
     src/aww-app-manifest.cpp
     src/aww-inspiration.cpp
     src/aww-inernal-aww-tag.cpp
+    src/internal/aww-date.cpp
 )
 if(WIN32)
     list(APPEND SOURCES src/aww-common-windows.cpp)
