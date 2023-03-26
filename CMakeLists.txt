@@ -45,6 +45,8 @@ set(SOURCES          # All .cpp files in src/
     src/aww-inernal-aww-tag.cpp
     src/internal/aww-date.cpp
     src/internal/aww-create.cpp
+    src/internal/aww-git-open.cpp
+    src/internal/aww-guid.cpp
 )
 if(WIN32)
     list(APPEND SOURCES src/aww-common-windows.cpp)
