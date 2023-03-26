@@ -49,7 +49,7 @@ namespace aww::internal::aww_run
     std::string &awwCommand = cmdArgs[0];
     fs::path maybeScriptPath;
 
-    aww::Result scriptFound = findScript(awwCommand, maybeScriptPath);
+    aww::Result scriptFound = find_script(awwCommand, maybeScriptPath);
     if (scriptFound.isOk())
     {
       std::cout << "Found script: " << maybeScriptPath << "\n";
@@ -119,7 +119,7 @@ namespace aww::internal::aww_run
     return exitCode;
   }
 
-  aww::Result findScriptWindows(const std::string &scriptName, fs::path &outScriptPath)
+  aww::Result find_script_windows(const std::string &scriptName, fs::path &outScriptPath)
   {
     // check if scriptName is not empty
     if (scriptName.empty())
@@ -179,7 +179,7 @@ namespace aww::internal::aww_run
     return aww::Result::fail("Script not found");
   }
 
-  aww::Result findScriptLinux(const std::string &scriptName, fs::path &outScriptPath)
+  aww::Result find_script_linux(const std::string &scriptName, fs::path &outScriptPath)
   {
     if (scriptName.empty())
     {
@@ -246,7 +246,7 @@ namespace aww::internal::aww_run
     return aww::Result::fail("Script not found");
   }
 
-  aww::Result findScript(const std::string &scriptName, fs::path &outScriptPath)
+  aww::Result find_script(const std::string &scriptName, fs::path &outScriptPath)
   {
     if (scriptName.empty())
     {
@@ -258,9 +258,9 @@ namespace aww::internal::aww_run
     switch (platform)
     {
     case aww::os::Platform::Windows:
-      return findScriptWindows(scriptName, outScriptPath);
+      return find_script_windows(scriptName, outScriptPath);
     case aww::os::Platform::Linux:
-      return findScriptLinux(scriptName, outScriptPath);
+      return find_script_linux(scriptName, outScriptPath);
     default:
       return aww::Result::fail("Unknown platform");
     }
