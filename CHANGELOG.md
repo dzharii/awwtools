@@ -7,6 +7,7 @@ Migrated to library:
 - `aww-create.cpp`
 - `aww-git-open.cpp`
 - `aww-guid.cpp`
+- ... and all others
 
 ## 2023-03-24
 
