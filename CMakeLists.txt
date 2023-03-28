@@ -49,6 +49,8 @@ set(SOURCES          # All .cpp files in src/
     src/internal/aww-open.cpp
     src/internal/aww-run.cpp
     src/internal/aww-tag.cpp
+    src/internal/aww-term.cpp
+    src/internal/aww-toast.cpp
 )
 if(WIN32)
     list(APPEND SOURCES src/aww-common-windows.cpp)
