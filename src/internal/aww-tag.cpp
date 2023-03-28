@@ -57,7 +57,7 @@ namespace aww::internal::aww_tag
   }
 
   // create a string of random characters a..z and 0..9 of the specified length
-  std::string aww::internal::aww_tag::makeTag(const size_t length)
+  std::string makeTag(const size_t length)
   {
     constexpr const char charset[] =
         "0123456789"
