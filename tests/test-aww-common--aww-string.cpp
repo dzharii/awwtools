@@ -37,6 +37,7 @@ TEST_CASE("aww::string::to_valid_identifier returns valid identifier")
   CHECK(aww::string::to_valid_identifier("hello") == "hello");
   CHECK(aww::string::to_valid_identifier("hello123") == "hello123");
   CHECK(aww::string::to_valid_identifier("hello-123") == "hello_123");
+  CHECK(aww::string::to_valid_identifier("Hello World") == "Hello_World");
   CHECK(aww::string::to_valid_identifier("hello world") == "hello_world");
   CHECK(aww::string::to_valid_identifier("hello-world") == "hello_world");
   CHECK(aww::string::to_valid_identifier("hello_world") == "hello_world");

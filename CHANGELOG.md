@@ -1,5 +1,16 @@
 # aww-tools changelog
 
+## 2023-03-27
+- fixed bug in `aww create` : `CPP_HEADER_FILE_NAME` to generate valid identifiers.
+
+
+the commands:
+```sh
+aww create .\include\internal\aww-xyz.hpp
+aww create .\src\internal\aww-xyz.cpp
+```
+were very helpful during migration to lib.
+
 
 ## 2021-03-26
 
