@@ -42,13 +42,13 @@ set(SOURCES          # All .cpp files in src/
     src/aww-common.cpp
     src/aww-app-manifest.cpp
     src/aww-inspiration.cpp
-    src/aww-inernal-aww-tag.cpp
     src/internal/aww-date.cpp
     src/internal/aww-create.cpp
     src/internal/aww-git-open.cpp
     src/internal/aww-guid.cpp
     src/internal/aww-open.cpp
     src/internal/aww-run.cpp
+    src/internal/aww-tag.cpp
 )
 if(WIN32)
     list(APPEND SOURCES src/aww-common-windows.cpp)
