@@ -119,7 +119,9 @@ namespace aww::internal::aww_create
       const std::string TargetFileName = filePath.stem().string();
 
       // Capitalized TargetFileName
-      const std::string CapitalizedTargetFileName = aww::string::toupper(TargetFileName);
+      const std::string CapitalizedTargetFileName = aww::string::toupper(
+        aww::string::to_valid_identifier(TargetFileName)
+      );
 
       while (std::getline(templateFile, line))
       {

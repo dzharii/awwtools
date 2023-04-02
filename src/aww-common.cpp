@@ -56,6 +56,16 @@ namespace aww::string
     }
     return out;
   }
+
+  std::string to_valid_identifier(const std::string &input)
+  {
+    std::string output = input;
+    std::replace_if(
+        output.begin(), output.end(), [](char c)
+        { return !std::isalnum(c); },
+        '_');
+    return output;
+  }
 }
 
 namespace aww::os
@@ -67,19 +77,19 @@ namespace aww::os
     this->onExitCallback = defaultExitCallback;
   }
 
-  Proccess& Proccess::onStdOut(std::function<void(const std::string)> callback)
+  Proccess &Proccess::onStdOut(std::function<void(const std::string)> callback)
   {
     onStdOutCallback = callback;
     return *this;
   }
 
-  Proccess& Proccess::onStdErr(std::function<void(const std::string)> callback)
+  Proccess &Proccess::onStdErr(std::function<void(const std::string)> callback)
   {
     onStdErrCallback = callback;
     return *this;
   }
 
-  Proccess& Proccess::onExit(std::function<void(int)> callback)
+  Proccess &Proccess::onExit(std::function<void(int)> callback)
   {
     onExitCallback = callback;
     return *this;
@@ -118,7 +128,7 @@ namespace aww::os
 
 namespace aww::os::env
 {
-  aww::Result getUserHomeDir(std::filesystem::path& outHomeDir)
+  aww::Result getUserHomeDir(std::filesystem::path &outHomeDir)
   {
     char *homeDir = nullptr;
 
@@ -150,16 +160,17 @@ namespace aww::os::env
   }
 }
 
-namespace aww::fs {
+namespace aww::fs
+{
 
-  std::string readAsciiTextFile(const std::filesystem::path& path)
+  std::string readAsciiTextFile(const std::filesystem::path &path)
   {
     std::ifstream file(path);
     std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     return content;
   }
 
-  std::string normalizeFilePath(const std::string& inputPath)
+  std::string normalizeFilePath(const std::string &inputPath)
   {
     std::filesystem::path path(inputPath);
     std::filesystem::path canonicalPath = std::filesystem::weakly_canonical(path);
