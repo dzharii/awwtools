@@ -4,19 +4,65 @@
 
 namespace aww::banner
 {
+
+  LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+  {
+      static char* text = "Hello World";
+      static int i = 0;
+      switch (msg)
+      {
+          case WM_PAINT:
+          {
+              PAINTSTRUCT ps;
+              HDC hdc = BeginPaint(hwnd, &ps);
+              TextOut(hdc, 0, 0, text, strlen(text));
+              EndPaint(hwnd, &ps);
+          }
+          break;
+          case WM_TIMER:
+          {
+              if (i < strlen(text))
+              {
+                  text[i] = 'a';
+                  i++;
+                  InvalidateRect(hwnd, NULL, TRUE);
+              }
+          }
+          break;
+          case WM_DESTROY:
+              PostQuitMessage(0);
+              break;
+          default:
+              return DefWindowProc(hwnd, msg, wParam, lParam);
+      }
+      return 0;
+  }
+
   void NotificationDialogBox::show()
   {
+
+    HINSTANCE hInstance = GetModuleHandle(NULL);
+
+    WNDCLASS wc = { 0 };
+    wc.lpfnWndProc = WndProc;
+    wc.hInstance = hInstance;
+    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    wc.lpszClassName = "myWindowClass";
+    RegisterClass(&wc);
+
     // Create a window
     const HWND hwnd = CreateWindowEx(
         WS_EX_CLIENTEDGE,
-        "STATIC",
+        "myWindowClass",
         title.c_str(),
         WS_POPUP | WS_VISIBLE | WS_BORDER,
-        CW_USEDEFAULT, CW_USEDEFAULT,
-        300, 200,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        300,
+        200,
         NULL,
         NULL,
-        GetModuleHandle(NULL),
+        hInstance,
         NULL);
 
     // Set the background color of the title
@@ -60,8 +106,14 @@ namespace aww::banner
     ShowWindow(hwndMessage, SW_SHOW);
     ShowWindow(hwnd, SW_SHOW);
 
-    // Wait for delayInSeconds seconds before closing the window
-    Sleep(delayInSeconds * 1000);
+    SetTimer(hwnd, NULL, 100, NULL);
+
+    MSG msg = { 0 };
+    while (GetMessage(&msg, NULL, 0, 0))
+    {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
 
     // Fade out and close the window
     for (unsigned char i = 255; i >= 0; i -= 5)
