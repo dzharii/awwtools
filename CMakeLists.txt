@@ -54,9 +54,15 @@ set(SOURCES          # All .cpp files in src/
     src/internal/aww.cpp
 )
 if(WIN32)
-    list(APPEND SOURCES src/aww-common-windows.cpp)
+    list(APPEND SOURCES
+        src/aww-common-windows.cpp
+        src/aww-toast-popup-windows.cpp
+    )
 elseif(UNIX)
-    list(APPEND SOURCES src/aww-common-linux.cpp)
+    list(APPEND SOURCES
+        src/aww-common-linux.cpp
+        src/aww-toast-popup-linux.cpp
+    )
 else()
     list(APPEND SOURCES src/aww-common-unknown.cpp)
 endif()
