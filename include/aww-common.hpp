@@ -13,6 +13,7 @@
 #include <functional>
 #include <chrono>
 #include <thread>
+#include <stdexcept>
 
 // Windows tricks for aww::os::Proccess
 #ifdef _WIN32
@@ -23,28 +24,33 @@
 
 namespace aww
 {
-  class Result {
+  class Result
+  {
   public:
-
     /* Create a successful result */
-    static Result ok() {
+    static Result ok()
+    {
       return Result(true, std::string());
     }
 
     /* Create a failed result */
-    static Result fail(const std::string& error) {
+    static Result fail(const std::string &error)
+    {
       return Result(false, error);
     }
 
-    bool isOk() const {
+    bool isOk() const
+    {
       return m_success;
     }
 
     /* Use hasValue to check if there is an error */
-    bool isFailed() const {
+    bool isFailed() const
+    {
       return !m_success;
     }
-    std::string error() const {
+    std::string error() const
+    {
       return m_errorMessage;
     }
 
@@ -52,8 +58,7 @@ namespace aww
     bool m_success;
     std::string m_errorMessage;
 
-    Result(const bool isSuccess, const std::string& errorMessage) :
-      m_success(isSuccess), m_errorMessage(errorMessage) {}
+    Result(const bool isSuccess, const std::string &errorMessage) : m_success(isSuccess), m_errorMessage(errorMessage) {}
   };
 
 } // namespace aww
@@ -79,26 +84,28 @@ namespace aww::os
 
   // OSPlatform
 #if defined(_WIN32)
-    const Platform OSPlatform = Platform::Windows;
+  const Platform OSPlatform = Platform::Windows;
 #elif defined(__linux__)
-    const Platform OSPlatform = Platform::Linux;
+  const Platform OSPlatform = Platform::Linux;
 #else
-    const Platform OSPlatform = Platform::Unknown;
+  const Platform OSPlatform = Platform::Unknown;
 #endif
 
   /** Check if file is executable
    * Returns false if file does not exist
    * @returns true if file is executable
-  */
+   */
   bool canExecute(const std::filesystem::path &path);
 
-  class Proccess {
+  class Proccess
+  {
   public:
     Proccess();
-    Proccess& onStdOut(std::function<void(const std::string)>);
-    Proccess& onStdErr(std::function<void(const std::string)>);
-    Proccess& onExit(std::function<void(int)>);
-    int run(const std::string&);
+    Proccess &onStdOut(std::function<void(const std::string)>);
+    Proccess &onStdErr(std::function<void(const std::string)>);
+    Proccess &onExit(std::function<void(int)>);
+    int run(const std::string &);
+
   private:
     std::function<void(std::string)> onStdOutCallback;
     std::function<void(std::string)> onStdErrCallback;
@@ -132,7 +139,8 @@ namespace aww::string
   std::string to_valid_identifier(const std::string &input);
 }
 
-namespace aww::fs {
+namespace aww::fs
+{
   std::filesystem::path getCurrentExecutablePath(void);
 
   /// @brief reads a text file at the given path and returns its contents as a string.
@@ -144,7 +152,68 @@ namespace aww::fs {
 
 namespace aww::util
 {
-   aww::Result getGuid(std::string &);
+  aww::Result getGuid(std::string &);
+}
+
+namespace aww::draw
+{
+  class RgbaColor
+  {
+  public:
+    RgbaColor(int red, int green, int blue, int alpha)
+    {
+      if (red < 0 || red > 255)
+      {
+        throw std::invalid_argument("red must be between 0 and 255");
+      }
+
+      if (green < 0 || green > 255)
+      {
+        throw std::invalid_argument("green must be between 0 and 255");
+      }
+
+      if (blue < 0 || blue > 255)
+      {
+        throw std::invalid_argument("blue must be between 0 and 255");
+      }
+
+      if (alpha < 0 || alpha > 255)
+      {
+        throw std::invalid_argument("alpha must be between 0 and 255");
+      }
+
+      this->red = red;
+      this->green = green;
+      this->blue = blue;
+      this->alpha = alpha;
+    }
+
+    int getRed() const
+    {
+      return red;
+    }
+
+    int getGreen() const
+    {
+      return green;
+    }
+
+    int getBlue() const
+    {
+      return blue;
+    }
+
+    int getAlpha() const
+    {
+      return alpha;
+    }
+
+  private:
+    int red;
+    int green;
+    int blue;
+    int alpha;
+  };
 }
 
 #endif // AWW_COMMON_HPP
