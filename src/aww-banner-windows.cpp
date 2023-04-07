@@ -18,17 +18,12 @@ namespace aww::banner
               TextOut(hdc, 0, 0, text.c_str(), static_cast<int>(text.length()));
               EndPaint(hwnd, &ps);
 
-              SetLayeredWindowAttributes(
-                hwnd,
-                RGB(255, 255, 255),
-                transparency * 255 / 100,
-                LWA_ALPHA);
 
               SetLayeredWindowAttributes(
                 hwnd,
                 RGB(255, 255, 255),
-                transparency * 255 / 100,
-                LWA_COLORKEY);
+                transparency,
+                LWA_ALPHA);
           }
           break;
           case WM_TIMER:
@@ -66,7 +61,7 @@ namespace aww::banner
 
     // Create a window
     const HWND hwnd = CreateWindowEx(
-        WS_EX_CLIENTEDGE,
+        WS_EX_CLIENTEDGE | WS_EX_LAYERED,
         "myWindowClass",
         title.c_str(),
         WS_POPUP | WS_VISIBLE | WS_BORDER,
