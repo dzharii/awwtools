@@ -7,26 +7,40 @@ namespace aww::banner
 
   LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
   {
-      static char* text = "Hello World";
-      static int i = 0;
+      static std::string text = "Hello World";
+      static unsigned char transparency = 255;
       switch (msg)
       {
           case WM_PAINT:
           {
               PAINTSTRUCT ps;
               HDC hdc = BeginPaint(hwnd, &ps);
-              TextOut(hdc, 0, 0, text, strlen(text));
+              TextOut(hdc, 0, 0, text.c_str(), static_cast<int>(text.length()));
               EndPaint(hwnd, &ps);
+
+              SetLayeredWindowAttributes(
+                hwnd,
+                RGB(255, 255, 255),
+                transparency * 255 / 100,
+                LWA_ALPHA);
+
+              SetLayeredWindowAttributes(
+                hwnd,
+                RGB(255, 255, 255),
+                transparency * 255 / 100,
+                LWA_COLORKEY);
           }
           break;
           case WM_TIMER:
           {
-              if (i < strlen(text))
-              {
-                  text[i] = 'a';
-                  i++;
-                  InvalidateRect(hwnd, NULL, TRUE);
-              }
+            transparency -= 5;
+            if (transparency <= 0)
+            {
+              KillTimer(hwnd, NULL);
+              DestroyWindow(hwnd);
+            }
+
+            InvalidateRect(hwnd, NULL, TRUE);
           }
           break;
           case WM_DESTROY:
@@ -43,7 +57,7 @@ namespace aww::banner
 
     HINSTANCE hInstance = GetModuleHandle(NULL);
 
-    WNDCLASS wc = { 0 };
+    WNDCLASS wc = { };
     wc.lpfnWndProc = WndProc;
     wc.hInstance = hInstance;
     wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
@@ -87,23 +101,23 @@ namespace aww::banner
     //             (LPARAM)NULL);
 
     // Set the text of the message
-    const HWND hwndMessage = CreateWindowEx(
-        WS_EX_CLIENTEDGE,
-        "STATIC",
-        message.c_str(),
-        WS_CHILD | WS_VISIBLE,
-        10,
-        50,
-        280,
-        100,
-        hwnd,
-        NULL,
-        GetModuleHandle(NULL),
-        NULL);
-    SendMessage(hwndMessage, WM_SETFONT, (WPARAM)font, TRUE);
+    // const HWND hwndMessage = CreateWindowEx(
+    //     WS_EX_CLIENTEDGE,
+    //     "STATIC",
+    //     message.c_str(),
+    //     WS_CHILD | WS_VISIBLE,
+    //     10,
+    //     50,
+    //     280,
+    //     100,
+    //     hwnd,
+    //     NULL,
+    //     GetModuleHandle(NULL),
+    //     NULL);
+    // SendMessage(hwndMessage, WM_SETFONT, (WPARAM)font, TRUE);
 
-    // Show the window
-    ShowWindow(hwndMessage, SW_SHOW);
+    // // Show the window
+    // ShowWindow(hwndMessage, SW_SHOW);
     ShowWindow(hwnd, SW_SHOW);
 
     SetTimer(hwnd, NULL, 100, NULL);
@@ -113,14 +127,6 @@ namespace aww::banner
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
-    }
-
-    // Fade out and close the window
-    for (unsigned char i = 255; i >= 0; i -= 5)
-    {
-      SetLayeredWindowAttributes(hwndMessage, RGB(255, 255, 255), i * 255 / 100, LWA_ALPHA);
-      SetLayeredWindowAttributes(hwndMessage, RGB(255, 255, 255), i * 255 / 100, LWA_COLORKEY);
-      Sleep(10);
     }
 
     DestroyWindow(hwnd);
