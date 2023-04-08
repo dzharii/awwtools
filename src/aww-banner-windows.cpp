@@ -5,7 +5,11 @@
 namespace aww::banner
 {
 
-  LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+  // Oh, passing state is not that simple
+  // Managing Application State - Win32 apps
+  // https://learn.microsoft.com/en-us/windows/win32/learnwin32/managing-application-state-?redirectedfrom=MSDN
+  //
+  static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
   {
       static std::string text = "Hello World";
       static unsigned char transparency = 255;
