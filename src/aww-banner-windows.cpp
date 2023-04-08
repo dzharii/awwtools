@@ -9,6 +9,12 @@ namespace aww::banner
   // Managing Application State - Win32 apps
   // https://learn.microsoft.com/en-us/windows/win32/learnwin32/managing-application-state-?redirectedfrom=MSDN
   //
+
+  struct StateInfo {
+    std::string title;
+    std::string message;
+  };
+
   static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
   {
       static std::string text = "Hello World";
@@ -54,9 +60,13 @@ namespace aww::banner
   void NotificationDialogBox::show()
   {
 
+    StateInfo pState = {};
+    pState.title = title;
+    pState.message = message;
+
     HINSTANCE hInstance = GetModuleHandle(NULL);
 
-    WNDCLASS wc = { };
+    WNDCLASS wc = { 0 };
     wc.lpfnWndProc = WndProc;
     wc.hInstance = hInstance;
     wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
