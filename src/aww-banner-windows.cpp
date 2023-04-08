@@ -2,6 +2,8 @@
 #include "aww-banner.hpp"
 #include "aww-common.hpp"
 
+#include <iostream>
+
 namespace aww::banner
 {
 
@@ -10,22 +12,28 @@ namespace aww::banner
   // https://learn.microsoft.com/en-us/windows/win32/learnwin32/managing-application-state-?redirectedfrom=MSDN
   //
 
-  struct StateInfo {
-    std::string title;
-    std::string message;
-  };
-
   static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
   {
-      static std::string text = "Hello World";
+      static std::string titleText = "Hello World";
       static unsigned char transparency = 255;
       switch (msg)
       {
+          case WM_CREATE:
+          {
+            CREATESTRUCT* create_struct = reinterpret_cast<CREATESTRUCT*>(lParam);
+            NotificationDialogBox* my_class = reinterpret_cast<NotificationDialogBox*>(create_struct->lpCreateParams);
+            SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(my_class));
+            std::cout << "Title: " << my_class->getTitle() << "\n";
+          }
+          break;
           case WM_PAINT:
           {
+
+              NotificationDialogBox* my_class = reinterpret_cast<NotificationDialogBox*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+              titleText = my_class->getTitle();
               PAINTSTRUCT ps;
               HDC hdc = BeginPaint(hwnd, &ps);
-              TextOut(hdc, 0, 0, text.c_str(), static_cast<int>(text.length()));
+              TextOut(hdc, 0, 0, titleText.c_str(), static_cast<int>(titleText.length()));
               EndPaint(hwnd, &ps);
 
 
@@ -60,10 +68,6 @@ namespace aww::banner
   void NotificationDialogBox::show()
   {
 
-    StateInfo pState = {};
-    pState.title = title;
-    pState.message = message;
-
     HINSTANCE hInstance = GetModuleHandle(NULL);
 
     WNDCLASS wc = { 0 };
@@ -86,7 +90,7 @@ namespace aww::banner
         NULL,
         NULL,
         hInstance,
-        NULL);
+        this);
 
     // Set the background color of the title
     const COLORREF titleBg = RGB(

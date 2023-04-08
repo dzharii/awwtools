@@ -25,6 +25,16 @@ namespace aww::banner
     }
     void show();
 
+    std::string getTitle() const
+    {
+      return title;
+    }
+
+    std::string getMessage() const
+    {
+      return message;
+    }
+
   private:
     std::string title;
     std::string message;
