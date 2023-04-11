@@ -1,5 +1,9 @@
 # aww-tools changelog
 
+## 2023-04-10
+
+- add more `aww create` templates for powershell cmd and sh companions
+
 ## 2023-03-27
 - fixed bug in `aww create` : `CPP_HEADER_FILE_NAME` to generate valid identifiers.
 
