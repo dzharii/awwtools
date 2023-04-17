@@ -26,15 +26,15 @@ namespace aww::internal::aww_run
       [](std::string line)
       {
         char &lastChar = line.back();
-        std::string endl = lastChar == '\n' ? "" : "\n";
-        std::cout << line <<  "\n";
+        std::string endOfLine = lastChar == '\n' ? "" : "\n";
+        std::cout << line <<  endOfLine;
       });
     proc.onStdErr(
       [](std::string line)
       {
         char &lastChar = line.back();
-        std::string endl = lastChar == '\n' ? "" : "\n";
-        std::cout << line <<  "\n";
+        std::string endOfLine = lastChar == '\n' ? "" : "\n";
+        std::cout << line <<  endOfLine;
       });
 
     proc.onExit(
