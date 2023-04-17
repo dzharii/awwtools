@@ -136,6 +136,8 @@ namespace aww::string
   std::string join(const std::vector<std::string> &, const std::string &);
   std::string leftPadding(const std::string &, const char &, const size_t &);
   std::string toupper(const std::string &);
+  std::string tolower(const std::string &);
+  bool ends_with(const std::string& str, const std::string& suffix);
   std::string to_valid_identifier(const std::string &input);
 }
 

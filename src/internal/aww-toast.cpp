@@ -8,10 +8,8 @@
 
 namespace aww::internal::aww_toast
 {
-  int aww_toast_main(int argc, char **argv)
+  int aww_toast_main(const std::vector<std::string> &cmdArgs)
   {
-    std::vector<std::string> cmdArgs(argv, argv + argc);
-    cmdArgs.erase(cmdArgs.begin()); // remove first element
     std::string message = "Hey!";
     if (cmdArgs.size() > 0)
     {

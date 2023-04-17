@@ -12,41 +12,40 @@ namespace fs = std::filesystem;
 
 namespace aww::internal::aww_run
 {
-  int aww_run_main(int argc, char **argv)
+  int aww_run_main(const std::vector<std::string> &cmdArgs)
   {
-    if (argc < 2)
+    if (cmdArgs.size() == 0)
     {
-      std::cout << "No arguments provided"
-                << "\n";
+      std::cout << "No arguments provided\n";
       return 1;
     }
-
-    std::vector<std::string> cmdArgs(argv, argv + argc);
-    cmdArgs.erase(cmdArgs.begin()); // remove first element
 
     aww::os::Proccess proc;
     int exitCode = 0;
     proc.onStdOut([](std::string line)
-                  {
-    char &lastChar = line.back();
-    std::string endl = lastChar == '\n' ? "" : "\n";
-    std::cout << line <<  endl; });
+    {
+      char &lastChar = line.back();
+      std::string endl = lastChar == '\n' ? "" : "\n";
+      std::cout << line <<  "\n";
+    });
     proc.onStdErr([](std::string line)
-                  {
-    char &lastChar = line.back();
-    std::string endl = lastChar == '\n' ? "" : "\n";
-    std::cout << line <<  endl; });
+    {
+      char &lastChar = line.back();
+      std::string endl = lastChar == '\n' ? "" : "\n";
+      std::cout << line <<  "\n";
+    });
     proc.onExit([&](int code)
-                {
-    std::cout << "Exit code: " << code << "\n";
-    exitCode = code; });
+    {
+      std::cout << "Exit code: " << code << "\n";
+      exitCode = code;
+    });
 
     // aww command is a shell script name without extension
     // so that we can have "build.sh" and "build.bat" in the same folder
     // and the correct one will be selected based on the OS
     // Sample:
     //        aww run build
-    std::string &awwCommand = cmdArgs[0];
+    std::string awwCommand = cmdArgs[0];
     fs::path maybeScriptPath;
 
     aww::Result scriptFound = find_script(awwCommand, maybeScriptPath);

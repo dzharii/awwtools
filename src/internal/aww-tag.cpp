@@ -9,16 +9,16 @@
 
 namespace aww::internal::aww_tag
 {
-  int aww_tag_main(int argc, char **argv)
+  int aww_tag_main(const std::vector<std::string> &cmdArgs)
   {
     size_t length = 11;
     int userInput = 0;
-    bool useDefaultInput = argc < 2;
+    bool useDefaultInput = cmdArgs.size() == 0;
     if (!useDefaultInput)
     {
       try
       {
-        userInput = std::stoi(argv[1]);
+        userInput = std::stoi(cmdArgs[0]);
         if (userInput < 1)
         {
           std::cout << "Invalid argument: '" << userInput << "', must be a positive number\n";

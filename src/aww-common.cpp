@@ -57,6 +57,24 @@ namespace aww::string
     return out;
   }
 
+  std::string tolower(const std::string &inp)
+  {
+    std::string out(inp);
+    for (char &c : out)
+    {
+      c = static_cast<char>(std::tolower(c));
+    }
+    return out;
+  }
+
+  bool ends_with(const std::string& str, const std::string& suffix) {
+  if (suffix.size() > str.size()) {
+    return false;
+  }
+  return std::equal(suffix.rbegin(), suffix.rend(), str.rbegin());
+}
+
+
   std::string to_valid_identifier(const std::string &input)
   {
     std::string output = input;

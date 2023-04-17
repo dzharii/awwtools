@@ -16,11 +16,8 @@ namespace aww::internal::aww_create
 {
   namespace fs = std::filesystem;
 
-  int aww_create_main(int argc, char **argv)
+  int aww_create_main(const std::vector<std::string> &cmdArgs)
   {
-    std::vector<std::string> cmdArgs(argv, argv + argc);
-    cmdArgs.erase(cmdArgs.begin()); // remove first element
-
     if (cmdArgs.size() == 0)
     {
       std::cout << "Usage: aww create <filepath>"

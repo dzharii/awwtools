@@ -14,20 +14,19 @@ namespace aww::internal::aww_git_open
 {
   namespace fs = std::filesystem;
 
-  int aww_git_open_main(int argc, char **argv)
+  int aww_git_open_main(const std::vector<std::string> &cmdArgs)
   {
-    if (argc > 2)
+    if (cmdArgs.size() > 1)
     {
-      std::cout << "Too many arguments provided"
-                << "\n";
+      std::cout << "Too many arguments provided" << "\n";
       return 1;
     }
 
     // this will open the current directory if no argument is provided
     std::string optionalFileToOpen = ".";
-    if (argc == 2)
+    if (cmdArgs.size() == 1)
     {
-      optionalFileToOpen = argv[1];
+      optionalFileToOpen = cmdArgs[0];
     }
 
     fs::path currentDir = fs::absolute(fs::current_path());

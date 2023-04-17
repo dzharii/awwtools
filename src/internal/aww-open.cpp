@@ -11,18 +11,19 @@ namespace aww::internal::aww_open
 {
   namespace fs = std::filesystem;
 
-  int aww_open_main(int argc, char **argv)
+  int aww_open_main(const std::vector<std::string> &cmdArgs)
   {
-    bool useDefaultInput = argc < 2;
+    bool useDefaultInput = cmdArgs.size() == 0;
 
-    if (argc > 2)
+    if (cmdArgs.size() > 1)
     {
       std::cout << "Too many arguments provided. Expected 1: file to open"
                 << "\n";
       return 1;
     }
 
-    std::string fileToOpen = useDefaultInput ? "." : argv[1];
+    const std::string DEFAULT_OPEN_PATH = "."; // Current directory
+    std::string fileToOpen = useDefaultInput ? DEFAULT_OPEN_PATH : cmdArgs[0];
 
     fileToOpen = aww::fs::normalizeFilePath(fileToOpen);
 

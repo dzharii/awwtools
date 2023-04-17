@@ -1,7 +1,10 @@
+#include <vector>
 #include "internal/aww-create.hpp"
 
 int main(int argc, char **argv)
 {
-  return aww::internal::aww_create::aww_create_main(argc, argv);
+  std::vector<std::string> cmdArgs(argv, argv + argc);
+  cmdArgs.erase(cmdArgs.begin()); // remove first element
+  return aww::internal::aww_create::aww_create_main(cmdArgs);
 }
 

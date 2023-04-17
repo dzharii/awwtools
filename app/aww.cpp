@@ -1,6 +1,10 @@
+#include <vector>
+#include <string>
 #include "internal/aww.hpp"
 
 int main(int argc, char **argv)
 {
-  return aww_main(argc, argv);
+  std::vector<std::string> cmdArgs(argv, argv + argc);
+  cmdArgs.erase(cmdArgs.begin()); // remove first element
+  return aww_main(cmdArgs);
 }

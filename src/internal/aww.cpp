@@ -2,62 +2,132 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <unordered_set>
 
 #include "aww-common.hpp"
 
-int aww_main(int argc, char **argv)
+#include "internal/aww-create.hpp"
+#include "internal/aww-date.hpp"
+#include "internal/aww-git-open.hpp"
+#include "internal/aww-guid.hpp"
+#include "internal/aww-open.hpp"
+#include "internal/aww-run.hpp"
+#include "internal/aww-tag.hpp"
+#include "internal/aww-term.hpp"
+#include "internal/aww-toast.hpp"
+
+enum class AwwTool
 {
-  if (argc < 2)
+  None,
+  Create,
+  Date,
+  GitOpen,
+  Guid,
+  Open,
+  Run,
+  Tag,
+  Term,
+  Toast,
+};
+
+AwwTool getAwwTool(const std::string &awwTool)
+{
+  const std::string awwToolLower = aww::string::tolower(awwTool);
+
+  if (awwToolLower == "aww-create")
   {
-    std::cout << "No arguments provided" << "\n";
+    return AwwTool::Create;
+  }
+  else if (awwToolLower == "aww-date")
+  {
+    return AwwTool::Date;
+  }
+  else if (awwToolLower == "aww-git-open")
+  {
+    return AwwTool::GitOpen;
+  }
+  else if (awwToolLower == "aww-guid")
+  {
+    return AwwTool::Guid;
+  }
+  else if (awwToolLower == "aww-open")
+  {
+    return AwwTool::Open;
+  }
+  else if (awwToolLower == "aww-run")
+  {
+    return AwwTool::Run;
+  }
+  else if (awwToolLower == "aww-tag")
+  {
+    return AwwTool::Tag;
+  }
+  else if (awwToolLower == "aww-term")
+  {
+    return AwwTool::Term;
+  }
+  else if (awwToolLower == "aww-toast")
+  {
+    return AwwTool::Toast;
+  }
+  return AwwTool::None;
+}
+
+int aww_main(const std::vector<std::string> &cmdArgs)
+{
+  if (cmdArgs.size() == 0)
+  {
+    std::cout << "No arguments provided\n";
     return 1;
   }
 
-  std::vector<std::string> cmdArgs(argv, argv + argc);
-  cmdArgs.erase(cmdArgs.begin()); // remove first element
-  std::filesystem::path awwExecutablePath = aww::fs::getCurrentExecutablePath();
-  std::filesystem::path awwExecutableDir = std::filesystem::absolute(awwExecutablePath.parent_path());
-
-  std::cout << "awwExecutablePath: " << awwExecutablePath << "\n";
-  std::cout << "awwExecutableDir: " << awwExecutableDir << "\n";
-
-  std::string maybeAwwExecutable = (awwExecutableDir / "aww").string();
-  bool isAwwExecutable = false;
+  std::string awwToolName = "aww";
+  AwwTool awwTool = AwwTool::None;
 
   auto itCmdArg = cmdArgs.begin();
   for (; itCmdArg != cmdArgs.end(); ++itCmdArg)
   {
-    maybeAwwExecutable += "-" + *itCmdArg;
-    if (std::filesystem::exists(maybeAwwExecutable))
+    awwToolName += "-" + aww::string::tolower(*itCmdArg);
+    awwTool = getAwwTool(awwToolName);
+
+    if (awwTool != AwwTool::None)
     {
-      isAwwExecutable = true;
-      break;
-    }
-    else if (std::filesystem::exists(maybeAwwExecutable + ".exe"))
-    {
-      isAwwExecutable = true;
-      maybeAwwExecutable += ".exe";
       break;
     }
   }
 
-  if (!isAwwExecutable)
+  if (awwTool == AwwTool::None)
   {
-      std::cout << "No aww executable found" << "\n";
-      return 1;
+    std::cout << "No aww executable found\n";
+    return 1;
   }
+
   // slice itCmdArg to end
   ++itCmdArg;
   std::vector<std::string> awwExecutableArgs(itCmdArg, cmdArgs.end());
-  std::string awwExecutableArgsStr = aww::string::join(awwExecutableArgs, " ");
 
-  std::filesystem::path executablePath(maybeAwwExecutable);
-  std::string cmd = std::filesystem::absolute(executablePath).string() +
-                    " " +
-                    awwExecutableArgsStr;
-  std::cout << "Executing: "
-            << cmd
-            << "\n";
-
-  return system(cmd.c_str());
+  switch (awwTool)
+  {
+  case AwwTool::Create:
+    return aww::internal::aww_create::aww_create_main(awwExecutableArgs);
+  case AwwTool::Date:
+    return aww::internal::aww_date::aww_date_main(awwExecutableArgs);
+  case AwwTool::GitOpen:
+    return aww::internal::aww_git_open::aww_git_open_main(awwExecutableArgs);
+  case AwwTool::Guid:
+    return aww::internal::aww_guid::aww_guid_main(awwExecutableArgs);
+  case AwwTool::Open:
+    return aww::internal::aww_open::aww_open_main(awwExecutableArgs);
+  case AwwTool::Run:
+    return aww::internal::aww_run::aww_run_main(awwExecutableArgs);
+  case AwwTool::Tag:
+    return aww::internal::aww_tag::aww_tag_main(awwExecutableArgs);
+  case AwwTool::Term:
+    return aww::internal::aww_term::aww_term_main(awwExecutableArgs);
+  case AwwTool::Toast:
+    return aww::internal::aww_toast::aww_toast_main(awwExecutableArgs);
+  default:
+    std::cout << "No aww executable found\n";
+    return 1;
+  }
 }

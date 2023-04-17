@@ -7,11 +7,8 @@
 
 namespace aww::internal::aww_term
 {
-  int aww_term_main(int argc, char **argv)
+  int aww_term_main(const std::vector<std::string> &cmdArgs)
   {
-    std::vector<std::string> cmdArgs(argv, argv + argc);
-    cmdArgs.erase(cmdArgs.begin()); // remove first element
-
     std::string cmdArgsArgsAsString = aww::string::join(cmdArgs, " ");
 
     // open new terminal with bash in new window

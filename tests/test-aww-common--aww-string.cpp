@@ -31,6 +31,30 @@ TEST_CASE("aww::string::toupper returns uppercase string")
   CHECK(aww::string::toupper("") == "");
 }
 
+// doctests for aww::string::tolower std::string tolower(const std::string &);
+TEST_CASE("aww::string::tolower returns lowercase string")
+{
+  CHECK(aww::string::tolower("hello") == "hello");
+  CHECK(aww::string::tolower("HELLO") == "hello");
+  CHECK(aww::string::tolower("hElLo") == "hello");
+  CHECK(aww::string::tolower("HeLlO") == "hello");
+  CHECK(aww::string::tolower("hElLo") == "hello");
+  CHECK(aww::string::tolower("hElLo") == "hello");
+  CHECK(aww::string::tolower("") == "");
+}
+
+// doctests for aww::string::ends_with bool ends_with(const std::string& str, const std::string& suffix);
+TEST_CASE("aww::string::ends_with returns true if string ends with suffix")
+{
+  CHECK(aww::string::ends_with("hello", "o"));
+  CHECK(aww::string::ends_with("hello", "lo"));
+  CHECK(aww::string::ends_with("hello", "hello"));
+  CHECK(aww::string::ends_with("hello", ""));
+  CHECK(aww::string::ends_with("", ""));
+  CHECK(aww::string::ends_with("", "hello") == false);
+  CHECK(aww::string::ends_with("hello", "hello world") == false);
+}
+
 // doctests for aww::string::to_valid_identifier std::string to_valid_identifier(const std::string &);
 TEST_CASE("aww::string::to_valid_identifier returns valid identifier")
 {

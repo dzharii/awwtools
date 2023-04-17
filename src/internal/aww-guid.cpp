@@ -7,7 +7,7 @@
 
 namespace aww::internal::aww_guid
 {
-  int aww_guid_main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
+  int aww_guid_main([[maybe_unused]] const std::vector<std::string> &cmdArgs)
   {
     std::string guid;
     aww::Result result = aww::util::getGuid(guid);

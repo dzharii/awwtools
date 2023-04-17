@@ -3,6 +3,7 @@
 #define AWW_RUN_HPP
 
 #include <filesystem>
+#include <vector>
 #include <string>
 #include "aww-common.hpp"
 
@@ -14,7 +15,7 @@ namespace aww::internal::aww_run
   aww::Result find_script_linux(const std::string &, fs::path &);
   aww::Result find_script(const std::string &, fs::path &);
 
-  int aww_run_main(int, char **);
+  int aww_run_main(const std::vector<std::string> &cmdArgs);
 }
 
 #endif // AWW_RUN_HPP

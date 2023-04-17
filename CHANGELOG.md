@@ -1,5 +1,18 @@
 # aww-tools changelog
 
+## 2023-04-16
+
+`aww.cpp` now provides a static definition of the tool list and passes arguments directly to the tool's `main()` function using  `const std::vector<std::string> &cmdArgs`. This change eliminates the need to check for the existence of `aww-tool.exe` using the filesystem and replaces the previous flow of reading arguments, serializing them as a string, and passing them to the `system()` call. Now, arguments are passed directly to the tool's main function as shown in the example below:
+Before:
+```
+aww tool-name => read args => serialize args back as string => find-if aww-tool exists => pass args as a string via system(...) call.
+```
+After:
+```
+aww date one two three => aww::internal::aww_date::aww_date_main(awwExecutableArgs)
+````
+These changes result in a more efficient and streamlined workflow for using the aww tools.
+
 ## 2023-04-10
 
 - add more `aww create` templates for powershell cmd and sh companions

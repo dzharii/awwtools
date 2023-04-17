@@ -3,6 +3,7 @@
 #define AWW_GIT_OPEN_HPP
 
 #include <filesystem>
+#include <vector>
 #include <string>
 
 #include "aww-common.hpp"
@@ -15,7 +16,7 @@ namespace aww::internal::aww_git_open
   bool tryConvertToGitUrl(const std::string &, std::string &);
   aww::Result tryFindRepositoryUrlInGitConfig(std::istream &, std::string &);
   aww::Result getRelativeUrlPath(const fs::path &, const fs::path &, std::string &);
-  int aww_git_open_main(int argc, char **argv);
+  int aww_git_open_main(const std::vector<std::string> &cmdArgs);
 }
 
 #endif // AWW_GIT_OPEN_HPP
