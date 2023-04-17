@@ -95,7 +95,14 @@ namespace aww::internal::aww_run
       std::cout << "Aww command was not found: " << awwCommand << "\n";
     }
 
-    std::string cmd = aww::string::join(cmdArgs, " ");
+    std::vector<std::string> cmdArgsCopy = cmdArgs;
+
+    // replace aww command with the full path to the script
+    if (scriptFound.isOk()) {
+      cmdArgsCopy[0] = "\"" + awwCommand + "\"";
+    }
+
+    std::string cmd = aww::string::join(cmdArgsCopy, " ");
     std::cout << "Running command: " << cmd << "\n";
 
     // measure time
@@ -106,8 +113,7 @@ namespace aww::internal::aww_run
     // print time
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    std::cout << "Command took " << duration.count() << "ms"
-              << "\n";
+    std::cout << "Command took " << duration.count() << "ms\n";
 
     if (exitCode != 0)
     {
