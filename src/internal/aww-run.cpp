@@ -22,23 +22,27 @@ namespace aww::internal::aww_run
 
     aww::os::Proccess proc;
     int exitCode = 0;
-    proc.onStdOut([](std::string line)
-    {
-      char &lastChar = line.back();
-      std::string endl = lastChar == '\n' ? "" : "\n";
-      std::cout << line <<  "\n";
-    });
-    proc.onStdErr([](std::string line)
-    {
-      char &lastChar = line.back();
-      std::string endl = lastChar == '\n' ? "" : "\n";
-      std::cout << line <<  "\n";
-    });
-    proc.onExit([&](int code)
-    {
-      std::cout << "Exit code: " << code << "\n";
-      exitCode = code;
-    });
+    proc.onStdOut(
+      [](std::string line)
+      {
+        char &lastChar = line.back();
+        std::string endl = lastChar == '\n' ? "" : "\n";
+        std::cout << line <<  "\n";
+      });
+    proc.onStdErr(
+      [](std::string line)
+      {
+        char &lastChar = line.back();
+        std::string endl = lastChar == '\n' ? "" : "\n";
+        std::cout << line <<  "\n";
+      });
+
+    proc.onExit(
+      [&](int code)
+      {
+        std::cout << "Exit code: " << code << "\n";
+        exitCode = code;
+      });
 
     // aww command is a shell script name without extension
     // so that we can have "build.sh" and "build.bat" in the same folder
@@ -67,7 +71,7 @@ namespace aww::internal::aww_run
         }
         else
         {
-          awwCommand = maybeScriptPath.string();
+          awwCommand = "\"" + maybeScriptPath.string() + "\"";
         }
         break;
       case aww::os::Platform::Linux:
@@ -81,7 +85,7 @@ namespace aww::internal::aww_run
         }
         else
         {
-          awwCommand = maybeScriptPath.string();
+          awwCommand = "\"" + maybeScriptPath.string() + "\"";
         }
         break;
       case aww::os::Platform::Unknown:
@@ -98,8 +102,9 @@ namespace aww::internal::aww_run
     std::vector<std::string> cmdArgsCopy = cmdArgs;
 
     // replace aww command with the full path to the script
-    if (scriptFound.isOk()) {
-      cmdArgsCopy[0] = "\"" + awwCommand + "\"";
+    if (scriptFound.isOk())
+    {
+      cmdArgsCopy[0] = awwCommand;
     }
 
     std::string cmd = aww::string::join(cmdArgsCopy, " ");
