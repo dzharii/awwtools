@@ -123,8 +123,9 @@ namespace aww::internal::aww_run
     if (exitCode != 0)
     {
       aww::os::actions::showNotification("aww run", "Failed to run command");
+    } else {
+      aww::os::actions::showNotification("aww run", "The command finished successfully");
     }
-    aww::os::actions::showNotification("aww run", "The command finished successfully");
 
     return exitCode;
   }

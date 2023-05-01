@@ -1,5 +1,9 @@
 # aww-tools changelog
 
+## 2023-05-01
+- fixed bug in aww run when failed command was reported as failed and then successful. O_O
+- wintoastlib -- removed debug output
+
 ## 2023-04-16
 
 `aww.cpp` now provides a static definition of the tool list and passes arguments directly to the tool's `main()` function using  `const std::vector<std::string> &cmdArgs`. This change eliminates the need to check for the existence of `aww-tool.exe` using the filesystem and replaces the previous flow of reading arguments, serializing them as a string, and passing them to the `system()` call. Now, arguments are passed directly to the tool's main function as shown in the example below:
