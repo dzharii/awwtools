@@ -253,6 +253,23 @@ aww-create myprogram.cpp main
 
 # Unknown file name. Will create an empty file with the name "secret.xxx"
 aww-create secret.xxx
+
+# since 2023-05-06 aww-create will create folders when the file extension is missing
+# this will create folder src/main/java
+aww create src/main/java
+
+# since 2023-05-06 aww-create supports pseudo modifier "date", which
+# allows to create files with the current date in the "leaf" name
+
+# this will create: src/main/2023-05-06-java
+aww create src/main/java date
+
+# this will create: 2023-05-06-my-aww-project-notes
+aww create my-aww-project-notes date
+
+# this will create: 2023-05-06-my-notes.md
+aww create my-notes.md date
+
   </code></pre>
 
   <p>
