@@ -22,7 +22,7 @@ namespace aww::internal::aww_create
       virtual std::string get_date_yyyymmdd() = 0;
 
       virtual inline std::filesystem::path fs_get_current_executable_path() = 0;
-      virtual inline aww::Result fs_exists(const std::filesystem::path &target) = 0;
+      virtual inline aww::Result fs_exists(const std::filesystem::path& target, bool& outFileExists) = 0;
       virtual inline aww::Result fs_create_directories(const std::filesystem::path& path) = 0;
       virtual inline aww::Result fs_create_empty_file(const std::filesystem::path& path) = 0;
 
@@ -39,54 +39,17 @@ namespace aww::internal::aww_create
         return aww::fs::getCurrentExecutablePath();
       }
 
-      inline aww::Result fs_exists(const std::filesystem::path &target) override {
-
-        // TODO 2023-06-03: move it to aww::fs::exists()
-        if constexpr (aww::os::OSPlatform == aww::os::Platform::Windows) {
-
-          const std::string reservedNames[] = {
-            "CON",
-            "PRN",
-            "AUX",
-            "NUL",
-            "COM1",
-            "COM2",
-            "COM3",
-            "COM4",
-            "COM5",
-            "COM6",
-            "COM7",
-            "COM8",
-            "COM9",
-            "LPT1",
-            "LPT2",
-            "LPT3",
-            "LPT4",
-            "LPT5",
-            "LPT6",
-            "LPT7",
-            "LPT8",
-            "LPT9" };
-
-          std::string fileOrDirName = target.filename().string();
-          fileOrDirName = aww::string::toupper(fileOrDirName);
-
-          bool directoryNameIsReserved = std::find(
-            std::begin(reservedNames),
-            std::end(reservedNames),
-            fileOrDirName) != std::end(reservedNames);
-
-          if (directoryNameIsReserved) {
-            std::string errorMessage = "Error checking if file or directory exists: The name is a reserved device name on Windows.";
-            return aww::Result::fail(errorMessage);
-          }
-        }
-
-        if (std::filesystem::exists(target)) {
+      inline aww::Result fs_exists(const std::filesystem::path& target, bool& outFileExists) override {
+        try {
+          outFileExists = std::filesystem::exists(target);
           return aww::Result::ok();
+        } catch (const std::exception& e) {
+          std::string errorMessage = "Error checking existence: " + std::string(e.what());
+          return aww::Result::fail(errorMessage);
+        } catch (...) {
+          std::string errorMessage = "Unknown error occurred while checking existence.";
+          return aww::Result::fail(errorMessage);
         }
-
-        return aww::Result::fail("The file or directory does not exist.");
       }
 
       inline aww::Result fs_create_directories(const std::filesystem::path& path) {

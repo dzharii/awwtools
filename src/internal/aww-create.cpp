@@ -53,19 +53,31 @@ namespace aww::internal::aww_create
     // check if file has extension. If not create a directory instead
     if (filePath.extension().string().empty())
     {
-
       std::cout << "Creating directory: " << filePath << "\n";
-      // THIS IS WHERE COM1 FAILS:
-      if (deps.fs_exists(filePath).isFailed())
+      bool outIsDirectoryExists = false;
+
+      aww::Result directoryAlreadyExistResult = deps.fs_exists(filePath, outIsDirectoryExists);
+
+      if (directoryAlreadyExistResult.isFailed())
       {
-        aww::Result createDirResult = deps.fs_create_directories(filePath);
-        if (createDirResult.isFailed())
-        {
-          std::cout << "Failed to create directory: " << createDirResult.error() << "; tag=evmmi0npk45\n";
-          return 1;
-        }
-        std::cout << "Created directory: " << filePath << "\n";
+        std::cout << "Failed to check if directory exists: " << directoryAlreadyExistResult.error() << "; tag=qu0rbfob4ey\n";
+        return 1;
       }
+
+      if (outIsDirectoryExists)
+      {
+        std::cout << "Directory already exists: " << filePath << "\n";
+        return 0;
+      }
+
+      aww::Result createDirResult = deps.fs_create_directories(filePath);
+      if (createDirResult.isFailed())
+      {
+        std::cout << "Failed to create directory: " << createDirResult.error() << "; tag=evmmi0npk45\n";
+        return 1;
+      }
+
+      std::cout << "Created directory: " << filePath << "\n";
       return 0;
     }
 
@@ -87,7 +99,17 @@ namespace aww::internal::aww_create
     if (hasTemplateModifier)
     {
       templatePath = awwCreateTemplates / ("template-" + templateModifier + fileExtensionWithDot);
-      if (deps.fs_exists(templatePath).isFailed())
+
+      bool outIsTemplateFileExists = false;
+      aww::Result templateFileExistsResult = deps.fs_exists(templatePath, outIsTemplateFileExists);
+
+      if (templateFileExistsResult.isFailed())
+      {
+        std::cout << "Failed to check if template file exists: " << templateFileExistsResult.error() << "; tag=de702q38ud3\n";
+        return 1;
+      }
+
+      if (!outIsTemplateFileExists)
       {
         templatePath = awwCreateTemplates / ("template" + fileExtensionWithDot);
       }
@@ -99,7 +121,16 @@ namespace aww::internal::aww_create
 
     std::cout << "templatePath: " << templatePath << "\n";
 
-    if (deps.fs_exists(templatePath).isOk())
+    bool outIsTemplateFileExists = false;
+    aww::Result templateFileExistsResult = deps.fs_exists(templatePath, outIsTemplateFileExists);
+
+    if (templateFileExistsResult.isFailed())
+    {
+      std::cout << "Failed to check if template file exists: " << templateFileExistsResult.error() << "; tag=htok5anj6gq\n";
+      return 1;
+    }
+
+    if (outIsTemplateFileExists)
     {
       // TODO 2023-06-03 REFACTOR DEPENDENCIES
       // Continue HERE
@@ -218,7 +249,16 @@ namespace aww::internal::aww_create
   aww::Result try_create_file_by_path(const fs::path &filePath, aww_create_io_dependencies_interface &deps)
   {
     // if file exists, return error
-    if (deps.fs_exists(filePath).isOk())
+
+    bool outFileExists = false;
+    aww::Result fsExistsResult = deps.fs_exists(filePath, outFileExists);
+
+    if (fsExistsResult.isFailed())
+    {
+      return fsExistsResult;
+    }
+
+    if (outFileExists)
     {
       return aww::Result::fail("File already exists: '" + filePath.string() + "'");
     }
@@ -248,9 +288,17 @@ namespace aww::internal::aww_create
       for (std::size_t i = 0; i < filePathParts.size() - 1; i++)
       {
         parentPath /= filePathParts[i];
-        if (deps.fs_exists(parentPath).isFailed())
-        {
 
+        bool isDirectoryExists = false;
+        aww::Result fsDirExistsResult = deps.fs_exists(parentPath, isDirectoryExists);
+
+        if (fsDirExistsResult.isFailed())
+        {
+          return fsDirExistsResult;
+        }
+
+        if (!isDirectoryExists)
+        {
           aww::Result createDirResult = deps.fs_create_directories(parentPath);
 
           if (createDirResult.isFailed())
