@@ -108,26 +108,36 @@ int aww_main(const std::vector<std::string> &cmdArgs)
 
   switch (awwTool)
   {
-  case AwwTool::Create:
+  case AwwTool::Create: {
     return aww::internal::aww_create::aww_create_main(awwExecutableArgs);
-  case AwwTool::Date:
-    return aww::internal::aww_date::aww_date_main(awwExecutableArgs);
-  case AwwTool::GitOpen:
+  }
+  case AwwTool::Date: {
+    aww::internal::aww_date::aww_date_io_dependencies deps;
+    return aww::internal::aww_date::aww_date_main(awwExecutableArgs, deps);
+  }
+  case AwwTool::GitOpen: {
     return aww::internal::aww_git_open::aww_git_open_main(awwExecutableArgs);
-  case AwwTool::Guid:
+  }
+  case AwwTool::Guid: {
     return aww::internal::aww_guid::aww_guid_main(awwExecutableArgs);
-  case AwwTool::Open:
+  }
+  case AwwTool::Open: {
     return aww::internal::aww_open::aww_open_main(awwExecutableArgs);
-  case AwwTool::Run:
+  }
+  case AwwTool::Run: {
     return aww::internal::aww_run::aww_run_main(awwExecutableArgs);
-  case AwwTool::Tag:
+  }
+  case AwwTool::Tag: {
     return aww::internal::aww_tag::aww_tag_main(awwExecutableArgs);
-  case AwwTool::Term:
+  }
+  case AwwTool::Term: {
     return aww::internal::aww_term::aww_term_main(awwExecutableArgs);
-  case AwwTool::Toast:
+  }
+  case AwwTool::Toast: {
     return aww::internal::aww_toast::aww_toast_main(awwExecutableArgs);
-  default:
+  }
+  default: {
     std::cout << "No aww executable found\n";
     return 1;
-  }
+  }}
 }
