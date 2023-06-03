@@ -132,9 +132,6 @@ namespace aww::internal::aww_create
 
     if (outIsTemplateFileExists)
     {
-      // TODO 2023-06-03 REFACTOR DEPENDENCIES
-      // Continue HERE
-
       std::cout << "Creating file from template: " << filePath << "\n";
 
       std::vector<std::string> templateLines;
