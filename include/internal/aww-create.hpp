@@ -25,6 +25,8 @@ namespace aww::internal::aww_create
       virtual inline aww::Result fs_exists(const std::filesystem::path& target, bool& outFileExists) = 0;
       virtual inline aww::Result fs_create_directories(const std::filesystem::path& path) = 0;
       virtual inline aww::Result fs_create_empty_file(const std::filesystem::path& path) = 0;
+      virtual inline aww::Result fs_read_lines(const std::filesystem::path& filePath, std::vector<std::string>& outFileLines) = 0;
+      virtual inline aww::Result fs_write_lines(const std::filesystem::path& filePath, const std::vector<std::string>& lines) = 0;
 
       virtual void show_notification(const std::string &title, const std::string &message) = 0;
   };
@@ -79,13 +81,58 @@ namespace aww::internal::aww_create
         }
       }
 
-      void show_notification(const std::string &title, const std::string &message) override {
+      inline aww::Result fs_read_lines(const std::filesystem::path& filePath, std::vector<std::string>& outFileLines) override {
+        try {
+          std::ifstream file(filePath);
+          if (!file.is_open()) {
+            return aww::Result::fail("Failed to open file for reading.");
+          }
+
+          std::string line;
+          while (std::getline(file, line)) {
+            outFileLines.push_back(line);
+          }
+
+          file.close();
+          return aww::Result::ok();
+        } catch (const std::exception& e) {
+          std::string errorMessage = "Error reading file: " + std::string(e.what());
+          return aww::Result::fail(errorMessage);
+        } catch (...) {
+          std::string errorMessage = "Unknown error occurred while reading file.";
+          return aww::Result::fail(errorMessage);
+        }
+      }
+
+      inline aww::Result fs_write_lines(const std::filesystem::path& filePath, const std::vector<std::string>& lines) override {
+        try {
+          std::ofstream file(filePath);
+          if (!file.is_open()) {
+            return aww::Result::fail("Failed to open file for writing.");
+          }
+
+          for (const auto& line : lines) {
+            file << line << std::endl;
+          }
+
+          file.close();
+          return aww::Result::ok();
+        } catch (const std::exception& e) {
+          std::string errorMessage = "Error writing file: " + std::string(e.what());
+          return aww::Result::fail(errorMessage);
+        } catch (...) {
+          std::string errorMessage = "Unknown error occurred while writing file.";
+          return aww::Result::fail(errorMessage);
+        }
+      }
+
+      void show_notification(const std::string &title, const std::string& message) override {
         aww::os::actions::showNotification(title, message);
       }
   };
 
-  aww::Result try_create_file_by_path(const fs::path &filePath, aww_create_io_dependencies_interface &deps);
-  int aww_create_main(const std::vector<std::string> &cmdArgs, aww_create_io_dependencies_interface &deps);
+  aww::Result try_create_file_by_path(const fs::path& filePath, aww_create_io_dependencies_interface& deps);
+  int aww_create_main(const std::vector<std::string>& cmdArgs, aww_create_io_dependencies_interface& deps);
 }
 
 #endif // AWW_CREATE_HPP

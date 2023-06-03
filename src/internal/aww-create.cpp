@@ -136,11 +136,17 @@ namespace aww::internal::aww_create
       // Continue HERE
 
       std::cout << "Creating file from template: " << filePath << "\n";
-      std::ifstream templateFile(templatePath);
-      std::ofstream file(filePath);
 
-      // read file line by line and output to file
-      std::string line;
+      std::vector<std::string> templateLines;
+      std::vector<std::string> newFileLines;
+
+      aww::Result readTemplateResult = deps.fs_read_lines(templatePath, templateLines);
+
+      if (readTemplateResult.isFailed())
+      {
+        std::cout << "Failed to read template file: " << readTemplateResult.error() << "; tag=0bo9nvppdbh\n";
+        return 1;
+      }
 
       // Here is a heuristic to determine if a line has a template variable
       // an example is "___FILE_NAME___"
@@ -161,9 +167,8 @@ namespace aww::internal::aww_create
         aww::string::to_valid_identifier(TargetFileName)
       );
 
-      while (std::getline(templateFile, line))
+      for (std::string& line : templateLines)
       {
-
         if (line.length() >= MinLineLenWithVariableHeuristic)
         {
           // search VariableStartOrEndToken in line
@@ -230,13 +235,16 @@ namespace aww::internal::aww_create
             tokenPos = line.find(VariableStartOrEndToken, offsetPos);
           }
         }
-
-        file << line << "\n";
+        newFileLines.push_back(line);
       }
 
-      // file << templateFile.rdbuf();
-      templateFile.close();
-      file.close();
+      aww::Result writeLinesResult = deps.fs_write_lines(filePath, newFileLines);
+
+      if (writeLinesResult.isFailed())
+      {
+        std::cout << "Failed to write file: " << writeLinesResult.error() << "; tag=wzogmbwb8w0\n";
+        return 1;
+      }
     }
     else
     {
