@@ -1,1 +1,1 @@
-cmake --build cmake-build-release --config Release
+cmake --build cmake-build --config Release

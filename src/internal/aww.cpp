@@ -109,7 +109,8 @@ int aww_main(const std::vector<std::string> &cmdArgs)
   switch (awwTool)
   {
   case AwwTool::Create: {
-    return aww::internal::aww_create::aww_create_main(awwExecutableArgs);
+    aww::internal::aww_create::aww_create_io_dependencies deps;
+    return aww::internal::aww_create::aww_create_main(awwExecutableArgs, deps);
   }
   case AwwTool::Date: {
     aww::internal::aww_date::aww_date_io_dependencies deps;

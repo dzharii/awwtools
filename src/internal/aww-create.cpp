@@ -16,7 +16,7 @@ namespace aww::internal::aww_create
 {
   namespace fs = std::filesystem;
 
-  int aww_create_main(const std::vector<std::string> &cmdArgs)
+  int aww_create_main(const std::vector<std::string> &cmdArgs, aww_create_io_dependencies_interface &deps)
   {
     if (cmdArgs.size() == 0)
     {
@@ -40,7 +40,7 @@ namespace aww::internal::aww_create
     // Like "date" will create a file with the current date prepending filename
     if (templateModifier == "date")
     {
-      std::string date = aww::date::getDateYYYYMMDD();
+      std::string date = deps.get_date_yyyymmdd();
       std::string fileName = filePath.filename().string();
       std::string newFileName = date + "-" + fileName;
       filePath.replace_filename(newFileName);
@@ -53,23 +53,30 @@ namespace aww::internal::aww_create
     // check if file has extension. If not create a directory instead
     if (filePath.extension().string().empty())
     {
+
       std::cout << "Creating directory: " << filePath << "\n";
-      if (!fs::exists(filePath))
+      // THIS IS WHERE COM1 FAILS:
+      if (deps.fs_exists(filePath).isFailed())
       {
-        fs::create_directories(filePath);
+        aww::Result createDirResult = deps.fs_create_directories(filePath);
+        if (createDirResult.isFailed())
+        {
+          std::cout << "Failed to create directory: " << createDirResult.error() << "; tag=evmmi0npk45\n";
+          return 1;
+        }
         std::cout << "Created directory: " << filePath << "\n";
       }
       return 0;
     }
 
-    aww::Result createResult = try_create_file_by_path(filePath);
+    aww::Result createResult = try_create_file_by_path(filePath, deps);
     if (createResult.isFailed())
     {
-      std::cout << "Failed to create file: " << createResult.error() << "\n";
+      std::cout << "Failed to create file: " << createResult.error() << "; tag=44f628f70vo\n";
       return 1;
     }
 
-    fs::path awwExecutablePath = aww::fs::getCurrentExecutablePath();
+    fs::path awwExecutablePath = deps.fs_get_current_executable_path();
     fs::path awwExecutableDir = std::filesystem::absolute(awwExecutablePath.parent_path());
     fs::path awwCreateTemplates = awwExecutableDir / "aww-create-aww" / "templates";
 
@@ -80,7 +87,7 @@ namespace aww::internal::aww_create
     if (hasTemplateModifier)
     {
       templatePath = awwCreateTemplates / ("template-" + templateModifier + fileExtensionWithDot);
-      if (!fs::exists(templatePath))
+      if (deps.fs_exists(templatePath).isFailed())
       {
         templatePath = awwCreateTemplates / ("template" + fileExtensionWithDot);
       }
@@ -92,8 +99,11 @@ namespace aww::internal::aww_create
 
     std::cout << "templatePath: " << templatePath << "\n";
 
-    if (fs::exists(templatePath))
+    if (deps.fs_exists(templatePath).isOk())
     {
+      // TODO 2023-06-03 REFACTOR DEPENDENCIES
+      // Continue HERE
+
       std::cout << "Creating file from template: " << filePath << "\n";
       std::ifstream templateFile(templatePath);
       std::ofstream file(filePath);
@@ -205,10 +215,10 @@ namespace aww::internal::aww_create
     return 0;
   }
 
-  aww::Result try_create_file_by_path(const fs::path &filePath)
+  aww::Result try_create_file_by_path(const fs::path &filePath, aww_create_io_dependencies_interface &deps)
   {
     // if file exists, return error
-    if (fs::exists(filePath))
+    if (deps.fs_exists(filePath).isOk())
     {
       return aww::Result::fail("File already exists: '" + filePath.string() + "'");
     }
@@ -229,10 +239,8 @@ namespace aww::internal::aww_create
     }
     else if (filePathParts.size() == 1)
     {
-      // create file
-      std::ofstream file(filePath);
-      file.close();
-      return aww::Result::ok();
+      // create an empty file
+      return deps.fs_create_empty_file(filePath);
     }
     else
     {
@@ -240,20 +248,23 @@ namespace aww::internal::aww_create
       for (std::size_t i = 0; i < filePathParts.size() - 1; i++)
       {
         parentPath /= filePathParts[i];
-        if (!fs::exists(parentPath))
+        if (deps.fs_exists(parentPath).isFailed())
         {
-          if (!fs::create_directory(parentPath))
+
+          aww::Result createDirResult = deps.fs_create_directories(parentPath);
+
+          if (createDirResult.isFailed())
           {
-            return aww::Result::fail("Failed to create directory: '" + parentPath.string() + "'");
+            return aww::Result::fail(
+              "Failed to create directory: '" + parentPath.string() + "':\n " +
+              createDirResult.error());
           }
         }
       }
       // create file
       std::cout << "Creating file: " << filePath << "\n";
-      std::ofstream file(filePath);
-      file.close();
-    }
 
-    return aww::Result::ok();
+      return deps.fs_create_empty_file(filePath);
+    }
   }
 }
