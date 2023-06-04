@@ -178,6 +178,8 @@ namespace aww::internal::aww_create
   };
 
   aww::Result try_create_file_by_path(const fs::path& filePath, aww_create_io_dependencies_interface& deps);
+  aww::Result create_new_directory_scenario(std::filesystem::path& filePath, aww_create_io_dependencies_interface &deps);
+  aww::Result create_new_file_from_template_scenario(std::filesystem::path& templatePath, std::filesystem::path& filePath, aww_create_io_dependencies_interface &deps);
   int aww_create_main(const std::vector<std::string>& cmdArgs, aww_create_io_dependencies_interface& deps);
 }
 

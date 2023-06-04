@@ -53,31 +53,12 @@ namespace aww::internal::aww_create
     // check if file has extension. If not create a directory instead
     if (filePath.extension().string().empty())
     {
-      std::cout << "Creating directory: " << filePath << "\n";
-      bool outIsDirectoryExists = false;
-
-      aww::Result directoryAlreadyExistResult = deps.fs_exists(filePath, outIsDirectoryExists);
-
-      if (directoryAlreadyExistResult.isFailed())
+      aww::Result createDirectoryResult = create_new_directory_scenario(filePath, deps);
+      if (createDirectoryResult.isFailed())
       {
-        std::cout << "Failed to check if directory exists: " << directoryAlreadyExistResult.error() << "; tag=qu0rbfob4ey\n";
+        std::cout << createDirectoryResult.error();
         return 1;
       }
-
-      if (outIsDirectoryExists)
-      {
-        std::cout << "Directory already exists: " << filePath << "\n";
-        return 0;
-      }
-
-      aww::Result createDirResult = deps.fs_create_directories(filePath);
-      if (createDirResult.isFailed())
-      {
-        std::cout << "Failed to create directory: " << createDirResult.error() << "; tag=evmmi0npk45\n";
-        return 1;
-      }
-
-      std::cout << "Created directory: " << filePath << "\n";
       return 0;
     }
 
@@ -132,6 +113,55 @@ namespace aww::internal::aww_create
 
     if (outIsTemplateFileExists)
     {
+      aww::Result createFileFromTemplateResult = create_new_file_from_template_scenario(templatePath, filePath, deps);
+      if (createFileFromTemplateResult.isFailed())
+      {
+        std::cout << createFileFromTemplateResult.error();
+        return 1;
+      }
+    }
+    else
+    {
+      std::cout << "No template found for file extension: " << fileExtensionWithDot << "\n";
+    }
+
+    return 0;
+  }
+
+  aww::Result create_new_directory_scenario(std::filesystem::path& filePath, aww_create_io_dependencies_interface &deps) {
+    std::cout << "Creating directory: " << filePath << "\n";
+    bool outIsDirectoryExists = false;
+
+    aww::Result directoryAlreadyExistResult = deps.fs_exists(filePath, outIsDirectoryExists);
+
+    if (directoryAlreadyExistResult.isFailed())
+    {
+      std::string errorMessage =  "Failed to check if directory exists: " +
+        directoryAlreadyExistResult.error() + "; tag=qu0rbfob4ey\n";
+      return aww::Result::fail(errorMessage);
+    }
+
+    if (outIsDirectoryExists)
+    {
+      std::cout << "Directory already exists: " << filePath << "\n";
+      std::string errorMessage = "Directory already exists: " + filePath.string() + "; tag=y5k2qwmd7kv\n";
+      return aww::Result::ok();
+    }
+
+    aww::Result createDirResult = deps.fs_create_directories(filePath);
+    if (createDirResult.isFailed())
+    {
+      std::string errorMessage = "Failed to create directory: " + createDirResult.error() + "; tag=evmmi0npk45\n";
+      return aww::Result::fail(errorMessage);
+    }
+
+    std::cout << "Created directory: " << filePath << "\n";
+    return aww::Result::ok();
+  }
+
+
+  aww::Result create_new_file_from_template_scenario(std::filesystem::path& templatePath, std::filesystem::path& filePath, aww_create_io_dependencies_interface &deps)
+  {
       std::cout << "Creating file from template: " << filePath << "\n";
 
       std::vector<std::string> templateLines;
@@ -141,8 +171,10 @@ namespace aww::internal::aww_create
 
       if (readTemplateResult.isFailed())
       {
-        std::cout << "Failed to read template file: " << readTemplateResult.error() << "; tag=0bo9nvppdbh\n";
-        return 1;
+        std::string readFailedMessage = "Failed to read template file: " +
+          readTemplateResult.error() + "; tag=0bo9nvppdbh\n";
+
+        return aww::Result::fail(readFailedMessage);
       }
 
       // Here is a heuristic to determine if a line has a template variable
@@ -239,16 +271,11 @@ namespace aww::internal::aww_create
 
       if (writeLinesResult.isFailed())
       {
-        std::cout << "Failed to write file: " << writeLinesResult.error() << "; tag=wzogmbwb8w0\n";
-        return 1;
+        std::string writeErrorMessage = "Failed to write file: " +  writeLinesResult.error() +  "; tag=wzogmbwb8w0\n";
+        return aww::Result::fail(writeErrorMessage);
       }
-    }
-    else
-    {
-      std::cout << "No template found for file extension: " << fileExtensionWithDot << "\n";
-    }
 
-    return 0;
+      return aww::Result::ok();
   }
 
   aww::Result try_create_file_by_path(const fs::path &filePath, aww_create_io_dependencies_interface &deps)
