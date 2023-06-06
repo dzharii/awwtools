@@ -26,13 +26,10 @@ namespace aww::internal::aww_create
     }
 
     fs::path filePath = cmdArgs[0];
-
-    bool hasTemplateModifier = false;
-    std::string templateModifier;
+    std::string templateModifier = "";
 
     if (cmdArgs.size() == 2)
     {
-      hasTemplateModifier = true;
       templateModifier = cmdArgs[1];
     }
 
@@ -45,8 +42,7 @@ namespace aww::internal::aww_create
       std::string newFileName = date + "-" + fileName;
       filePath.replace_filename(newFileName);
 
-      // processed the pseudo modifier, so set hasTemplateModifier to false
-      hasTemplateModifier = false;
+      // processed the pseudo modifier
       templateModifier = "";
     }
 
@@ -71,36 +67,19 @@ namespace aww::internal::aww_create
 
     fs::path awwExecutablePath = deps.fs_get_current_executable_path();
     fs::path awwExecutableDir = std::filesystem::absolute(awwExecutablePath.parent_path());
-    fs::path awwCreateTemplates = awwExecutableDir / "aww-create-aww" / "templates";
-
-    // get file extension from filePath
-    std::string fileExtensionWithDot = filePath.extension().string();
+    fs::path awwCreateTemplatesDir = awwExecutableDir / "aww-create-aww" / "templates";
 
     fs::path templatePath;
-    if (hasTemplateModifier)
+    aww::Result findExistingTemplateResult = assume_template_path(awwCreateTemplatesDir, filePath, templateModifier, templatePath, deps);
+
+    if (findExistingTemplateResult.isFailed())
     {
-      templatePath = awwCreateTemplates / ("template-" + templateModifier + fileExtensionWithDot);
-
-      bool outIsTemplateFileExists = false;
-      aww::Result templateFileExistsResult = deps.fs_exists(templatePath, outIsTemplateFileExists);
-
-      if (templateFileExistsResult.isFailed())
-      {
-        std::cout << "Failed to check if template file exists: " << templateFileExistsResult.error() << "; tag=de702q38ud3\n";
-        return 1;
-      }
-
-      if (!outIsTemplateFileExists)
-      {
-        templatePath = awwCreateTemplates / ("template" + fileExtensionWithDot);
-      }
-    }
-    else
-    {
-      templatePath = awwCreateTemplates / ("template" + fileExtensionWithDot);
+      std::cout << findExistingTemplateResult.error() << "; tag=de702q38ud3\n";
+      return 1;
     }
 
-    std::cout << "templatePath: " << templatePath << "\n";
+
+    std::cout << "assumed templatePath: " << templatePath << "\n";
 
     bool outIsTemplateFileExists = false;
     aww::Result templateFileExistsResult = deps.fs_exists(templatePath, outIsTemplateFileExists);
@@ -111,9 +90,13 @@ namespace aww::internal::aww_create
       return 1;
     }
 
+    // At this point, an empty file has been created.
+    // here we check if a template file exists for the file extension
+    // if it does, we copy the template file to the new file
+    // otherwise, just keep the empty file
     if (outIsTemplateFileExists)
     {
-      aww::Result createFileFromTemplateResult = create_new_file_from_template_scenario(templatePath, filePath, deps);
+      aww::Result createFileFromTemplateResult = append_template_content_to_new_file_scenario(templatePath, filePath, deps);
       if (createFileFromTemplateResult.isFailed())
       {
         std::cout << createFileFromTemplateResult.error();
@@ -122,13 +105,54 @@ namespace aww::internal::aww_create
     }
     else
     {
-      std::cout << "No template found for file extension: " << fileExtensionWithDot << "\n";
+      std::cout << "No template found for file : " << filePath.string() << "\n";
     }
 
     return 0;
   }
 
-  aww::Result create_new_directory_scenario(std::filesystem::path& filePath, aww_create_io_dependencies_interface &deps) {
+
+  aww::Result assume_template_path(const std::filesystem::path& awwCreateTemplatesDir, const std::filesystem::path& targetFilePath, const std::string& templateModifier, std::filesystem::path& outTemplatePath, aww_create_io_dependencies_interface &deps) {
+
+    // print all arguments
+    std::cout << "Inside assume_template_path\n";
+    std::cout << "awwCreateTemplatesDir: " << awwCreateTemplatesDir << "\n";
+    std::cout << "targetFilePath: " << targetFilePath << "\n";
+    std::cout << "templateModifier: " << templateModifier << "\n";
+
+    std::filesystem::path assumedTemplatePath;
+
+    // get file extension from filePath
+    std::string fileExtensionWithDot = targetFilePath.extension().string();
+
+    if (!templateModifier.empty())
+    {
+      assumedTemplatePath = awwCreateTemplatesDir / ("template-" + templateModifier + fileExtensionWithDot);
+
+      bool outIsTemplateFileExists = false;
+      aww::Result templateFileExistsResult = deps.fs_exists(assumedTemplatePath, outIsTemplateFileExists);
+
+      if (templateFileExistsResult.isFailed())
+      {
+        std::string errorMessage = "Failed to check if template file exists: " + templateFileExistsResult.error();
+        return aww::Result::fail(errorMessage);
+      }
+
+      if (!outIsTemplateFileExists)
+      {
+        assumedTemplatePath = awwCreateTemplatesDir / ("template" + fileExtensionWithDot);
+      }
+    }
+    else
+    {
+      assumedTemplatePath = awwCreateTemplatesDir / ("template" + fileExtensionWithDot);
+    }
+
+    outTemplatePath = assumedTemplatePath;
+    return aww::Result::ok();
+  }
+
+  aww::Result create_new_directory_scenario(const std::filesystem::path& filePath, aww_create_io_dependencies_interface &deps) {
     std::cout << "Creating directory: " << filePath << "\n";
     bool outIsDirectoryExists = false;
 
@@ -160,7 +184,7 @@ namespace aww::internal::aww_create
   }
 
 
-  aww::Result create_new_file_from_template_scenario(std::filesystem::path& templatePath, std::filesystem::path& filePath, aww_create_io_dependencies_interface &deps)
+  aww::Result append_template_content_to_new_file_scenario(const std::filesystem::path& templatePath, const std::filesystem::path& filePath, aww_create_io_dependencies_interface &deps)
   {
       std::cout << "Creating file from template: " << filePath << "\n";
 
@@ -172,7 +196,9 @@ namespace aww::internal::aww_create
       if (readTemplateResult.isFailed())
       {
         std::string readFailedMessage = "Failed to read template file: " +
-          readTemplateResult.error() + "; tag=0bo9nvppdbh\n";
+          readTemplateResult.error() +
+          "File path: '" + templatePath.string() + "'" +
+          "; tag=0bo9nvppdbh\n";
 
         return aww::Result::fail(readFailedMessage);
       }
