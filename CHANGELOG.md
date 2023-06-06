@@ -1,5 +1,13 @@
 # aww-tools changelog
 
+## 2023-06-05
+- The Great Unit testing refactoring
+- Introduced dependency pattern for input/output dependencies.
+- refactored `aww date` and `aww create` to use dependency injection and covered
+the utils with unit-tests.
+- `CPP_HEADER_FILE_NAME` renamed to `CAPITALIZED_FILE_NAME`
+This is important milestone to make code more stable and perform less manual adhoc tests.
+
 ## 2023-05-01
 - fixed bug in aww run when failed command was reported as failed and then successful. O_O
 - wintoastlib -- removed debug output
