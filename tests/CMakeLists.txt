@@ -8,7 +8,7 @@ set(TESTFILES        # All .cpp files in tests/
     test-aww-common--aww-Result.cpp
     test-aww-tag.cpp
     test-aww-date.cpp
-    # test-aww-create.cpp
+    test-aww-create.cpp
 )
 
 set(TEST_MAIN unit_tests)   # Default name for test executable (change if you wish).

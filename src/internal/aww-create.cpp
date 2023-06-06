@@ -113,13 +113,6 @@ namespace aww::internal::aww_create
 
 
   aww::Result assume_template_path(const std::filesystem::path& awwCreateTemplatesDir, const std::filesystem::path& targetFilePath, const std::string& templateModifier, std::filesystem::path& outTemplatePath, aww_create_io_dependencies_interface &deps) {
-
-    // print all arguments
-    std::cout << "Inside assume_template_path\n";
-    std::cout << "awwCreateTemplatesDir: " << awwCreateTemplatesDir << "\n";
-    std::cout << "targetFilePath: " << targetFilePath << "\n";
-    std::cout << "templateModifier: " << templateModifier << "\n";
-
     std::filesystem::path assumedTemplatePath;
 
     // get file extension from filePath
