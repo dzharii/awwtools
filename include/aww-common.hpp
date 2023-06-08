@@ -145,6 +145,8 @@ namespace aww::fs
 {
   std::filesystem::path getCurrentExecutablePath(void);
 
+  aww::Result file_or_dir_exists(const std::filesystem::path& target, bool& outFileExists);
+
   /// @brief reads a text file at the given path and returns its contents as a string.
   /// @return file contents as a string
   std::string readAsciiTextFile(const std::filesystem::path &);
