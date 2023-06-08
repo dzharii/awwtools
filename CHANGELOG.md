@@ -1,9 +1,16 @@
 # aww-tools changelog
 
+
+## 2023-06-08
+
+- Refactor / move from `aww create` to `awwlib`
+  - `aww::fs::` file_or_dir_exists, create_directories,
+  - Rename camel case to snake case
+
+
 ## 2023-06-07
 
 - Use `aww-run-aww` for custom cmd, sh and ps1 scripts
-
 
 
 ## 2023-06-05

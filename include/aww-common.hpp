@@ -147,9 +147,15 @@ namespace aww::fs
 
   aww::Result file_or_dir_exists(const std::filesystem::path& target, bool& outFileExists);
 
-  /// @brief reads a text file at the given path and returns its contents as a string.
-  /// @return file contents as a string
+  aww::Result create_directories(const std::filesystem::path& path);
+
+  aww::Result create_empty_file(const std::filesystem::path& path);
+
+  aww::Result read_lines(const std::filesystem::path& filePath, std::vector<std::string>& outFileLines);
+
   std::string readAsciiTextFile(const std::filesystem::path &);
+
+  aww::Result write_lines(const std::filesystem::path& filePath, const std::vector<std::string>& lines);
 
   std::string normalizeFilePath(const std::string &);
 }

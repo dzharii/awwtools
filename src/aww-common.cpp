@@ -193,6 +193,78 @@ namespace aww::fs
     }
   }
 
+  aww::Result create_directories(const std::filesystem::path& path) {
+    try {
+      std::filesystem::create_directories(path);
+      return aww::Result::ok();
+    } catch (const std::exception& e) {
+      std::string errorMessage = "Error creating directories: " + std::string(e.what());
+      return aww::Result::fail(errorMessage);
+    } catch (...) {
+      std::string errorMessage = "Unknown error occurred while creating directories.";
+      return aww::Result::fail(errorMessage);
+    }
+  }
+
+  aww::Result create_empty_file(const std::filesystem::path& path) {
+    try {
+      std::ofstream file(path);
+      file.close();
+      return aww::Result::ok();
+    } catch (const std::exception& e) {
+      std::string errorMessage = "Error creating file '" + path.filename().string() + "': " + e.what();
+      return aww::Result::fail(errorMessage);
+    } catch (...) {
+      std::string errorMessage = "Unknown error occurred while creating file '" + path.filename().string() + "'.";
+      return aww::Result::fail(errorMessage);
+    }
+  }
+
+  aww::Result read_lines(const std::filesystem::path& filePath, std::vector<std::string>& outFileLines) {
+    try {
+      std::ifstream file(filePath);
+      if (!file.is_open()) {
+        return aww::Result::fail("Failed to open file for reading.");
+      }
+
+      std::string line;
+      while (std::getline(file, line)) {
+        outFileLines.push_back(line);
+      }
+
+      file.close();
+      return aww::Result::ok();
+    } catch (const std::exception& e) {
+      std::string errorMessage = "Error reading file: " + std::string(e.what());
+      return aww::Result::fail(errorMessage);
+    } catch (...) {
+      std::string errorMessage = "Unknown error occurred while reading file.";
+      return aww::Result::fail(errorMessage);
+    }
+  }
+
+  aww::Result write_lines(const std::filesystem::path& filePath, const std::vector<std::string>& lines) {
+        try {
+          std::ofstream file(filePath);
+          if (!file.is_open()) {
+            return aww::Result::fail("Failed to open file for writing.");
+          }
+
+          for (const auto& line : lines) {
+            file << line << std::endl;
+          }
+
+          file.close();
+          return aww::Result::ok();
+        } catch (const std::exception& e) {
+          std::string errorMessage = "Error writing file: " + std::string(e.what());
+          return aww::Result::fail(errorMessage);
+        } catch (...) {
+          std::string errorMessage = "Unknown error occurred while writing file.";
+          return aww::Result::fail(errorMessage);
+        }
+  }
+
   std::string readAsciiTextFile(const std::filesystem::path &path)
   {
     std::ifstream file(path);
