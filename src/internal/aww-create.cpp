@@ -50,7 +50,7 @@ namespace aww::internal::aww_create
     if (filePath.extension().string().empty())
     {
       aww::Result createDirectoryResult = create_new_directory_scenario(filePath, deps);
-      if (createDirectoryResult.isFailed())
+      if (createDirectoryResult.is_failed())
       {
         std::cout << createDirectoryResult.error();
         return 1;
@@ -59,7 +59,7 @@ namespace aww::internal::aww_create
     }
 
     aww::Result createResult = try_create_file_by_path(filePath, deps);
-    if (createResult.isFailed())
+    if (createResult.is_failed())
     {
       std::cout << "Failed to create file: " << createResult.error() << "; tag=44f628f70vo\n";
       return 1;
@@ -72,7 +72,7 @@ namespace aww::internal::aww_create
     fs::path templatePath;
     aww::Result findExistingTemplateResult = assume_template_path(awwCreateTemplatesDir, filePath, templateModifier, templatePath, deps);
 
-    if (findExistingTemplateResult.isFailed())
+    if (findExistingTemplateResult.is_failed())
     {
       std::cout << findExistingTemplateResult.error() << "; tag=de702q38ud3\n";
       return 1;
@@ -84,7 +84,7 @@ namespace aww::internal::aww_create
     bool outIsTemplateFileExists = false;
     aww::Result templateFileExistsResult = deps.fs_exists(templatePath, outIsTemplateFileExists);
 
-    if (templateFileExistsResult.isFailed())
+    if (templateFileExistsResult.is_failed())
     {
       std::cout << "Failed to check if template file exists: " << templateFileExistsResult.error() << "; tag=htok5anj6gq\n";
       return 1;
@@ -97,7 +97,7 @@ namespace aww::internal::aww_create
     if (outIsTemplateFileExists)
     {
       aww::Result createFileFromTemplateResult = append_template_content_to_new_file_scenario(templatePath, filePath, deps);
-      if (createFileFromTemplateResult.isFailed())
+      if (createFileFromTemplateResult.is_failed())
       {
         std::cout << createFileFromTemplateResult.error();
         return 1;
@@ -125,7 +125,7 @@ namespace aww::internal::aww_create
       bool outIsTemplateFileExists = false;
       aww::Result templateFileExistsResult = deps.fs_exists(assumedTemplatePath, outIsTemplateFileExists);
 
-      if (templateFileExistsResult.isFailed())
+      if (templateFileExistsResult.is_failed())
       {
         std::string errorMessage = "Failed to check if template file exists: " + templateFileExistsResult.error();
         return aww::Result::fail(errorMessage);
@@ -151,7 +151,7 @@ namespace aww::internal::aww_create
 
     aww::Result directoryAlreadyExistResult = deps.fs_exists(filePath, outIsDirectoryExists);
 
-    if (directoryAlreadyExistResult.isFailed())
+    if (directoryAlreadyExistResult.is_failed())
     {
       std::string errorMessage =  "Failed to check if directory exists: " +
         directoryAlreadyExistResult.error() + "; tag=qu0rbfob4ey\n";
@@ -166,7 +166,7 @@ namespace aww::internal::aww_create
     }
 
     aww::Result createDirResult = deps.fs_create_directories(filePath);
-    if (createDirResult.isFailed())
+    if (createDirResult.is_failed())
     {
       std::string errorMessage = "Failed to create directory: " + createDirResult.error() + "; tag=evmmi0npk45\n";
       return aww::Result::fail(errorMessage);
@@ -186,7 +186,7 @@ namespace aww::internal::aww_create
 
       aww::Result readTemplateResult = deps.fs_read_lines(templatePath, templateLines);
 
-      if (readTemplateResult.isFailed())
+      if (readTemplateResult.is_failed())
       {
         std::string readFailedMessage = "Failed to read template file: " +
           readTemplateResult.error() +
@@ -211,7 +211,7 @@ namespace aww::internal::aww_create
       const std::string TargetFileName = filePath.stem().string();
 
       // Capitalized TargetFileName
-      const std::string CapitalizedTargetFileName = aww::string::toupper(
+      const std::string CapitalizedTargetFileName = aww::string::to_upper(
         aww::string::to_valid_identifier(TargetFileName)
       );
 
@@ -265,7 +265,7 @@ namespace aww::internal::aww_create
             else if (variableName == CURRENT_DATE)
             {
               // replace ___CURRENT_DATE___ with the current date in YYYYMMDD format
-              const std::string replacement = aww::date::getDateYYYYMMDD();
+              const std::string replacement = aww::date::get_date_YYYYMMDD();
               line.replace(
                   tokenPos,
                   nextTokenPos + StartStopTokenLen - tokenPos,
@@ -288,7 +288,7 @@ namespace aww::internal::aww_create
 
       aww::Result writeLinesResult = deps.fs_write_lines(filePath, newFileLines);
 
-      if (writeLinesResult.isFailed())
+      if (writeLinesResult.is_failed())
       {
         std::string writeErrorMessage = "Failed to write file: " +  writeLinesResult.error() +  "; tag=wzogmbwb8w0\n";
         return aww::Result::fail(writeErrorMessage);
@@ -304,7 +304,7 @@ namespace aww::internal::aww_create
     bool outFileExists = false;
     aww::Result fsExistsResult = deps.fs_exists(filePath, outFileExists);
 
-    if (fsExistsResult.isFailed())
+    if (fsExistsResult.is_failed())
     {
       return fsExistsResult;
     }
@@ -343,7 +343,7 @@ namespace aww::internal::aww_create
         bool isDirectoryExists = false;
         aww::Result fsDirExistsResult = deps.fs_exists(parentPath, isDirectoryExists);
 
-        if (fsDirExistsResult.isFailed())
+        if (fsDirExistsResult.is_failed())
         {
           return fsDirExistsResult;
         }
@@ -352,7 +352,7 @@ namespace aww::internal::aww_create
         {
           aww::Result createDirResult = deps.fs_create_directories(parentPath);
 
-          if (createDirResult.isFailed())
+          if (createDirResult.is_failed())
           {
             return aww::Result::fail(
               "Failed to create directory: '" + parentPath.string() + "':\n " +

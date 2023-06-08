@@ -6,13 +6,13 @@
 
 TEST_CASE("aww::Result creates a successful result") {
   aww::Result result = aww::Result::ok();
-  CHECK(result.isOk());
-  CHECK(!result.isFailed());
+  CHECK(result.is_ok());
+  CHECK(!result.is_failed());
 }
 
 TEST_CASE("aww::Result creates a failed result with error message") {
   aww::Result result = aww::Result::fail("error");
-  CHECK(!result.isOk());
-  CHECK(result.isFailed());
+  CHECK(!result.is_ok());
+  CHECK(result.is_failed());
   CHECK(result.error() == "error");
 }

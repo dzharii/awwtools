@@ -5,6 +5,6 @@ namespace aww::banner
 {
   void NotificationDialogBox::show()
   {
-    aww::os::actions::showNotification(title, message);
+    aww::os::actions::show_notification(title, message);
   }
 }

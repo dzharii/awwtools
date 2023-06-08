@@ -10,9 +10,9 @@ namespace aww::internal::aww_guid
   int aww_guid_main([[maybe_unused]] const std::vector<std::string> &cmdArgs)
   {
     std::string guid;
-    aww::Result result = aww::util::getGuid(guid);
+    aww::Result result = aww::util::get_guid(guid);
 
-    if (result.isFailed())
+    if (result.is_failed())
     {
       std::cout << "Failed to get GUID" << result.error() << "\n";
       return 1;
@@ -22,13 +22,13 @@ namespace aww::internal::aww_guid
     {
       std::cout << "Copied to clipboard:\n"
                 << guid << "\n";
-      aww::os::actions::showNotification("aww guid", "The guid has been copied to the clipboard");
+      aww::os::actions::show_notification("aww guid", "The guid has been copied to the clipboard");
     }
     else
     {
       std::cout << "Failed to copy to clipboard:\n"
                 << guid << "\n";
-      aww::os::actions::showNotification("aww guid", "Failed to copy the guid to the clipboard");
+      aww::os::actions::show_notification("aww guid", "Failed to copy the guid to the clipboard");
     }
     return 0;
   }

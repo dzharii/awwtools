@@ -6,7 +6,7 @@
 namespace aww::date
 {
   // TODO: - 2022-10-18 [Exploring C++11, part 2 localtime and time again Kjellkod's Blog](https://kjellkod.wordpress.com/2013/01/22/exploring-c11-part-2-localtime-and-time-again/)
-  std::string getDateYYYYMMDD(void)
+  std::string get_date_YYYYMMDD(void)
   {
     std::string date;
     char buff[32]{};
@@ -35,7 +35,7 @@ namespace aww::string
     return out;
   }
 
-  std::string leftPadding(const std::string &inp, const char &padChar, const size_t &padLength)
+  std::string left_padding(const std::string &inp, const char &padChar, const size_t &padLength)
   {
     const size_t inpLength = inp.length();
     if (inpLength >= padLength)
@@ -47,7 +47,7 @@ namespace aww::string
     return padding + inp;
   }
 
-  std::string toupper(const std::string &inp)
+  std::string to_upper(const std::string &inp)
   {
     std::string out(inp);
     for (char &c : out)
@@ -57,7 +57,7 @@ namespace aww::string
     return out;
   }
 
-  std::string tolower(const std::string &inp)
+  std::string to_lower(const std::string &inp)
   {
     std::string out(inp);
     for (char &c : out)
@@ -146,7 +146,7 @@ namespace aww::os
 
 namespace aww::os::env
 {
-  aww::Result getUserHomeDir(std::filesystem::path &outHomeDir)
+  aww::Result get_user_home_dir(std::filesystem::path &outHomeDir)
   {
     char *homeDir = nullptr;
 
@@ -166,11 +166,11 @@ namespace aww::os::env
     return aww::Result::fail("Could not find user home directory");
   }
 
-  std::filesystem::path getAwwDotDir(void)
+  std::filesystem::path get_aww_dot_dir(void)
   {
     std::filesystem::path homeDir;
-    aww::Result result = getUserHomeDir(homeDir);
-    if (result.isFailed())
+    aww::Result result = get_user_home_dir(homeDir);
+    if (result.is_failed())
     {
       return std::filesystem::path(); // empty path
     }
@@ -265,14 +265,14 @@ namespace aww::fs
         }
   }
 
-  std::string readAsciiTextFile(const std::filesystem::path &path)
+  std::string read_ascii_text_file(const std::filesystem::path &path)
   {
     std::ifstream file(path);
     std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     return content;
   }
 
-  std::string normalizeFilePath(const std::string &inputPath)
+  std::string normalize_file_path(const std::string &inputPath)
   {
     std::filesystem::path path(inputPath);
     std::filesystem::path canonicalPath = std::filesystem::weakly_canonical(path);

@@ -25,18 +25,18 @@ namespace aww::internal::aww_open
     const std::string DEFAULT_OPEN_PATH = "."; // Current directory
     std::string fileToOpen = useDefaultInput ? DEFAULT_OPEN_PATH : cmdArgs[0];
 
-    fileToOpen = aww::fs::normalizeFilePath(fileToOpen);
+    fileToOpen = aww::fs::normalize_file_path(fileToOpen);
 
-    aww::Result launchFileRes = aww::os::actions::launchFile(fileToOpen);
-    if (launchFileRes.isFailed())
+    aww::Result launchFileRes = aww::os::actions::launch_file(fileToOpen);
+    if (launchFileRes.is_failed())
     {
       std::cout << "Failed to launch file " << launchFileRes.error() << "\n";
-      aww::os::actions::showNotification("aww open", "Failed to open file: " + fileToOpen);
+      aww::os::actions::show_notification("aww open", "Failed to open file: " + fileToOpen);
       return 1;
     }
     std::cout << "Launched file"
               << "\n";
-    aww::os::actions::showNotification("aww open", "The file was opened");
+    aww::os::actions::show_notification("aww open", "The file was opened");
     return 0;
   }
 }

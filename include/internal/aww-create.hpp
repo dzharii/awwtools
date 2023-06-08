@@ -80,11 +80,11 @@ namespace aww::internal::aww_create
   class aww_create_io_dependencies : public aww_create_io_dependencies_interface {
     public:
       std::string get_date_yyyymmdd() override {
-        return aww::date::getDateYYYYMMDD();
+        return aww::date::get_date_YYYYMMDD();
       }
 
       inline std::filesystem::path fs_get_current_executable_path() override {
-        return aww::fs::getCurrentExecutablePath();
+        return aww::fs::get_current_executable_path();
       }
 
       inline aww::Result fs_exists(const std::filesystem::path& target, bool& outFileExists) override {
@@ -109,7 +109,7 @@ namespace aww::internal::aww_create
       }
 
       void show_notification(const std::string &title, const std::string& message) override {
-        aww::os::actions::showNotification(title, message);
+        aww::os::actions::show_notification(title, message);
       }
   };
 

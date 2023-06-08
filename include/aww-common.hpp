@@ -39,13 +39,13 @@ namespace aww
       return Result(false, error);
     }
 
-    bool isOk() const
+    bool is_ok() const
     {
       return m_success;
     }
 
     /* Use hasValue to check if there is an error */
-    bool isFailed() const
+    bool is_failed() const
     {
       return !m_success;
     }
@@ -69,7 +69,7 @@ namespace aww::date
   /** Get the current date in YYYY-MM-DD format
    * @return Date string
    */
-  std::string getDateYYYYMMDD(void);
+  std::string get_date_YYYYMMDD(void);
 }
 
 namespace aww::os
@@ -95,7 +95,7 @@ namespace aww::os
    * Returns false if file does not exist
    * @returns true if file is executable
    */
-  bool canExecute(const std::filesystem::path &path);
+  bool can_execute(const std::filesystem::path &path);
 
   class Proccess
   {
@@ -116,34 +116,34 @@ namespace aww::os
     static void defaultExitCallback(int);
   };
 
-  std::vector<std::string> getCommandLineArgs(void);
+  std::vector<std::string> get_command_line_args(void);
 }
 
 namespace aww::os::actions
 {
-  aww::Result launchFile(const std::string &);
-  aww::Result showNotification(const std::string &, const std::string &);
+  aww::Result launch_file(const std::string &);
+  aww::Result show_notification(const std::string &, const std::string &);
 }
 
 namespace aww::os::env
 {
-  aww::Result getUserHomeDir(std::filesystem::path &);
-  std::filesystem::path getAwwDotDir(void);
+  aww::Result get_user_home_dir(std::filesystem::path &);
+  std::filesystem::path get_aww_dot_dir(void);
 }
 
 namespace aww::string
 {
   std::string join(const std::vector<std::string> &, const std::string &);
-  std::string leftPadding(const std::string &, const char &, const size_t &);
-  std::string toupper(const std::string &);
-  std::string tolower(const std::string &);
+  std::string left_padding(const std::string &, const char &, const size_t &);
+  std::string to_upper(const std::string &);
+  std::string to_lower(const std::string &);
   bool ends_with(const std::string& str, const std::string& suffix);
   std::string to_valid_identifier(const std::string &input);
 }
 
 namespace aww::fs
 {
-  std::filesystem::path getCurrentExecutablePath(void);
+  std::filesystem::path get_current_executable_path(void);
 
   aww::Result file_or_dir_exists(const std::filesystem::path& target, bool& outFileExists);
 
@@ -153,16 +153,16 @@ namespace aww::fs
 
   aww::Result read_lines(const std::filesystem::path& filePath, std::vector<std::string>& outFileLines);
 
-  std::string readAsciiTextFile(const std::filesystem::path &);
+  std::string read_ascii_text_file(const std::filesystem::path &);
 
   aww::Result write_lines(const std::filesystem::path& filePath, const std::vector<std::string>& lines);
 
-  std::string normalizeFilePath(const std::string &);
+  std::string normalize_file_path(const std::string &);
 }
 
 namespace aww::util
 {
-  aww::Result getGuid(std::string &);
+  aww::Result get_guid(std::string &);
 }
 
 namespace aww::draw
@@ -198,22 +198,22 @@ namespace aww::draw
       this->alpha = alpha;
     }
 
-    int getRed() const
+    int get_red() const
     {
       return red;
     }
 
-    int getGreen() const
+    int get_green() const
     {
       return green;
     }
 
-    int getBlue() const
+    int get_blue() const
     {
       return blue;
     }
 
-    int getAlpha() const
+    int get_alpha() const
     {
       return alpha;
     }

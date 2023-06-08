@@ -44,13 +44,13 @@ namespace aww::internal::aww_tag
     {
       std::cout << "Copied to clipboard:\n"
                 << tag << "\n";
-      aww::os::actions::showNotification("aww tag", "The tag has been copied to the clipboard");
+      aww::os::actions::show_notification("aww tag", "The tag has been copied to the clipboard");
     }
     else
     {
       std::cout << "Failed to copy to clipboard:\n"
                 << tag << "\n";
-      aww::os::actions::showNotification("aww tag", "Failed to copy the tag to the clipboard");
+      aww::os::actions::show_notification("aww tag", "Failed to copy the tag to the clipboard");
       return 1;
     }
     return 0;

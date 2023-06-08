@@ -32,7 +32,7 @@ enum class AwwTool
 
 AwwTool getAwwTool(const std::string &awwTool)
 {
-  const std::string awwToolLower = aww::string::tolower(awwTool);
+  const std::string awwToolLower = aww::string::to_lower(awwTool);
 
   if (awwToolLower == "aww-create")
   {
@@ -87,7 +87,7 @@ int aww_main(const std::vector<std::string> &cmdArgs)
   auto itCmdArg = cmdArgs.begin();
   for (; itCmdArg != cmdArgs.end(); ++itCmdArg)
   {
-    awwToolName += "-" + aww::string::tolower(*itCmdArg);
+    awwToolName += "-" + aww::string::to_lower(*itCmdArg);
     awwTool = getAwwTool(awwToolName);
 
     if (awwTool != AwwTool::None)

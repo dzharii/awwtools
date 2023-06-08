@@ -68,7 +68,7 @@ namespace aww::internal::aww_git_open
     std::ifstream file(gitConfigPath);
     std::string repoUrl;
     aww::Result findUrlResult = tryFindRepositoryUrlInGitConfig(file, repoUrl);
-    if (findUrlResult.isFailed())
+    if (findUrlResult.is_failed())
     {
       std::cout << "Failed to find repository url in git config "
                 << "[tryFindRepositoryUrlInGitConfig]"
@@ -103,7 +103,7 @@ namespace aww::internal::aww_git_open
           optionalPathAbsolute,
           webPath);
 
-      if (webPathConverted.isFailed())
+      if (webPathConverted.is_failed())
       {
         std::cout << "Failed to convert path to web url"
                   << webPathConverted.error()
@@ -115,16 +115,16 @@ namespace aww::internal::aww_git_open
       std::cout << "Opening file: " << webUrl << "\n";
     }
 
-    aww::Result launchFileRes = aww::os::actions::launchFile(webUrl);
-    if (launchFileRes.isFailed())
+    aww::Result launchFileRes = aww::os::actions::launch_file(webUrl);
+    if (launchFileRes.is_failed())
     {
       std::cout << "Failed to launch file" << launchFileRes.error() << "\n";
-      aww::os::actions::showNotification("aww git open", "Failed to open file in browser");
+      aww::os::actions::show_notification("aww git open", "Failed to open file in browser");
       return 1;
     }
     std::cout << "Launched file"
               << "\n";
-    aww::os::actions::showNotification("aww git open", "The file was opened in browser");
+    aww::os::actions::show_notification("aww git open", "The file was opened in browser");
     return 0;
   }
 
