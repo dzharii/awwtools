@@ -1,6 +1,13 @@
 # aww-tools changelog
 
+## 2023-06-07
+
+- Use `aww-run-aww` for custom cmd, sh and ps1 scripts
+
+
+
 ## 2023-06-05
+
 - The Great Unit testing refactoring
 - Introduced dependency pattern for input/output dependencies.
 - refactored `aww date` and `aww create` to use dependency injection and covered
@@ -55,7 +62,6 @@ Changelog created!
 `aww create` now creates folders when the file name does not have an extension. This makes it impossible to create extension-less files, but for the sake of simplicity -- it is what it is.
 
 `aww date` -- converted to use `main` implementation from lib.
-
 
 
 
