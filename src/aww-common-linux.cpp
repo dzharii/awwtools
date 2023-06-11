@@ -7,7 +7,7 @@
 
 namespace aww::os {
 
-  bool canExecute(const std::filesystem::path &path)
+  bool can_execute(const std::filesystem::path &path)
   {
     if (!std::filesystem::exists(path)) {
       return false;
@@ -25,7 +25,7 @@ namespace aww::os {
     return anyExecute;
   }
 
-  std::vector<std::string> getCommandLineArgs(void)
+  std::vector<std::string> get_command_line_args(void)
   {
     pid_t pid = getpid();
     std::vector<std::string> args;
@@ -46,7 +46,7 @@ namespace aww::os {
 
 namespace aww::os::actions
 {
-  aww::Result launchFile(const std::string &path)
+  aww::Result launch_file(const std::string &path)
   {
     // check path is null
     if (path.empty())
@@ -62,7 +62,7 @@ namespace aww::os::actions
     return aww::Result::fail("xdg-open failed");
   }
 
-  aww::Result showNotification(
+  aww::Result show_notification(
     const std::string &title,
     const std::string &message)
   {
@@ -88,7 +88,7 @@ namespace aww::os::actions
 
 namespace aww::fs
 {
-    std::filesystem::path getCurrentExecutablePath(void)
+    std::filesystem::path get_current_executable_path(void)
     {
       char result[PATH_MAX];
       ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
@@ -99,7 +99,7 @@ namespace aww::fs
 namespace aww::util
 {
   // Implements GUID generations for linux using /proc/sys/kernel/random/uuid
-  aww::Result getGuid(std::string &out) {
+  aww::Result get_guid(std::string &out) {
     const static std::string uuidFile = "/proc/sys/kernel/random/uuid";
     std::ifstream file(uuidFile);
     if (file.is_open())

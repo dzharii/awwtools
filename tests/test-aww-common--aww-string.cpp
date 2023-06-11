@@ -10,37 +10,37 @@ TEST_CASE("aww::string::join returns joined string")
   CHECK(aww::string::join({ }, " - ") == "");
 }
 
-// doctests for aww::string::leftPadding std::string leftPadding(const std::string &, const char &, const size_t &);
-TEST_CASE("aww::string::leftPadding returns left padded string")
+// doctests for aww::string::left_padding std::string left_padding(const std::string &, const char &, const size_t &);
+TEST_CASE("aww::string::left_padding returns left padded string")
 {
-  CHECK(aww::string::leftPadding("hello", ' ', 10) == "     hello");
-  CHECK(aww::string::leftPadding("hello", ' ', 5) == "hello");
-  CHECK(aww::string::leftPadding("hello", ' ', 1) == "hello");
-  CHECK(aww::string::leftPadding("hello", ' ', 0) == "hello");
+  CHECK(aww::string::left_padding("hello", ' ', 10) == "     hello");
+  CHECK(aww::string::left_padding("hello", ' ', 5) == "hello");
+  CHECK(aww::string::left_padding("hello", ' ', 1) == "hello");
+  CHECK(aww::string::left_padding("hello", ' ', 0) == "hello");
 }
 
-// doctests for aww::string::toupper std::string toupper(const std::string &);
-TEST_CASE("aww::string::toupper returns uppercase string")
+// doctests for aww::string::to_upper std::string to_upper(const std::string &);
+TEST_CASE("aww::string::to_upper returns uppercase string")
 {
-  CHECK(aww::string::toupper("hello") == "HELLO");
-  CHECK(aww::string::toupper("HELLO") == "HELLO");
-  CHECK(aww::string::toupper("hElLo") == "HELLO");
-  CHECK(aww::string::toupper("HeLlO") == "HELLO");
-  CHECK(aww::string::toupper("hElLo") == "HELLO");
-  CHECK(aww::string::toupper("hElLo") == "HELLO");
-  CHECK(aww::string::toupper("") == "");
+  CHECK(aww::string::to_upper("hello") == "HELLO");
+  CHECK(aww::string::to_upper("HELLO") == "HELLO");
+  CHECK(aww::string::to_upper("hElLo") == "HELLO");
+  CHECK(aww::string::to_upper("HeLlO") == "HELLO");
+  CHECK(aww::string::to_upper("hElLo") == "HELLO");
+  CHECK(aww::string::to_upper("hElLo") == "HELLO");
+  CHECK(aww::string::to_upper("") == "");
 }
 
-// doctests for aww::string::tolower std::string tolower(const std::string &);
-TEST_CASE("aww::string::tolower returns lowercase string")
+// doctests for aww::string::to_lower std::string to_lower(const std::string &);
+TEST_CASE("aww::string::to_lower returns lowercase string")
 {
-  CHECK(aww::string::tolower("hello") == "hello");
-  CHECK(aww::string::tolower("HELLO") == "hello");
-  CHECK(aww::string::tolower("hElLo") == "hello");
-  CHECK(aww::string::tolower("HeLlO") == "hello");
-  CHECK(aww::string::tolower("hElLo") == "hello");
-  CHECK(aww::string::tolower("hElLo") == "hello");
-  CHECK(aww::string::tolower("") == "");
+  CHECK(aww::string::to_lower("hello") == "hello");
+  CHECK(aww::string::to_lower("HELLO") == "hello");
+  CHECK(aww::string::to_lower("hElLo") == "hello");
+  CHECK(aww::string::to_lower("HeLlO") == "hello");
+  CHECK(aww::string::to_lower("hElLo") == "hello");
+  CHECK(aww::string::to_lower("hElLo") == "hello");
+  CHECK(aww::string::to_lower("") == "");
 }
 
 // doctests for aww::string::ends_with bool ends_with(const std::string& str, const std::string& suffix);

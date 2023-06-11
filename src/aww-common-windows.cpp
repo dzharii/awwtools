@@ -12,8 +12,8 @@
 
 
 namespace aww::os {
-  
-  bool canExecute(const std::filesystem::path &path)
+
+  bool can_execute(const std::filesystem::path &path)
   {
     const std::string fileExtension = path.extension().string();
     // fileExtension to lower case
@@ -31,7 +31,7 @@ namespace aww::os {
     return isExecutable;
   }
 
-  std::vector<std::string> getCommandLineArgs(void)
+  std::vector<std::string> get_command_line_args(void)
   {
     int argc;
     LPWSTR *argv = CommandLineToArgvW(GetCommandLineW(), &argc);
@@ -66,7 +66,7 @@ namespace aww::os {
 
 namespace aww::os::actions
 {
-  aww::Result launchFile(const std::string &path)
+  aww::Result launch_file(const std::string &path)
   {
     // check path is null
     if (path.empty())
@@ -162,7 +162,7 @@ namespace aww::os::actions
   };
 
 
-aww::Result showNotification(
+aww::Result show_notification(
     const std::string &title,
     const std::string &message)
   {
@@ -214,7 +214,7 @@ aww::Result showNotification(
 
 namespace aww::fs
 {
-  std::filesystem::path getCurrentExecutablePath(void)
+  std::filesystem::path get_current_executable_path(void)
   {
     char buffer[MAX_PATH];
     DWORD nchar;
@@ -229,7 +229,7 @@ namespace aww::fs
 
 namespace aww::util
 {
-  aww::Result getGuid(std::string &out)
+  aww::Result get_guid(std::string &out)
   {
     GUID guid;
     HRESULT hres = CoCreateGuid(&guid);

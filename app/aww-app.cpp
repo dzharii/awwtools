@@ -36,7 +36,7 @@ int main()
     // log appmanifestJson["description"]
     std::cout << "appmanifestJson[\"description\"]: " << appmanifestJson["description"] << "\n";
 
-    std::string myCommandlineArgs = aww::string::join(aww::os::getCommandLineArgs(), "<br />");
+    std::string myCommandlineArgs = aww::string::join(aww::os::get_command_line_args(), "<br />");
     std::cout << "myCommandlineArgs: " << myCommandlineArgs << "\n";
 
     // TODO Create a class for this with default values
@@ -72,7 +72,7 @@ int main()
 
     if (fs::exists(mainJavascriptFile))
     {
-      std::string mainJavascriptFileContents = aww::fs::readAsciiTextFile(mainJavascriptFile);
+      std::string mainJavascriptFileContents = aww::fs::read_ascii_text_file(mainJavascriptFile);
       std::cout << "mainJavascriptFileContents: " << mainJavascriptFileContents << "\n";
 
       w.eval(mainJavascriptFileContents);

@@ -23,7 +23,7 @@ namespace aww::internal::aww_date {
   class aww_date_io_dependencies : public aww_date_io_dependencies_interface {
     public:
       std::string get_date_yyyymmdd() override {
-        return aww::date::getDateYYYYMMDD();
+        return aww::date::get_date_YYYYMMDD();
       }
 
       bool clipboard_set_text(const std::string &text) override {
@@ -31,7 +31,7 @@ namespace aww::internal::aww_date {
       }
 
       void show_notification(const std::string &title, const std::string &message) override {
-        aww::os::actions::showNotification(title, message);
+        aww::os::actions::show_notification(title, message);
       }
   };
 

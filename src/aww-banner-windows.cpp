@@ -192,9 +192,9 @@ namespace aww::banner
 
     // Set the background color of the title
     const COLORREF titleBg = RGB(
-        titleBackgroundColor.getRed(),
-        titleBackgroundColor.getGreen(),
-        titleBackgroundColor.getBlue());
+        titleBackgroundColor.get_red(),
+        titleBackgroundColor.get_green(),
+        titleBackgroundColor.get_blue());
 
     const HBRUSH brush = CreateSolidBrush(titleBg);
     SendMessage(hwnd, WM_CTLCOLORSTATIC, (WPARAM)GetDC(hwnd), (LPARAM)brush);

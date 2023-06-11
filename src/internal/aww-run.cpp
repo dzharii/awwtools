@@ -53,7 +53,7 @@ namespace aww::internal::aww_run
     fs::path maybeScriptPath;
 
     aww::Result scriptFound = find_script(awwCommand, maybeScriptPath);
-    if (scriptFound.isOk())
+    if (scriptFound.is_ok())
     {
       std::cout << "Found script: " << maybeScriptPath << "\n";
       std::string scriptExtension = maybeScriptPath.extension().string();
@@ -102,7 +102,7 @@ namespace aww::internal::aww_run
     std::vector<std::string> cmdArgsCopy = cmdArgs;
 
     // replace aww command with the full path to the script
-    if (scriptFound.isOk())
+    if (scriptFound.is_ok())
     {
       cmdArgsCopy[0] = awwCommand;
     }
@@ -122,9 +122,9 @@ namespace aww::internal::aww_run
 
     if (exitCode != 0)
     {
-      aww::os::actions::showNotification("aww run", "Failed to run command");
+      aww::os::actions::show_notification("aww run", "Failed to run command");
     } else {
-      aww::os::actions::showNotification("aww run", "The command finished successfully");
+      aww::os::actions::show_notification("aww run", "The command finished successfully");
     }
 
     return exitCode;
@@ -140,7 +140,7 @@ namespace aww::internal::aww_run
 
     const fs::path currentDir = fs::absolute(fs::current_path());
     const fs::path awwScriptsDir = currentDir / "aww-scripts";
-    const fs::path awwDotScriptsDir = aww::os::env::getAwwDotDir() / "aww-scripts";
+    const fs::path awwDotScriptsDir = aww::os::env::get_aww_dot_dir() / "aww-scripts";
     const fs::path awwDir = currentDir / "aww";
 
     const fs::path batCurrentDirPath = currentDir / (scriptName + ".bat");
@@ -199,7 +199,7 @@ namespace aww::internal::aww_run
 
     const fs::path currentDir = fs::absolute(fs::current_path());
     const fs::path awwScriptsDir = currentDir / "aww-scripts";
-    const fs::path awwDotScriptsDir = aww::os::env::getAwwDotDir() / "aww-scripts";
+    const fs::path awwDotScriptsDir = aww::os::env::get_aww_dot_dir() / "aww-scripts";
     const fs::path awwDir = currentDir / "aww";
 
     const fs::path shCurrentDirPath = currentDir / (scriptName + ".sh");
@@ -247,7 +247,7 @@ namespace aww::internal::aww_run
 
     for (const fs::path &path : emptyLookupPath)
     {
-      if (fs::exists(path) && aww::os::canExecute(path))
+      if (fs::exists(path) && aww::os::can_execute(path))
       {
         outScriptPath = path;
         return aww::Result::ok();

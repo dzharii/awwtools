@@ -236,7 +236,7 @@ TEST_CASE("aww::internal::aww_create::try_create_file_by_path")
 
     // ASSERT
     CHECK_MESSAGE(
-        result.isFailed(),
+        result.is_failed(),
         "Result should be failed because file already exists"
     );
   }
@@ -258,7 +258,7 @@ TEST_CASE("aww::internal::aww_create::try_create_file_by_path")
 
     // ASSERT
     CHECK_MESSAGE(
-        result.isFailed(),
+        result.is_failed(),
         "Result should be failed because path is invalid"
     );
   }
@@ -287,7 +287,7 @@ TEST_CASE("aww::internal::aww_create::try_create_file_by_path")
 
     // ASSERT
     CHECK_MESSAGE(
-        result.isOk(),
+        result.is_ok(),
         "Result should be successful"
     );
   }
@@ -323,7 +323,7 @@ TEST_CASE("aww::internal::aww_create::try_create_file_by_path")
 
     // ASSERT
     CHECK_MESSAGE(
-        result.isOk(),
+        result.is_ok(),
         "Result should be successful"
     );
   }
@@ -351,7 +351,7 @@ TEST_CASE("aww::internal::aww_create::create_new_directory_scenario")
 
     // ASSERT
     CHECK_MESSAGE(
-        result.isOk(),
+        result.is_ok(),
         "Result should be successful even if directory already exists"
     );
   }
@@ -372,7 +372,7 @@ TEST_CASE("aww::internal::aww_create::create_new_directory_scenario")
 
     // ASSERT
     CHECK_MESSAGE(
-        result.isFailed(),
+        result.is_failed(),
         "Result should be failed if failed to check directory existence"
     );
   }
@@ -401,7 +401,7 @@ TEST_CASE("aww::internal::aww_create::create_new_directory_scenario")
 
     // ASSERT
     CHECK_MESSAGE(
-        result.isOk(),
+        result.is_ok(),
         "Result should be successful"
     );
   }
@@ -430,7 +430,7 @@ TEST_CASE("aww::internal::aww_create::create_new_directory_scenario")
 
     // ASSERT
     CHECK_MESSAGE(
-        result.isFailed(),
+        result.is_failed(),
         "Result should be failed if failed to create directory"
     );
   }
@@ -458,7 +458,7 @@ TEST_CASE("aww::internal::aww_create::append_template_content_to_new_file_scenar
 
     // ASSERT
     CHECK_MESSAGE(
-        result.isFailed(),
+        result.is_failed(),
         "Result should be failed if failed to read template file"
     );
   }
@@ -493,7 +493,7 @@ TEST_CASE("aww::internal::aww_create::append_template_content_to_new_file_scenar
 
     // ASSERT
     CHECK_MESSAGE(
-        result.isOk(),
+        result.is_ok(),
         "Result should be successful"
     );
 
@@ -532,7 +532,7 @@ TEST_CASE("aww::internal::aww_create::append_template_content_to_new_file_scenar
 
     // ASSERT
     CHECK_MESSAGE(
-        result.isFailed(),
+        result.is_failed(),
         "Result should be failed if failed to write file"
     );
   }
