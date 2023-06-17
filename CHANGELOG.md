@@ -1,5 +1,9 @@
 # aww-tools changelog
 
+## 2023-06-17
+
+- `aww_git_open` started refactoring to extract I/O dependencies
+
 
 ## 2023-06-08
 

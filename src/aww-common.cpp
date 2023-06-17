@@ -180,6 +180,20 @@ namespace aww::os::env
 
 namespace aww::fs
 {
+  aww::Result get_current_directory_absolute_path(std::filesystem::path& path) {
+    try {
+      path = std::filesystem::current_path();
+      path = std::filesystem::absolute(path);
+      return aww::Result::ok();
+    } catch (const std::exception& e) {
+      std::string errorMessage = "Error getting current directory: " + std::string(e.what());
+      return aww::Result::fail(errorMessage);
+    } catch (...) {
+      std::string errorMessage = "Unknown error occurred while getting current directory.";
+      return aww::Result::fail(errorMessage);
+    }
+  }
+
   aww::Result file_or_dir_exists(const std::filesystem::path& target, bool& outFileExists) {
     try {
       outFileExists = std::filesystem::exists(target);

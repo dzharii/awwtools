@@ -117,7 +117,8 @@ int aww_main(const std::vector<std::string> &cmdArgs)
     return aww::internal::aww_date::aww_date_main(awwExecutableArgs, deps);
   }
   case AwwTool::GitOpen: {
-    return aww::internal::aww_git_open::aww_git_open_main(awwExecutableArgs);
+    aww::internal::aww_git_open::aww_git_open_io_dependencies deps;
+    return aww::internal::aww_git_open::aww_git_open_main(awwExecutableArgs, deps);
   }
   case AwwTool::Guid: {
     return aww::internal::aww_guid::aww_guid_main(awwExecutableArgs);

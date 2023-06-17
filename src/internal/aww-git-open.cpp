@@ -14,7 +14,7 @@ namespace aww::internal::aww_git_open
 {
   namespace fs = std::filesystem;
 
-  int aww_git_open_main(const std::vector<std::string> &cmdArgs)
+  int aww_git_open_main(const std::vector<std::string> &cmdArgs, aww_git_open_io_dependencies_interface &deps)
   {
     if (cmdArgs.size() > 1)
     {
@@ -29,7 +29,17 @@ namespace aww::internal::aww_git_open
       optionalFileToOpen = cmdArgs[0];
     }
 
-    fs::path currentDir = fs::absolute(fs::current_path());
+    fs::path currentDir;
+
+    aww::Result currentDirResult = deps.fs_get_current_directory_absolute_path(currentDir);
+    if (currentDirResult.is_failed())
+    {
+      std::cout << "Failed to get current directory"
+                << currentDirResult.error()
+                << "\n";
+      return 1;
+    }
+
     fs::path optionalPathAbsolute;
 
     if (fs::exists(optionalFileToOpen))
