@@ -30,7 +30,6 @@ namespace aww::internal::aww_git_open
     }
 
     fs::path currentDir;
-
     aww::Result currentDirResult = deps.fs_get_current_directory_absolute_path(currentDir);
     if (currentDirResult.is_failed())
     {
