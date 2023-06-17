@@ -15,13 +15,25 @@ namespace aww::internal::aww_git_open
   class aww_git_open_io_dependencies_interface {
   public:
     virtual ~aww_git_open_io_dependencies_interface() = default;
-    virtual aww::Result fs_get_current_directory_absolute_path(fs::path &result) = 0;
+
+    virtual inline aww::Result fs_get_absolute_path(fs::path &result) = 0;
+    virtual inline aww::Result fs_get_current_directory_absolute_path(fs::path &result) = 0;
+    virtual inline aww::Result fs_exists(const std::filesystem::path& target, bool& outFileExists) = 0;
   };
 
   class aww_git_open_io_dependencies : public aww_git_open_io_dependencies_interface {
   public:
-    aww::Result fs_get_current_directory_absolute_path(fs::path &result) override {
+
+    inline aww::Result fs_get_absolute_path(fs::path &result) override {
+      return aww::fs::get_absolute_path(result);
+    }
+
+    inline aww::Result fs_get_current_directory_absolute_path(fs::path &result) override {
       return aww::fs::get_current_directory_absolute_path(result);
+    }
+
+    inline aww::Result fs_exists(const std::filesystem::path& target, bool& outFileExists) override {
+      return aww::fs::file_or_dir_exists(target, outFileExists);
     }
   };
 

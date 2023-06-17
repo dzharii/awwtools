@@ -41,9 +41,27 @@ namespace aww::internal::aww_git_open
 
     fs::path optionalPathAbsolute;
 
-    if (fs::exists(optionalFileToOpen))
+    bool optionalFileToOpenExists = false;
+    aww::Result optionalFileToOpenExistsResult = deps.fs_exists(optionalFileToOpen, optionalFileToOpenExists);
+    if (optionalFileToOpenExistsResult.is_failed())
     {
-      optionalPathAbsolute = fs::absolute(optionalFileToOpen);
+      std::cout << "Failed to check if file exists"
+                << optionalFileToOpenExistsResult.error()
+                << "\n";
+      return 1;
+    }
+
+    if (optionalFileToOpenExists)
+    {
+
+      aww::Result optionalPathAbsoluteResul = deps.fs_get_absolute_path(optionalPathAbsolute);
+      if (optionalPathAbsoluteResul.is_failed())
+      {
+        std::cout << "Failed to get absolute path"
+                  << optionalPathAbsoluteResul.error()
+                  << "\n";
+        return 1;
+      }
 
       // check if it is file or directory
       if (fs::is_directory(optionalPathAbsolute))
@@ -52,6 +70,7 @@ namespace aww::internal::aww_git_open
       }
       else
       {
+        //TODO:  get absolute parent path
         currentDir = fs::absolute(optionalPathAbsolute.parent_path());
       }
     }

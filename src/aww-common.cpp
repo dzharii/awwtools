@@ -180,6 +180,19 @@ namespace aww::os::env
 
 namespace aww::fs
 {
+  aww::Result get_absolute_path(std::filesystem::path& path) {
+    try {
+      path = std::filesystem::absolute(path);
+      return aww::Result::ok();
+    } catch (const std::exception& e) {
+      std::string errorMessage = "Error getting absolute path: " + std::string(e.what());
+      return aww::Result::fail(errorMessage);
+    } catch (...) {
+      std::string errorMessage = "Unknown error occurred while getting absolute path.";
+      return aww::Result::fail(errorMessage);
+    }
+  }
+
   aww::Result get_current_directory_absolute_path(std::filesystem::path& path) {
     try {
       path = std::filesystem::current_path();

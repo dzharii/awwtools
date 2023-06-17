@@ -144,6 +144,8 @@ namespace aww::string
 namespace aww::fs
 {
   std::filesystem::path get_current_executable_path(void);
+
+  aww::Result get_absolute_path(std::filesystem::path& path);
   aww::Result get_current_directory_absolute_path(std::filesystem::path& path);
 
   aww::Result file_or_dir_exists(const std::filesystem::path& target, bool& outFileExists);
