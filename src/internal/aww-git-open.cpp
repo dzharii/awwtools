@@ -52,7 +52,7 @@ namespace aww::internal::aww_git_open
 
     fs::path gitRepo;
 
-    bool gitRepoFound = findGitRepo(currentDir, gitRepo);
+    bool gitRepoFound = find_git_repo(currentDir, gitRepo);
 
     if (!gitRepoFound)
     {
@@ -67,11 +67,11 @@ namespace aww::internal::aww_git_open
     // read line by line
     std::ifstream file(gitConfigPath);
     std::string repoUrl;
-    aww::Result findUrlResult = tryFindRepositoryUrlInGitConfig(file, repoUrl);
+    aww::Result findUrlResult = try_find_repository_url_in_git_config(file, repoUrl);
     if (findUrlResult.is_failed())
     {
       std::cout << "Failed to find repository url in git config "
-                << "[tryFindRepositoryUrlInGitConfig]"
+                << "[try_find_repository_url_in_git_config]"
                 << findUrlResult.error()
                 << "\n";
       return 1;
@@ -80,7 +80,7 @@ namespace aww::internal::aww_git_open
     std::cout << "Found url: " << repoUrl << "\n";
 
     std::string webUrl;
-    bool convertedToWebUrl = tryConvertToGitUrl(repoUrl, webUrl);
+    bool convertedToWebUrl = try_convert_to_git_url(repoUrl, webUrl);
     if (!convertedToWebUrl)
     {
       std::cout << "Failed to convert git repo url to web url"
@@ -98,7 +98,7 @@ namespace aww::internal::aww_git_open
     if (!optionalPathAbsolute.empty())
     {
       std::string webPath;
-      aww::Result webPathConverted = getRelativeUrlPath(
+      aww::Result webPathConverted = get_relative_url_path(
           gitRepoAbsolute,
           optionalPathAbsolute,
           webPath);
@@ -128,7 +128,7 @@ namespace aww::internal::aww_git_open
     return 0;
   }
 
-  aww::Result getRelativeUrlPath(const fs::path &parentAbsPath, const fs::path &childAbsPath, std::string &result)
+  aww::Result get_relative_url_path(const fs::path &parentAbsPath, const fs::path &childAbsPath, std::string &result)
   {
     std::string parentPathStr = parentAbsPath.string();
     std::string childPathStr = childAbsPath.string();
@@ -157,7 +157,7 @@ namespace aww::internal::aww_git_open
     return aww::Result::ok();
   }
 
-  aww::Result tryFindRepositoryUrlInGitConfig(std::istream &gitConfigStream, std::string &gitSshOrHttpUri)
+  aww::Result try_find_repository_url_in_git_config(std::istream &gitConfigStream, std::string &gitSshOrHttpUri)
   {
     std::string result = "";
     std::string str;
@@ -209,7 +209,7 @@ namespace aww::internal::aww_git_open
   //  Attempts to convert git origin url to a web url
   //  git@github.com:dzharii/awwtools.git     => https://github.com/dzharii/awwtools.git
   //  https://github.com/dzharii/awwtools.git => https://github.com/dzharii/awwtools.git
-  bool tryConvertToGitUrl(const std::string &inputUrl, std::string &httpUrl)
+  bool try_convert_to_git_url(const std::string &inputUrl, std::string &httpUrl)
   {
     if (inputUrl.find("https://") == 0 || inputUrl.find("http://") == 0)
     {
@@ -256,7 +256,7 @@ namespace aww::internal::aww_git_open
     return false;
   }
 
-  bool findGitRepo(const fs::path &dirPath, fs::path &gitRepoPath)
+  bool find_git_repo(const fs::path &dirPath, fs::path &gitRepoPath)
   {
     std::cout << "Searching for git repo in: " << dirPath << "\n";
     fs::path currentDir(dirPath);
@@ -275,7 +275,7 @@ namespace aww::internal::aww_git_open
     if (!isRoot)
     {
       currentDir = currentDir.parent_path();
-      return findGitRepo(currentDir, gitRepoPath);
+      return find_git_repo(currentDir, gitRepoPath);
     }
     std::cout << "Reached root directory, no git repo found."
               << "\n";
