@@ -207,6 +207,19 @@ namespace aww::fs
     }
   }
 
+  aww::Result is_directory(const std::filesystem::path &path, bool &outIsDirectory) {
+    try {
+      outIsDirectory = std::filesystem::is_directory(path);
+      return aww::Result::ok();
+    } catch (const std::exception& e) {
+      std::string errorMessage = "Error checking if directory: " + std::string(e.what());
+      return aww::Result::fail(errorMessage);
+    } catch (...) {
+      std::string errorMessage = "Unknown error occurred while checking if directory.";
+      return aww::Result::fail(errorMessage);
+    }
+  }
+
   aww::Result file_or_dir_exists(const std::filesystem::path& target, bool& outFileExists) {
     try {
       outFileExists = std::filesystem::exists(target);

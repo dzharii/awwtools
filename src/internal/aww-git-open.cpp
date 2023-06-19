@@ -64,14 +64,15 @@ namespace aww::internal::aww_git_open
       }
 
       // check if it is file or directory
-      if (fs::is_directory(optionalPathAbsolute))
+      bool optionalPathIsDirectory = false;
+      aww::Result optionalPathIsDirectoryResult = deps.fs_is_directory(optionalPathAbsolute, optionalPathIsDirectory);
+      if (optionalPathIsDirectory)
       {
         currentDir = optionalPathAbsolute;
       }
       else
       {
-        //TODO:  get absolute parent path
-        currentDir = fs::absolute(optionalPathAbsolute.parent_path());
+        currentDir = optionalPathAbsolute.parent_path();
       }
     }
 
