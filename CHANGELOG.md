@@ -3,13 +3,17 @@
 ## 2023-06-19
 
 aww::Result improving experiment
-```cpp
-if (int a = Func1(), b = Func2(); a && b)
-{
-    // Do stuff with a and b.
-}
-```
 
+2023-06-20 [if statement - cppreference.com](https://en.cppreference.com/w/cpp/language/if)
+```cpp
+    if (aww::Result res = deps.fs_get_current_directory_absolute_path(currentDir); res.is_failed())
+    {
+      std::cout << "Failed to get current directory"
+                << res.error()
+                << "\n";
+      return 1;
+    }
+```
 
 
 
