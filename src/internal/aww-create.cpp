@@ -149,12 +149,12 @@ namespace aww::internal::aww_create
     std::cout << "Creating directory: " << filePath << "\n";
     bool outIsDirectoryExists = false;
 
-    aww::Result directoryAlreadyExistResult = deps.fs_exists(filePath, outIsDirectoryExists);
 
-    if (directoryAlreadyExistResult.is_failed())
+
+    if (aww::Result res = deps.fs_exists(filePath, outIsDirectoryExists); res.is_failed())
     {
       std::string errorMessage =  "Failed to check if directory exists: " +
-        directoryAlreadyExistResult.error() + "; tag=qu0rbfob4ey\n";
+        res.error() + "; tag=qu0rbfob4ey\n";
       return aww::Result::fail(errorMessage);
     }
 
@@ -165,10 +165,9 @@ namespace aww::internal::aww_create
       return aww::Result::ok();
     }
 
-    aww::Result createDirResult = deps.fs_create_directories(filePath);
-    if (createDirResult.is_failed())
+    if (aww::Result res = deps.fs_create_directories(filePath); res.is_failed())
     {
-      std::string errorMessage = "Failed to create directory: " + createDirResult.error() + "; tag=evmmi0npk45\n";
+      std::string errorMessage = "Failed to create directory: " + res.error() + "; tag=evmmi0npk45\n";
       return aww::Result::fail(errorMessage);
     }
 
@@ -184,12 +183,10 @@ namespace aww::internal::aww_create
       std::vector<std::string> templateLines;
       std::vector<std::string> newFileLines;
 
-      aww::Result readTemplateResult = deps.fs_read_lines(templatePath, templateLines);
-
-      if (readTemplateResult.is_failed())
+      if (aww::Result res = deps.fs_read_lines(templatePath, templateLines); res.is_failed())
       {
         std::string readFailedMessage = "Failed to read template file: " +
-          readTemplateResult.error() +
+          res.error() +
           "File path: '" + templatePath.string() + "'" +
           "; tag=0bo9nvppdbh\n";
 
@@ -286,11 +283,13 @@ namespace aww::internal::aww_create
         newFileLines.push_back(line);
       }
 
-      aww::Result writeLinesResult = deps.fs_write_lines(filePath, newFileLines);
-
-      if (writeLinesResult.is_failed())
+      if (aww::Result res = deps.fs_write_lines(filePath, newFileLines); res.is_failed())
       {
-        std::string writeErrorMessage = "Failed to write file: " +  writeLinesResult.error() +  "; tag=wzogmbwb8w0\n";
+        std::string writeErrorMessage =
+          "Failed to write file: " +
+          res.error() +
+          "; tag=wzogmbwb8w0\n";
+
         return aww::Result::fail(writeErrorMessage);
       }
 
@@ -341,28 +340,23 @@ namespace aww::internal::aww_create
         parentPath /= filePathParts[i];
 
         bool isDirectoryExists = false;
-        aww::Result fsDirExistsResult = deps.fs_exists(parentPath, isDirectoryExists);
-
-        if (fsDirExistsResult.is_failed())
+        if (aww::Result res = deps.fs_exists(parentPath, isDirectoryExists); res.is_failed())
         {
-          return fsDirExistsResult;
+          return res;
         }
 
         if (!isDirectoryExists)
         {
-          aww::Result createDirResult = deps.fs_create_directories(parentPath);
-
-          if (createDirResult.is_failed())
+          if (aww::Result res = deps.fs_create_directories(parentPath); res.is_failed())
           {
             return aww::Result::fail(
               "Failed to create directory: '" + parentPath.string() + "':\n " +
-              createDirResult.error());
+              res.error());
           }
         }
       }
       // create file
       std::cout << "Creating file: " << filePath << "\n";
-
       return deps.fs_create_empty_file(filePath);
     }
   }

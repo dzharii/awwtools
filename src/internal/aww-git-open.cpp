@@ -30,11 +30,10 @@ namespace aww::internal::aww_git_open
     }
 
     fs::path currentDir;
-    aww::Result currentDirResult = deps.fs_get_current_directory_absolute_path(currentDir);
-    if (currentDirResult.is_failed())
+    if (aww::Result res = deps.fs_get_current_directory_absolute_path(currentDir); res.is_failed())
     {
       std::cout << "Failed to get current directory"
-                << currentDirResult.error()
+                << res.error()
                 << "\n";
       return 1;
     }
@@ -42,11 +41,10 @@ namespace aww::internal::aww_git_open
     fs::path optionalPathAbsolute;
 
     bool optionalFileToOpenExists = false;
-    aww::Result optionalFileToOpenExistsResult = deps.fs_exists(optionalFileToOpen, optionalFileToOpenExists);
-    if (optionalFileToOpenExistsResult.is_failed())
+    if (aww::Result res = deps.fs_exists(optionalFileToOpen, optionalFileToOpenExists); res.is_failed())
     {
       std::cout << "Failed to check if file exists"
-                << optionalFileToOpenExistsResult.error()
+                << res.error()
                 << "\n";
       return 1;
     }
@@ -54,18 +52,24 @@ namespace aww::internal::aww_git_open
     if (optionalFileToOpenExists)
     {
 
-      aww::Result optionalPathAbsoluteResul = deps.fs_get_absolute_path(optionalPathAbsolute);
-      if (optionalPathAbsoluteResul.is_failed())
+      if (aww::Result res = deps.fs_get_absolute_path(optionalPathAbsolute); res.is_failed())
       {
         std::cout << "Failed to get absolute path"
-                  << optionalPathAbsoluteResul.error()
+                  << res.error()
                   << "\n";
         return 1;
       }
 
       // check if it is file or directory
       bool optionalPathIsDirectory = false;
-      aww::Result optionalPathIsDirectoryResult = deps.fs_is_directory(optionalPathAbsolute, optionalPathIsDirectory);
+      if (aww::Result res = deps.fs_is_directory(optionalPathAbsolute, optionalPathIsDirectory); res.is_failed())
+      {
+        std::cout << "Failed to check if path is directory"
+                  << res.error()
+                  << "\n";
+        return 1;
+      }
+
       if (optionalPathIsDirectory)
       {
         currentDir = optionalPathAbsolute;

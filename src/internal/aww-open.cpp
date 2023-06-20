@@ -27,10 +27,9 @@ namespace aww::internal::aww_open
 
     fileToOpen = aww::fs::normalize_file_path(fileToOpen);
 
-    aww::Result launchFileRes = aww::os::actions::launch_file(fileToOpen);
-    if (launchFileRes.is_failed())
+    if (aww::Result res = aww::os::actions::launch_file(fileToOpen); res.is_failed())
     {
-      std::cout << "Failed to launch file " << launchFileRes.error() << "\n";
+      std::cout << "Failed to launch file " << res.error() << "\n";
       aww::os::actions::show_notification("aww open", "Failed to open file: " + fileToOpen);
       return 1;
     }

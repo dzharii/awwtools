@@ -1,5 +1,18 @@
 # aww-tools changelog
 
+## 2023-06-19
+
+aww::Result improving experiment
+```cpp
+if (int a = Func1(), b = Func2(); a && b)
+{
+    // Do stuff with a and b.
+}
+```
+
+
+
+
 ## 2023-06-17
 
 - `aww_git_open` started refactoring to extract I/O dependencies
