@@ -42,18 +42,10 @@ namespace aww::internal::aww_git_open
 
     fs::path optionalPathAbsolute;
 
-    bool optionalFileToOpenExists = false;
-    if (aww::Result res = deps.fs_exists(optionalFileToOpen, optionalFileToOpenExists); res.is_failed())
-    {
-      std::cout << "Failed to check if file exists"
-                << res.error()
-                << "\n";
-      return 1;
-    }
+    bool optionalFileToOpenExists = deps.fs_exists(optionalFileToOpen);
 
     if (optionalFileToOpenExists)
     {
-
       if (aww::Result res = deps.fs_get_absolute_path(optionalPathAbsolute); res.is_failed())
       {
         std::cout << "Failed to get absolute path"

@@ -33,11 +33,10 @@ namespace aww::internal::aww_create
 
       /**
        * Check if a file or directory exists at the specified path.
-       * @param target The path to check for existence.
-       * @param outFileExists Reference to a boolean variable that will be set to true if the target exists, false otherwise.
-       * @return Aww::Result indicating the success or failure of the operation.
+       * @param target The path to check.
+       * @return True if a file or directory exists at the specified path, false otherwise.
        */
-      virtual inline aww::Result fs_exists(const std::filesystem::path& target, bool& outFileExists) = 0;
+      virtual inline bool fs_exists(const std::filesystem::path& target) = 0;
 
       /**
        * Create directories at the specified path.
@@ -87,8 +86,8 @@ namespace aww::internal::aww_create
         return aww::fs::get_current_executable_path();
       }
 
-      inline aww::Result fs_exists(const std::filesystem::path& target, bool& outFileExists) override {
-        return aww::fs::file_or_dir_exists(target, outFileExists);
+      inline bool fs_exists(const std::filesystem::path& target) override {
+        return std::filesystem::exists(target);
       }
 
       inline aww::Result fs_create_directories(const std::filesystem::path& path) override {

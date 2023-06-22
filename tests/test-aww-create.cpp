@@ -23,10 +23,10 @@ public:
   };
   int fs_get_current_executable_path_called = 0;
 
-  std::function<aww::Result(int, const std::filesystem::path &, bool &)>
-      fs_exists_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &target, [[maybe_unused]] bool &outFileExists) -> aww::Result
+  std::function<bool(int, const std::filesystem::path&)>
+      fs_exists_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &target) -> bool
   {
-    return aww::Result::ok();
+    return true;
   };
   int fs_exists_called = 0;
 
@@ -76,10 +76,10 @@ public:
     return fs_get_current_executable_path_stub();
   }
 
-  aww::Result fs_exists(const std::filesystem::path &target, bool &outFileExists) override
+  inline bool fs_exists(const std::filesystem::path &target) override
   {
     fs_exists_called += 1;
-    return fs_exists_stub(fs_exists_called, target, outFileExists);
+    return fs_exists_stub(fs_exists_called, target);
   }
 
   aww::Result fs_create_directories(const std::filesystem::path &path) override
@@ -128,20 +128,14 @@ TEST_CASE("aww::internal::aww_create::assume_template_path")
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
                                         [[maybe_unused]] int callCount,
-                                        [[maybe_unused]] const std::filesystem::path &target,
-                                        [[maybe_unused]] bool &outFileExists) -> aww::Result
+                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
     {
       // check if template file exists
       if (target.filename() == "template-hello.md")
       {
-        outFileExists = true;
+        return true;
       }
-      else
-      {
-        outFileExists = false;
-      }
-
-      return aww::Result::ok();
+      return false;
     };
 
     // ACT
@@ -164,11 +158,9 @@ TEST_CASE("aww::internal::aww_create::assume_template_path")
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
                                         [[maybe_unused]] int callCount,
-                                        [[maybe_unused]] const std::filesystem::path &target,
-                                        [[maybe_unused]] bool &outFileExists) -> aww::Result
+                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
     {
-      outFileExists = false;
-      return aww::Result::ok();
+      return false;
     };
 
     // ACT
@@ -191,11 +183,9 @@ TEST_CASE("aww::internal::aww_create::assume_template_path")
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
                                         [[maybe_unused]] int callCount,
-                                        [[maybe_unused]] const std::filesystem::path &target,
-                                        [[maybe_unused]] bool &outFileExists) -> aww::Result
+                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
     {
-      outFileExists = false;
-      return aww::Result::ok();
+      return false;
     };
 
     // ACT
@@ -223,12 +213,10 @@ TEST_CASE("aww::internal::aww_create::try_create_file_by_path")
   {
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
-                                      [[maybe_unused]] int callCount,
-                                      [[maybe_unused]] const std::filesystem::path& target,
-                                      [[maybe_unused]] bool& outFileExists) -> aww::Result
+                                        [[maybe_unused]] int callCount,
+                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
     {
-      outFileExists = true;
-      return aww::Result::ok();
+      return true;
     };
 
     // ACT
@@ -245,12 +233,10 @@ TEST_CASE("aww::internal::aww_create::try_create_file_by_path")
   {
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
-                                      [[maybe_unused]] int callCount,
-                                      [[maybe_unused]] const std::filesystem::path& target,
-                                      [[maybe_unused]] bool& outFileExists) -> aww::Result
+                                        [[maybe_unused]] int callCount,
+                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
     {
-      outFileExists = false;
-      return aww::Result::ok();
+      return false;
     };
 
     // ACT
@@ -267,12 +253,10 @@ TEST_CASE("aww::internal::aww_create::try_create_file_by_path")
   {
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
-                                      [[maybe_unused]] int callCount,
-                                      [[maybe_unused]] const std::filesystem::path& target,
-                                      [[maybe_unused]] bool& outFileExists) -> aww::Result
+                                        [[maybe_unused]] int callCount,
+                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
     {
-      outFileExists = false;
-      return aww::Result::ok();
+      return false;
     };
 
     ioDependencies.fs_create_empty_file_stub = [&](
@@ -296,12 +280,10 @@ TEST_CASE("aww::internal::aww_create::try_create_file_by_path")
   {
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
-                                      [[maybe_unused]] int callCount,
-                                      [[maybe_unused]] const std::filesystem::path& target,
-                                      [[maybe_unused]] bool& outFileExists) -> aww::Result
+                                        [[maybe_unused]] int callCount,
+                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
     {
-      outFileExists = false;
-      return aww::Result::ok();
+      return false;
     };
 
     ioDependencies.fs_create_directories_stub = [&](
@@ -338,12 +320,10 @@ TEST_CASE("aww::internal::aww_create::create_new_directory_scenario")
   {
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
-                                      [[maybe_unused]] int callCount,
-                                      [[maybe_unused]] const std::filesystem::path& target,
-                                      [[maybe_unused]] bool& outFileExists) -> aww::Result
+                                        [[maybe_unused]] int callCount,
+                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
     {
-      outFileExists = true;
-      return aww::Result::ok();
+      return false;
     };
 
     // ACT
@@ -356,37 +336,14 @@ TEST_CASE("aww::internal::aww_create::create_new_directory_scenario")
     );
   }
 
-  SUBCASE("Failed to check if directory exists")
-  {
-    // ARRANGE
-    ioDependencies.fs_exists_stub = [&](
-                                      [[maybe_unused]] int callCount,
-                                      [[maybe_unused]] const std::filesystem::path& target,
-                                      [[maybe_unused]] bool& outFileExists) -> aww::Result
-    {
-      return aww::Result::fail("Failed to check directory existence");
-    };
-
-    // ACT
-    aww::Result result = create_new_directory_scenario(filePath, ioDependencies);
-
-    // ASSERT
-    CHECK_MESSAGE(
-        result.is_failed(),
-        "Result should be failed if failed to check directory existence"
-    );
-  }
-
   SUBCASE("Create directory")
   {
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
-                                      [[maybe_unused]] int callCount,
-                                      [[maybe_unused]] const std::filesystem::path& target,
-                                      [[maybe_unused]] bool& outFileExists) -> aww::Result
+                                        [[maybe_unused]] int callCount,
+                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
     {
-      outFileExists = false;
-      return aww::Result::ok();
+      return false;
     };
 
     ioDependencies.fs_create_directories_stub = [&](
@@ -410,12 +367,10 @@ TEST_CASE("aww::internal::aww_create::create_new_directory_scenario")
   {
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
-                                      [[maybe_unused]] int callCount,
-                                      [[maybe_unused]] const std::filesystem::path& target,
-                                      [[maybe_unused]] bool& outFileExists) -> aww::Result
+                                        [[maybe_unused]] int callCount,
+                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
     {
-      outFileExists = false;
-      return aww::Result::ok();
+      return false;
     };
 
     ioDependencies.fs_create_directories_stub = [&](
@@ -537,5 +492,3 @@ TEST_CASE("aww::internal::aww_create::append_template_content_to_new_file_scenar
     );
   }
 }
-
-

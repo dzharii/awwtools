@@ -1,10 +1,42 @@
 # aww-tools changelog
 
+## 2023-06-22
+
+The error handling aww::Result code for I/O operations is too verbose and complex.
+I've decided to revert some code to use std::filesystem functions instead and added
+global error handler.
+
+```cpp
+int main(int argc, char **argv)
+{
+  try
+  {
+    std::vector<std::string> cmdArgs(argv, argv + argc);
+    cmdArgs.erase(cmdArgs.begin()); // remove first element
+
+    aww::internal::aww_create::aww_create_io_dependencies deps;
+    return aww::internal::aww_create::aww_create_main(cmdArgs, deps);
+  }
+  catch (std::exception &ex)
+  {
+    std::cerr << ex.what() << "\n";
+    return 1;
+  }
+  catch (...)
+  {
+    std::cerr << "Caught unknown exception.\n";
+    return 1;
+  }
+```
+
+The exception situation is truly should be !! exceptional !!, so I'd rather handle I/O error in the
+global handler.
+
 ## 2023-06-19
-The idea about returning aw::Result from each I/O operation adds lots of ugly error handling code. 
+The idea about returning aw::Result from each I/O operation adds lots of ugly error handling code.
 
 nope, maybe some global try/cath will be better.
-Maybe I should whitch back to std::* io opearions. 
+Maybe I should whitch back to std::* io opearions.
 
 
 

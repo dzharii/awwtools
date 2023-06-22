@@ -220,19 +220,6 @@ namespace aww::fs
     }
   }
 
-  aww::Result file_or_dir_exists(const std::filesystem::path& target, bool& outFileExists) {
-    try {
-      outFileExists = std::filesystem::exists(target);
-      return aww::Result::ok();
-    } catch (const std::exception& e) {
-      std::string errorMessage = "Error checking existence: " + std::string(e.what());
-      return aww::Result::fail(errorMessage);
-    } catch (...) {
-      std::string errorMessage = "Unknown error occurred while checking existence.";
-      return aww::Result::fail(errorMessage);
-    }
-  }
-
   aww::Result create_directories(const std::filesystem::path& path) {
     try {
       std::filesystem::create_directories(path);

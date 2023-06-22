@@ -150,8 +150,6 @@ namespace aww::fs
 
   aww::Result is_directory(const std::filesystem::path &path, bool &outIsDirectory);
 
-  aww::Result file_or_dir_exists(const std::filesystem::path& target, bool& outFileExists);
-
   aww::Result create_directories(const std::filesystem::path& path);
 
   aww::Result create_empty_file(const std::filesystem::path& path);

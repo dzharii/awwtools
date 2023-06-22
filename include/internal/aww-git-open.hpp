@@ -18,7 +18,14 @@ namespace aww::internal::aww_git_open
 
     virtual aww::Result fs_get_absolute_path(fs::path &result) = 0;
     virtual aww::Result fs_get_current_directory_absolute_path(fs::path &result) = 0;
-    virtual aww::Result fs_exists(const std::filesystem::path& target, bool& outFileExists) = 0;
+
+    /**
+     * Check if a file or directory exists at the specified path.
+     * @param target The path to check.
+     * @return True if a file or directory exists at the specified path, false otherwise.
+     */
+    virtual inline bool fs_exists(const std::filesystem::path& target) = 0;
+
     virtual aww::Result fs_is_directory(const std::filesystem::path &path, bool &outIsDirectory) = 0;
   };
 
@@ -33,8 +40,8 @@ namespace aww::internal::aww_git_open
       return aww::fs::get_current_directory_absolute_path(result);
     }
 
-    aww::Result fs_exists(const std::filesystem::path& target, bool& outFileExists) override {
-      return aww::fs::file_or_dir_exists(target, outFileExists);
+    inline bool fs_exists(const std::filesystem::path& target) override {
+      return std::filesystem::exists(target);
     }
 
     aww::Result fs_is_directory(const std::filesystem::path &path, bool &outIsDirectory) {

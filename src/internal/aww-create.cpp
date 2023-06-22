@@ -81,14 +81,7 @@ namespace aww::internal::aww_create
 
     std::cout << "assumed templatePath: " << templatePath << "\n";
 
-    bool outIsTemplateFileExists = false;
-    aww::Result templateFileExistsResult = deps.fs_exists(templatePath, outIsTemplateFileExists);
-
-    if (templateFileExistsResult.is_failed())
-    {
-      std::cout << "Failed to check if template file exists: " << templateFileExistsResult.error() << "; tag=htok5anj6gq\n";
-      return 1;
-    }
+    bool outIsTemplateFileExists = deps.fs_exists(templatePath);
 
     // At this point, an empty file has been created.
     // here we check if a template file exists for the file extension
@@ -122,15 +115,7 @@ namespace aww::internal::aww_create
     {
       assumedTemplatePath = awwCreateTemplatesDir / ("template-" + templateModifier + fileExtensionWithDot);
 
-      bool outIsTemplateFileExists = false;
-      aww::Result templateFileExistsResult = deps.fs_exists(assumedTemplatePath, outIsTemplateFileExists);
-
-      if (templateFileExistsResult.is_failed())
-      {
-        std::string errorMessage = "Failed to check if template file exists: " + templateFileExistsResult.error();
-        return aww::Result::fail(errorMessage);
-      }
-
+      bool outIsTemplateFileExists = deps.fs_exists(assumedTemplatePath);
       if (!outIsTemplateFileExists)
       {
         assumedTemplatePath = awwCreateTemplatesDir / ("template" + fileExtensionWithDot);
@@ -147,16 +132,7 @@ namespace aww::internal::aww_create
 
   aww::Result create_new_directory_scenario(const std::filesystem::path& filePath, aww_create_io_dependencies_interface &deps) {
     std::cout << "Creating directory: " << filePath << "\n";
-    bool outIsDirectoryExists = false;
-
-
-
-    if (aww::Result res = deps.fs_exists(filePath, outIsDirectoryExists); res.is_failed())
-    {
-      std::string errorMessage =  "Failed to check if directory exists: " +
-        res.error() + "; tag=qu0rbfob4ey\n";
-      return aww::Result::fail(errorMessage);
-    }
+    bool outIsDirectoryExists = deps.fs_exists(filePath);
 
     if (outIsDirectoryExists)
     {
@@ -300,14 +276,7 @@ namespace aww::internal::aww_create
   {
     // if file exists, return error
 
-    bool outFileExists = false;
-    aww::Result fsExistsResult = deps.fs_exists(filePath, outFileExists);
-
-    if (fsExistsResult.is_failed())
-    {
-      return fsExistsResult;
-    }
-
+    bool outFileExists = deps.fs_exists(filePath);
     if (outFileExists)
     {
       return aww::Result::fail("File already exists: '" + filePath.string() + "'");
@@ -339,12 +308,7 @@ namespace aww::internal::aww_create
       {
         parentPath /= filePathParts[i];
 
-        bool isDirectoryExists = false;
-        if (aww::Result res = deps.fs_exists(parentPath, isDirectoryExists); res.is_failed())
-        {
-          return res;
-        }
-
+        bool isDirectoryExists = deps.fs_exists(parentPath);
         if (!isDirectoryExists)
         {
           if (aww::Result res = deps.fs_create_directories(parentPath); res.is_failed())
