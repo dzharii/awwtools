@@ -38,6 +38,8 @@ namespace aww::internal::aww_git_open
       return 1;
     }
 
+    std::cout << "Current directory tag=b5w2oy8p662: " << currentDir << "\n";
+
     fs::path optionalPathAbsolute;
 
     bool optionalFileToOpenExists = false;
