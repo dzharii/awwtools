@@ -106,40 +106,63 @@ int aww_main(const std::vector<std::string> &cmdArgs)
   ++itCmdArg;
   std::vector<std::string> awwExecutableArgs(itCmdArg, cmdArgs.end());
 
-  switch (awwTool)
+  try
   {
-  case AwwTool::Create: {
-    aww::internal::aww_create::aww_create_io_dependencies deps;
-    return aww::internal::aww_create::aww_create_main(awwExecutableArgs, deps);
+    switch (awwTool)
+    {
+    case AwwTool::Create:
+    {
+      aww::internal::aww_create::aww_create_io_dependencies deps;
+      return aww::internal::aww_create::aww_create_main(awwExecutableArgs, deps);
+    }
+    case AwwTool::Date:
+    {
+      aww::internal::aww_date::aww_date_io_dependencies deps;
+      return aww::internal::aww_date::aww_date_main(awwExecutableArgs, deps);
+    }
+    case AwwTool::GitOpen:
+    {
+      aww::internal::aww_git_open::aww_git_open_io_dependencies deps;
+      return aww::internal::aww_git_open::aww_git_open_main(awwExecutableArgs, deps);
+    }
+    case AwwTool::Guid:
+    {
+      return aww::internal::aww_guid::aww_guid_main(awwExecutableArgs);
+    }
+    case AwwTool::Open:
+    {
+      return aww::internal::aww_open::aww_open_main(awwExecutableArgs);
+    }
+    case AwwTool::Run:
+    {
+      return aww::internal::aww_run::aww_run_main(awwExecutableArgs);
+    }
+    case AwwTool::Tag:
+    {
+      return aww::internal::aww_tag::aww_tag_main(awwExecutableArgs);
+    }
+    case AwwTool::Term:
+    {
+      return aww::internal::aww_term::aww_term_main(awwExecutableArgs);
+    }
+    case AwwTool::Toast:
+    {
+      return aww::internal::aww_toast::aww_toast_main(awwExecutableArgs);
+    }
+    default:
+    {
+      std::cerr << "No aww executable found\n";
+      return 1;
+    }}
   }
-  case AwwTool::Date: {
-    aww::internal::aww_date::aww_date_io_dependencies deps;
-    return aww::internal::aww_date::aww_date_main(awwExecutableArgs, deps);
-  }
-  case AwwTool::GitOpen: {
-    aww::internal::aww_git_open::aww_git_open_io_dependencies deps;
-    return aww::internal::aww_git_open::aww_git_open_main(awwExecutableArgs, deps);
-  }
-  case AwwTool::Guid: {
-    return aww::internal::aww_guid::aww_guid_main(awwExecutableArgs);
-  }
-  case AwwTool::Open: {
-    return aww::internal::aww_open::aww_open_main(awwExecutableArgs);
-  }
-  case AwwTool::Run: {
-    return aww::internal::aww_run::aww_run_main(awwExecutableArgs);
-  }
-  case AwwTool::Tag: {
-    return aww::internal::aww_tag::aww_tag_main(awwExecutableArgs);
-  }
-  case AwwTool::Term: {
-    return aww::internal::aww_term::aww_term_main(awwExecutableArgs);
-  }
-  case AwwTool::Toast: {
-    return aww::internal::aww_toast::aww_toast_main(awwExecutableArgs);
-  }
-  default: {
-    std::cout << "No aww executable found\n";
+  catch (std::exception &ex)
+  {
+    std::cerr << ex.what() << "\n";
     return 1;
-  }}
+  }
+  catch (...)
+  {
+    std::cerr << "Caught unknown exception.\n";
+    return 1;
+  }
 }
