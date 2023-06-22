@@ -1,6 +1,27 @@
 # aww-tools changelog
 
 ## 2023-06-19
+The idea about returning aw::Result from each I/O operation adds lots of ugly error handling code. 
+
+nope, maybe some global try/cath will be better.
+Maybe I should whitch back to std::* io opearions. 
+
+
+
+```
+    fs::path currentDir;
+    if (aww::Result res = deps.fs_get_current_directory_absolute_path(currentDir); res.is_failed())
+    {
+      std::cout << "Failed to get current directory"
+                << res.error()
+                << "\n";
+      return 1;
+    }
+
+```
+
+
+## 2023-06-19
 
 aww::Result improving experiment
 
