@@ -30,10 +30,10 @@ public:
   };
   int fs_exists_called = 0;
 
-  std::function<aww::Result(int, const std::filesystem::path &)>
-      fs_create_directories_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &path) -> aww::Result
+  std::function<bool(int, const std::filesystem::path &)>
+      fs_create_directories_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &path) -> bool
   {
-    return aww::Result::ok();
+    return true;
   };
   int fs_create_directories_called = 0;
 
@@ -82,7 +82,7 @@ public:
     return fs_exists_stub(fs_exists_called, target);
   }
 
-  aww::Result fs_create_directories(const std::filesystem::path &path) override
+  bool fs_create_directories(const std::filesystem::path &path) override
   {
     fs_create_directories_called += 1;
     return fs_create_directories_stub(fs_create_directories_called, path);
@@ -288,9 +288,9 @@ TEST_CASE("aww::internal::aww_create::try_create_file_by_path")
 
     ioDependencies.fs_create_directories_stub = [&](
                                                   [[maybe_unused]] int callCount,
-                                                  [[maybe_unused]] const std::filesystem::path& path) -> aww::Result
+                                                  [[maybe_unused]] const std::filesystem::path& path) -> bool
     {
-      return aww::Result::ok();
+      return true;
     };
 
     ioDependencies.fs_create_empty_file_stub = [&](
@@ -348,9 +348,9 @@ TEST_CASE("aww::internal::aww_create::create_new_directory_scenario")
 
     ioDependencies.fs_create_directories_stub = [&](
                                                   [[maybe_unused]] int callCount,
-                                                  [[maybe_unused]] const std::filesystem::path& path) -> aww::Result
+                                                  [[maybe_unused]] const std::filesystem::path& path) -> bool
     {
-      return aww::Result::ok();
+      return true;
     };
 
     // ACT
@@ -375,9 +375,9 @@ TEST_CASE("aww::internal::aww_create::create_new_directory_scenario")
 
     ioDependencies.fs_create_directories_stub = [&](
                                                   [[maybe_unused]] int callCount,
-                                                  [[maybe_unused]] const std::filesystem::path& path) -> aww::Result
+                                                  [[maybe_unused]] const std::filesystem::path& path) -> bool
     {
-      return aww::Result::fail("Failed to create directory");
+      return false;
     };
 
     // ACT

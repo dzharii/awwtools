@@ -16,7 +16,7 @@ namespace aww::internal::aww_git_open
   public:
     virtual ~aww_git_open_io_dependencies_interface() = default;
 
-    virtual aww::Result fs_get_absolute_path(fs::path &result) = 0;
+    virtual inline std::filesystem::path fs_get_absolute_path(const fs::path &path) = 0;
     virtual aww::Result fs_get_current_directory_absolute_path(fs::path &result) = 0;
 
     /**
@@ -26,14 +26,14 @@ namespace aww::internal::aww_git_open
      */
     virtual inline bool fs_exists(const std::filesystem::path& target) = 0;
 
-    virtual aww::Result fs_is_directory(const std::filesystem::path &path, bool &outIsDirectory) = 0;
+    virtual inline bool fs_is_directory(const std::filesystem::path &path) = 0;
   };
 
   class aww_git_open_io_dependencies : public aww_git_open_io_dependencies_interface {
   public:
 
-    aww::Result fs_get_absolute_path(fs::path &result) override {
-      return aww::fs::get_absolute_path(result);
+    inline std::filesystem::path fs_get_absolute_path(const fs::path &path) override {
+      return std::filesystem::absolute(path);
     }
 
     aww::Result fs_get_current_directory_absolute_path(fs::path &result) override {
@@ -44,8 +44,8 @@ namespace aww::internal::aww_git_open
       return std::filesystem::exists(target);
     }
 
-    aww::Result fs_is_directory(const std::filesystem::path &path, bool &outIsDirectory) {
-      return aww::fs::is_directory(path, outIsDirectory);
+    inline bool fs_is_directory(const std::filesystem::path &path) {
+      return std::filesystem::is_directory(path);
     }
   };
 

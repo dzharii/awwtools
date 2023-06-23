@@ -41,9 +41,9 @@ namespace aww::internal::aww_create
       /**
        * Create directories at the specified path.
        * @param path The path at which to create directories.
-       * @return Aww::Result indicating the success or failure of the operation.
+       * @return True if the directories were created successfully, false otherwise.
        */
-      virtual inline aww::Result fs_create_directories(const std::filesystem::path& path) = 0;
+      virtual inline bool fs_create_directories(const std::filesystem::path& path) = 0;
 
       /**
        * Create an empty file at the specified path.
@@ -90,8 +90,8 @@ namespace aww::internal::aww_create
         return std::filesystem::exists(target);
       }
 
-      inline aww::Result fs_create_directories(const std::filesystem::path& path) override {
-        return aww::fs::create_directories(path);
+      inline bool fs_create_directories(const std::filesystem::path& path) override {
+        return std::filesystem::create_directories(path);
       }
 
       // 2023-06-08

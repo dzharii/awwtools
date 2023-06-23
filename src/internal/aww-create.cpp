@@ -141,9 +141,13 @@ namespace aww::internal::aww_create
       return aww::Result::ok();
     }
 
-    if (aww::Result res = deps.fs_create_directories(filePath); res.is_failed())
+    if (!deps.fs_create_directories(filePath))
     {
-      std::string errorMessage = "Failed to create directory: " + res.error() + "; tag=evmmi0npk45\n";
+      std::string errorMessage =
+        "Failed to create directory: '"+
+        filePath.string() +
+        "'; tag=evmmi0npk45\n";
+
       return aww::Result::fail(errorMessage);
     }
 
@@ -311,11 +315,10 @@ namespace aww::internal::aww_create
         bool isDirectoryExists = deps.fs_exists(parentPath);
         if (!isDirectoryExists)
         {
-          if (aww::Result res = deps.fs_create_directories(parentPath); res.is_failed())
+          if (!deps.fs_create_directories(parentPath))
           {
             return aww::Result::fail(
-              "Failed to create directory: '" + parentPath.string() + "':\n " +
-              res.error());
+              "Failed to create directory: '" + parentPath.string() + "' tag=07zimuhjpgg");
           }
         }
       }

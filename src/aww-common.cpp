@@ -180,23 +180,11 @@ namespace aww::os::env
 
 namespace aww::fs
 {
-  aww::Result get_absolute_path(std::filesystem::path& path) {
-    try {
-      path = std::filesystem::absolute(path);
-      return aww::Result::ok();
-    } catch (const std::exception& e) {
-      std::string errorMessage = "Error getting absolute path: " + std::string(e.what());
-      return aww::Result::fail(errorMessage);
-    } catch (...) {
-      std::string errorMessage = "Unknown error occurred while getting absolute path.";
-      return aww::Result::fail(errorMessage);
-    }
-  }
 
-  aww::Result get_current_directory_absolute_path(std::filesystem::path& path) {
+  aww::Result get_current_directory_absolute_path(std::filesystem::path& result) {
     try {
-      path = std::filesystem::current_path();
-      path = std::filesystem::absolute(path);
+      result = std::filesystem::current_path();
+      result = std::filesystem::absolute(result);
       return aww::Result::ok();
     } catch (const std::exception& e) {
       std::string errorMessage = "Error getting current directory: " + std::string(e.what());
@@ -216,19 +204,6 @@ namespace aww::fs
       return aww::Result::fail(errorMessage);
     } catch (...) {
       std::string errorMessage = "Unknown error occurred while checking if directory.";
-      return aww::Result::fail(errorMessage);
-    }
-  }
-
-  aww::Result create_directories(const std::filesystem::path& path) {
-    try {
-      std::filesystem::create_directories(path);
-      return aww::Result::ok();
-    } catch (const std::exception& e) {
-      std::string errorMessage = "Error creating directories: " + std::string(e.what());
-      return aww::Result::fail(errorMessage);
-    } catch (...) {
-      std::string errorMessage = "Unknown error occurred while creating directories.";
       return aww::Result::fail(errorMessage);
     }
   }
