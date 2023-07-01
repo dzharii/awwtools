@@ -139,6 +139,7 @@ namespace aww::string
   std::string to_lower(const std::string &);
   bool ends_with(const std::string& str, const std::string& suffix);
   std::string to_valid_identifier(const std::string &input);
+  std::string trim(std::string str);
 }
 
 namespace aww::fs

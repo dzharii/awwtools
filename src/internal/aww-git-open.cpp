@@ -65,7 +65,7 @@ namespace aww::internal::aww_git_open
 
     fs::path gitRepo;
 
-    bool gitRepoFound = find_git_repo(currentDir, gitRepo);
+    bool gitRepoFound = find_git_repo(currentDir, gitRepo, deps);
 
     if (!gitRepoFound)
     {
@@ -78,9 +78,18 @@ namespace aww::internal::aww_git_open
     std::cout << "git config path: " << gitConfigPath << "\n";
 
     // read line by line
-    std::ifstream file(gitConfigPath);
+    std::vector<std::string> gitConfigLines;
+    if (aww::Result res = deps.fs_read_lines(gitConfigPath, gitConfigLines); res.is_failed())
+    {
+      std::cout << "Failed to read git config file"
+                << res.error()
+                << "\n";
+      return 1;
+    }
+
+
     std::string repoUrl;
-    aww::Result findUrlResult = try_find_repository_url_in_git_config(file, repoUrl);
+    aww::Result findUrlResult = try_find_repository_url_in_git_config(gitConfigLines, repoUrl);
     if (findUrlResult.is_failed())
     {
       std::cout << "Failed to find repository url in git config "
@@ -170,54 +179,35 @@ namespace aww::internal::aww_git_open
     return aww::Result::ok();
   }
 
-  aww::Result try_find_repository_url_in_git_config(std::istream &gitConfigStream, std::string &gitSshOrHttpUri)
+aww::Result try_find_repository_url_in_git_config(const std::vector<std::string>& gitConfigLines, std::string& gitSshOrHttpUri)
+{
+  // Find [remote "origin"] entry
+  auto originIter = std::find(gitConfigLines.begin(), gitConfigLines.end(), "[remote \"origin\"]");
+  if (originIter == gitConfigLines.end())
   {
-    std::string result = "";
-    std::string str;
-    bool foundOrigin = false;
-    while (std::getline(gitConfigStream, str))
-    {
-      if (str == "[remote \"origin\"]")
-      {
-        foundOrigin = true;
-        break;
-      }
-    }
-
-    if (!foundOrigin)
-    {
-      return aww::Result::fail(
-          "Configuration entry for remote origin was not found");
-    }
-
-    std::string urlConfigLine;
-    bool foundUrl = false;
-
-    while (std::getline(gitConfigStream, str))
-    {
-      if (str.find("url = ") != std::string::npos)
-      {
-        // split str on =
-        std::string delimiter = "=";
-        urlConfigLine = str.substr(str.find(delimiter) + 1);
-
-        // trim whitespace before and after
-        urlConfigLine = urlConfigLine.erase(0, urlConfigLine.find_first_not_of(' '));
-        urlConfigLine = urlConfigLine.erase(urlConfigLine.find_last_not_of(' ') + 1);
-
-        foundUrl = true;
-        std::cout << "urlConfigLine: " << urlConfigLine << "\n";
-        break;
-      }
-    }
-    if (!foundUrl)
-    {
-      return aww::Result::fail(
-          "Configuration entry for remote origin url was not found");
-    }
-    gitSshOrHttpUri = urlConfigLine;
-    return aww::Result::ok();
+    return aww::Result::fail("Configuration entry for remote origin was not found");
   }
+
+  // Find url = entry
+  auto urlIter = std::find_if(gitConfigLines.begin(), gitConfigLines.end(), [](const std::string& line) {
+    return line.find("url = ") != std::string::npos;
+  });
+
+  if (urlIter == gitConfigLines.end())
+  {
+    return aww::Result::fail("Configuration entry for remote origin url was not found");
+  }
+
+  // Trim whitespace and extract URL
+  const std::string& urlConfigLine = *urlIter;
+  std::string urlValue = urlConfigLine.substr(urlConfigLine.find('=') + 1);
+
+  urlValue = aww::string::trim(urlValue);
+
+  gitSshOrHttpUri = urlValue;
+  return aww::Result::ok();
+}
+
 
   //  Attempts to convert git origin url to a web url
   //  git@github.com:dzharii/awwtools.git     => https://github.com/dzharii/awwtools.git
@@ -247,8 +237,6 @@ namespace aww::internal::aww_git_open
     }
     else if (inputUrl.find("@vs-ssh.visualstudio.com") > 0)
     {
-      std::cout << "aaaa";
-
       std::regex reGithubSsh("^.+?@vs-ssh.visualstudio.com:[^/]+/([^/]+)/([^/]+)/(.+)$");
       std::smatch match;
 
@@ -269,13 +257,13 @@ namespace aww::internal::aww_git_open
     return false;
   }
 
-  bool find_git_repo(const fs::path &dirPath, fs::path &gitRepoPath)
+  bool find_git_repo(const fs::path &dirPath, fs::path &gitRepoPath, aww_git_open_io_dependencies_interface &deps)
   {
     std::cout << "Searching for git repo in: " << dirPath << "\n";
     fs::path currentDir(dirPath);
     fs::path gitPath = currentDir / ".git";
     std::cout << "gitPath: " << gitPath << "\n";
-    if (fs::exists(gitPath))
+    if (deps.fs_exists(gitPath))
     {
       std::cout << "Found git repo in: " << currentDir << "\n";
       // The parent of the .git directory is the git repo
@@ -288,7 +276,7 @@ namespace aww::internal::aww_git_open
     if (!isRoot)
     {
       currentDir = currentDir.parent_path();
-      return find_git_repo(currentDir, gitRepoPath);
+      return find_git_repo(currentDir, gitRepoPath, deps);
     }
     std::cout << "Reached root directory, no git repo found."
               << "\n";

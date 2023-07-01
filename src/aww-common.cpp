@@ -67,13 +67,14 @@ namespace aww::string
     return out;
   }
 
-  bool ends_with(const std::string& str, const std::string& suffix) {
-  if (suffix.size() > str.size()) {
-    return false;
+  bool ends_with(const std::string &str, const std::string &suffix)
+  {
+    if (suffix.size() > str.size())
+    {
+      return false;
+    }
+    return std::equal(suffix.rbegin(), suffix.rend(), str.rbegin());
   }
-  return std::equal(suffix.rbegin(), suffix.rend(), str.rbegin());
-}
-
 
   std::string to_valid_identifier(const std::string &input)
   {
@@ -83,6 +84,21 @@ namespace aww::string
         { return !std::isalnum(c); },
         '_');
     return output;
+  }
+
+  std::string trim(std::string str)
+  {
+    // Trim leading whitespace
+    str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](int ch)
+                                        { return !std::isspace(ch); }));
+
+    // Trim trailing whitespace
+    str.erase(std::find_if(str.rbegin(), str.rend(), [](int ch)
+                           { return !std::isspace(ch); })
+                  .base(),
+              str.end());
+
+    return str;
   }
 }
 
@@ -180,91 +196,124 @@ namespace aww::os::env
 
 namespace aww::fs
 {
-
-  aww::Result get_current_directory_absolute_path(std::filesystem::path& result) {
-    try {
+  aww::Result get_current_directory_absolute_path(std::filesystem::path &result)
+  {
+    try
+    {
       result = std::filesystem::current_path();
       result = std::filesystem::absolute(result);
       return aww::Result::ok();
-    } catch (const std::exception& e) {
+    }
+    catch (const std::exception &e)
+    {
       std::string errorMessage = "Error getting current directory: " + std::string(e.what());
       return aww::Result::fail(errorMessage);
-    } catch (...) {
+    }
+    catch (...)
+    {
       std::string errorMessage = "Unknown error occurred while getting current directory.";
       return aww::Result::fail(errorMessage);
     }
   }
 
-  aww::Result is_directory(const std::filesystem::path &path, bool &outIsDirectory) {
-    try {
+  aww::Result is_directory(const std::filesystem::path &path, bool &outIsDirectory)
+  {
+    try
+    {
       outIsDirectory = std::filesystem::is_directory(path);
       return aww::Result::ok();
-    } catch (const std::exception& e) {
+    }
+    catch (const std::exception &e)
+    {
       std::string errorMessage = "Error checking if directory: " + std::string(e.what());
       return aww::Result::fail(errorMessage);
-    } catch (...) {
+    }
+    catch (...)
+    {
       std::string errorMessage = "Unknown error occurred while checking if directory.";
       return aww::Result::fail(errorMessage);
     }
   }
 
-  aww::Result create_empty_file(const std::filesystem::path& path) {
-    try {
+  aww::Result create_empty_file(const std::filesystem::path &path)
+  {
+    try
+    {
       std::ofstream file(path);
       file.close();
       return aww::Result::ok();
-    } catch (const std::exception& e) {
+    }
+    catch (const std::exception &e)
+    {
       std::string errorMessage = "Error creating file '" + path.filename().string() + "': " + e.what();
       return aww::Result::fail(errorMessage);
-    } catch (...) {
+    }
+    catch (...)
+    {
       std::string errorMessage = "Unknown error occurred while creating file '" + path.filename().string() + "'.";
       return aww::Result::fail(errorMessage);
     }
   }
 
-  aww::Result read_lines(const std::filesystem::path& filePath, std::vector<std::string>& outFileLines) {
-    try {
+  aww::Result read_lines(const std::filesystem::path &filePath, std::vector<std::string> &outFileLines)
+  {
+    try
+    {
       std::ifstream file(filePath);
-      if (!file.is_open()) {
+      if (!file.is_open())
+      {
         return aww::Result::fail("Failed to open file for reading.");
       }
 
       std::string line;
-      while (std::getline(file, line)) {
+      while (std::getline(file, line))
+      {
         outFileLines.push_back(line);
       }
 
       file.close();
       return aww::Result::ok();
-    } catch (const std::exception& e) {
+    }
+    catch (const std::exception &e)
+    {
       std::string errorMessage = "Error reading file: " + std::string(e.what());
       return aww::Result::fail(errorMessage);
-    } catch (...) {
+    }
+    catch (...)
+    {
       std::string errorMessage = "Unknown error occurred while reading file.";
       return aww::Result::fail(errorMessage);
     }
   }
 
-  aww::Result write_lines(const std::filesystem::path& filePath, const std::vector<std::string>& lines) {
-        try {
-          std::ofstream file(filePath);
-          if (!file.is_open()) {
-            return aww::Result::fail("Failed to open file for writing.");
-          }
+  aww::Result write_lines(const std::filesystem::path &filePath, const std::vector<std::string> &lines)
+  {
+    try
+    {
+      std::ofstream file(filePath);
+      if (!file.is_open())
+      {
+        return aww::Result::fail("Failed to open file for writing.");
+      }
 
-          for (const auto& line : lines) {
-            file << line << std::endl;
-          }
+      for (const auto &line : lines)
+      {
+        file << line << std::endl;
+      }
 
-          file.close();
-          return aww::Result::ok();
-        } catch (const std::exception& e) {
-          std::string errorMessage = "Error writing file: " + std::string(e.what());
-          return aww::Result::fail(errorMessage);
-        } catch (...) {
-          std::string errorMessage = "Unknown error occurred while writing file.";
-          return aww::Result::fail(errorMessage);
-        }
+      file.close();
+      return aww::Result::ok();
+    }
+    catch (const std::exception &e)
+    {
+      std::string errorMessage = "Error writing file: " + std::string(e.what());
+      return aww::Result::fail(errorMessage);
+    }
+    catch (...)
+    {
+      std::string errorMessage = "Unknown error occurred while writing file.";
+      return aww::Result::fail(errorMessage);
+    }
   }
 
   std::string read_ascii_text_file(const std::filesystem::path &path)

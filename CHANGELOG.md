@@ -1,5 +1,8 @@
 # aww-tools changelog
 
+## 2023-06-30
+- Tiny refactoring for aww-git-open. Ready for making unit-tests.
+
 ## 2023-06-22
 
 The error handling aww::Result code for I/O operations is too verbose and complex.
