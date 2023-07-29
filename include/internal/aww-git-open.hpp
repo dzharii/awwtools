@@ -17,7 +17,16 @@ namespace aww::internal::aww_git_open
   public:
     virtual ~aww_git_open_io_dependencies_interface() = default;
 
+    /**
+     * Get the absolute path of the file or directory.
+     * @return The absolute path of the file or directory.
+     */
     virtual inline std::filesystem::path fs_get_absolute_path(const fs::path &path) = 0;
+
+    /**
+     * Get the absolute path of the current working directory
+     * @return absolute path.
+     */
     virtual aww::Result fs_get_current_directory_absolute_path(fs::path &result) = 0;
 
     /**
@@ -27,6 +36,11 @@ namespace aww::internal::aww_git_open
      */
     virtual inline bool fs_exists(const std::filesystem::path &target) = 0;
 
+    /**
+     * Check if a path is a directory.
+     * @param path The path to check.
+     * @return True if the path is a directory, false otherwise.
+     */
     virtual inline bool fs_is_directory(const std::filesystem::path &path) = 0;
 
     /**
