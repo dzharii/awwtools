@@ -1,5 +1,9 @@
 ﻿# MDTREE (`output-aww-create.md`)
 
+```
+aww run mdtree -include "*aww-git-open*.cpp,*aww-git-open*.hpp"
+```
+
 
 - $Path = `.`
 - $FilterPath = ``
