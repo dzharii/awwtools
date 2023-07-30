@@ -263,6 +263,7 @@ aww::Result try_find_repository_url_in_git_config(const std::vector<std::string>
     fs::path currentDir(dirPath);
     fs::path gitPath = currentDir / ".git";
     std::cout << "gitPath: " << gitPath << "\n";
+
     if (deps.fs_exists(gitPath))
     {
       std::cout << "Found git repo in: " << currentDir << "\n";

@@ -77,77 +77,159 @@ public:
     }
 };
 
-TEST_CASE("try_convert_to_git_url") {
+TEST_CASE("try_convert_to_git_url accepatance tests")
+{
     aww_git_open_io_dependencies_stub deps;
-    std::string inputUrl = "git@github.com:user/repo.git";
-    std::string httpUrl;
-    bool result = aww::internal::aww_git_open::try_convert_to_git_url(inputUrl, httpUrl);
-    CHECK(result == true);
-    CHECK(httpUrl == "https://github.com/user/repo.git");
+
+    const std::string input_url_SSH_github = "git@github.com:user/repo.git";
+    const std::string input_url_HTTPS_github = "https://github.com/apache/arrow";
+    const std::string input_url_SSH_azure_devops = "example@vs-ssh.visualstudio.com:v3/example/ProjectName/RepoName";
+    const std::string input_url_HTTPS_azure_devops = "https://example.visualstudio.com/DefaultCollection/ProjectName/_git/RepoName";
+
+    SUBCASE("try_convert_to_git_url: input_url_SSH_github")
+    {
+        std::string httpUrl;
+        bool result = aww::internal::aww_git_open::try_convert_to_git_url(input_url_SSH_github, httpUrl);
+        CHECK(result == true);
+        CHECK(httpUrl == "https://github.com/user/repo.git");
+    }
+
+    SUBCASE("try_convert_to_git_url: input_url_HTTPS_github")
+    {
+        std::string httpUrl;
+        bool result = aww::internal::aww_git_open::try_convert_to_git_url(input_url_HTTPS_github, httpUrl);
+        CHECK(result == true);
+        CHECK(httpUrl == "https://github.com/apache/arrow");
+    }
+
+    SUBCASE("try_convert_to_git_url: input_url_SSH_azure_devops")
+    {
+        std::string httpUrl;
+        bool result = aww::internal::aww_git_open::try_convert_to_git_url(input_url_SSH_azure_devops, httpUrl);
+        CHECK(result == true);
+        CHECK(httpUrl == "https://example.visualstudio.com/DefaultCollection/ProjectName/_git/RepoName");
+    }
+
+    SUBCASE("try_convert_to_git_url: input_url_HTTPS_azure_devops")
+    {
+        std::string httpUrl;
+        bool result = aww::internal::aww_git_open::try_convert_to_git_url(input_url_HTTPS_azure_devops, httpUrl);
+        CHECK(result == true);
+        CHECK(httpUrl == "https://example.visualstudio.com/DefaultCollection/ProjectName/_git/RepoName");
+    }
 }
 
-/* TODO:
-TEST_CASE("try_find_repository_url_in_git_config") {
+TEST_CASE("try_find_repository_url_in_git_config accepatance tests")
+{
     aww_git_open_io_dependencies_stub deps;
-    std::vector<std::string> gitConfigLines = {"url = https://github.com/user/repo.git"};
+    std::vector<std::string> gitConfigLines = {
+        "[remote \"origin\"]",
+        "    url = https://github.com/user/repo.git"};
+
     std::string gitSshOrHttpUri;
     aww::Result result = aww::internal::aww_git_open::try_find_repository_url_in_git_config(gitConfigLines, gitSshOrHttpUri);
     CHECK(result.is_ok());
+    CHECK(result.error() == "");
+
     CHECK(gitSshOrHttpUri == "https://github.com/user/repo.git");
 }
-*/
 
-/* TODO:
-TEST_CASE("find_git_repo") {
+TEST_CASE("find_git_repo accepatance tests")
+{
     aww_git_open_io_dependencies_stub deps;
-    fs::path dirPath = "/";
-    fs::path gitRepoPath;
-    bool result = aww::internal::aww_git_open::find_git_repo(dirPath, gitRepoPath, deps);
-    CHECK(result == true);
+
+    SUBCASE("when executed from a valid nested folder of git repo, it should return the root git repo path") {
+        const std::filesystem::path dirPath = "C:\\Repo\\A\\B\\C";
+        std::filesystem::path gitRepoPath;
+
+        deps.fs_exists_stub = []([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &target) -> bool
+        {
+            if (target == "C:\\Repo\\.git")
+            {
+                return true;
+            }
+
+            return false;
+        };
+
+        bool result = aww::internal::aww_git_open::find_git_repo(dirPath, gitRepoPath, deps);
+        CHECK(result == true);
+        CHECK(gitRepoPath == "C:\\Repo");
+    }
+
+    SUBCASE("when executed from a valid root folder of git repo, it should return the root git repo path") {
+        const std::filesystem::path dirPath = "C:\\Repo\\";
+        std::filesystem::path gitRepoPath;
+
+        deps.fs_exists_stub = []([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &target) -> bool
+        {
+            if (target == "C:\\Repo\\.git")
+            {
+                return true;
+            }
+
+            return false;
+        };
+
+        bool result = aww::internal::aww_git_open::find_git_repo(dirPath, gitRepoPath, deps);
+        CHECK(result == true);
+        CHECK(gitRepoPath == "C:\\Repo");
+    }
+
+    SUBCASE("should fail when there is no .git folder in the path") {
+        const std::filesystem::path dirPath = "C:\\Repo\\A\\B\\C";
+        std::filesystem::path gitRepoPath;
+
+        deps.fs_exists_stub = []([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &target) -> bool
+        {
+            return false;
+        };
+
+        bool result = aww::internal::aww_git_open::find_git_repo(dirPath, gitRepoPath, deps);
+        CHECK(result == false);
+    }
 }
 
-
-TEST_CASE("get_relative_url_path") {
+TEST_CASE("get_relative_url_path acceptance tests") {
     aww_git_open_io_dependencies_stub deps;
-    fs::path parentAbsPath = "/repo";
-    fs::path childAbsPath = "/repo/subdir/file.txt";
+    std::filesystem::path parentAbsPath = "/repo";
+    std::filesystem::path childAbsPath = "/repo/subdir/file.txt";
     std::string result;
     aww::Result res = aww::internal::aww_git_open::get_relative_url_path(parentAbsPath, childAbsPath, result);
     CHECK(res.is_ok());
     CHECK(result == "subdir/file.txt");
 }
-*/
 
-
-TEST_CASE("aww_git_open_main THIS TEST IS NOT IMPLEMENTED YET!!!!!!!!!!!!!") {
+TEST_CASE("aww_git_open_main THIS TEST IS NOT IMPLEMENTED YET!!!!!!!!!!!!!")
+{
     aww_git_open_io_dependencies_stub deps;
 
     // TODO: continue with try_find_repository_url_in_git_config mocks
 
-/*
-    SUBCASE("No arguments provided") {
-        std::vector<std::string> cmdArgs;
-        int result = aww::internal::aww_git_open::aww_git_open_main(cmdArgs, deps);
-        CHECK(result == 0);
-    }
+    /*
+        SUBCASE("No arguments provided") {
+            std::vector<std::string> cmdArgs;
+            int result = aww::internal::aww_git_open::aww_git_open_main(cmdArgs, deps);
+            CHECK(result == 0);
+        }
 
-    SUBCASE("Too many arguments provided") {
-        std::vector<std::string> cmdArgs = {"arg1", "arg2"};
-        int result = aww::internal::aww_git_open::aww_git_open_main(cmdArgs, deps);
-        CHECK(result == 1);
-    }
+        SUBCASE("Too many arguments provided") {
+            std::vector<std::string> cmdArgs = {"arg1", "arg2"};
+            int result = aww::internal::aww_git_open::aww_git_open_main(cmdArgs, deps);
+            CHECK(result == 1);
+        }
 
-    SUBCASE("Git repository found") {
-        std::vector<std::string> cmdArgs = {"arg1"};
-        int result = aww::internal::aww_git_open::aww_git_open_main(cmdArgs, deps);
-        CHECK(result == 0);
-    }
+        SUBCASE("Git repository found") {
+            std::vector<std::string> cmdArgs = {"arg1"};
+            int result = aww::internal::aww_git_open::aww_git_open_main(cmdArgs, deps);
+            CHECK(result == 0);
+        }
 
-    SUBCASE("Git repository not found") {
-        std::vector<std::string> cmdArgs = {"arg1"};
-        int result = aww::internal::aww_git_open::aww_git_open_main(cmdArgs, deps);
-        CHECK(result == 1);
-    }
+        SUBCASE("Git repository not found") {
+            std::vector<std::string> cmdArgs = {"arg1"};
+            int result = aww::internal::aww_git_open::aww_git_open_main(cmdArgs, deps);
+            CHECK(result == 1);
+        }
 
-*/
+    */
 }
