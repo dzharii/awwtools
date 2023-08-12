@@ -9,42 +9,14 @@
 class aww_git_open_io_dependencies_stub : public aww::internal::aww_git_open::aww_git_open_io_dependencies_interface
 {
 public:
+    // fs_get_absolute_path_stub
     std::function<std::filesystem::path(int, const std::filesystem::path &)>
         fs_get_absolute_path_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &path) -> std::filesystem::path
     {
         return path;
     };
+
     int fs_get_absolute_path_called = 0;
-
-    std::function<aww::Result(int, std::filesystem::path &)>
-        fs_get_current_directory_absolute_path_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] std::filesystem::path &result) -> aww::Result
-    {
-        result = "/";
-        return aww::Result::ok();
-    };
-    int fs_get_current_directory_absolute_path_called = 0;
-
-    std::function<bool(int, const std::filesystem::path &)>
-        fs_exists_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &target) -> bool
-    {
-        return true;
-    };
-    int fs_exists_called = 0;
-
-    std::function<bool(int, const std::filesystem::path &)>
-        fs_is_directory_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &path) -> bool
-    {
-        return true;
-    };
-    int fs_is_directory_called = 0;
-
-    std::function<aww::Result(int, const std::filesystem::path &, std::vector<std::string> &)>
-        fs_read_lines_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &filePath, [[maybe_unused]] std::vector<std::string> &outFileLines) -> aww::Result
-    {
-        outFileLines.push_back("url = https://github.com/user/repo.git");
-        return aww::Result::ok();
-    };
-    int fs_read_lines_called = 0;
 
     std::filesystem::path fs_get_absolute_path(const std::filesystem::path &path) override
     {
@@ -52,11 +24,30 @@ public:
         return fs_get_absolute_path_stub(fs_get_absolute_path_called, path);
     }
 
+    // fs_get_current_directory_absolute_path_stub
+    std::function<aww::Result(int, std::filesystem::path &)>
+        fs_get_current_directory_absolute_path_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] std::filesystem::path &result) -> aww::Result
+    {
+        result = "/";
+        return aww::Result::ok();
+    };
+
+    int fs_get_current_directory_absolute_path_called = 0;
+
     aww::Result fs_get_current_directory_absolute_path(std::filesystem::path &result) override
     {
         fs_get_current_directory_absolute_path_called += 1;
         return fs_get_current_directory_absolute_path_stub(fs_get_current_directory_absolute_path_called, result);
     }
+
+    // fs_exists_stub
+    std::function<bool(int, const std::filesystem::path &)>
+        fs_exists_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &target) -> bool
+    {
+        return true;
+    };
+
+    int fs_exists_called = 0;
 
     bool fs_exists(const std::filesystem::path &target) override
     {
@@ -64,16 +55,65 @@ public:
         return fs_exists_stub(fs_exists_called, target);
     }
 
+    // fs_is_directory_stub
+    std::function<bool(int, const std::filesystem::path &)>
+        fs_is_directory_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &path) -> bool
+    {
+        return true;
+    };
+
+    int fs_is_directory_called = 0;
+
     bool fs_is_directory(const std::filesystem::path &path) override
     {
         fs_is_directory_called += 1;
         return fs_is_directory_stub(fs_is_directory_called, path);
     }
 
+    // fs_read_lines_stub
+    std::function<aww::Result(int, const std::filesystem::path &, std::vector<std::string> &)>
+        fs_read_lines_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &filePath, [[maybe_unused]] std::vector<std::string> &outFileLines) -> aww::Result
+    {
+        outFileLines.push_back("url = https://github.com/user/repo.git");
+        return aww::Result::ok();
+    };
+
+    int fs_read_lines_called = 0;
+
     aww::Result fs_read_lines(const std::filesystem::path &filePath, std::vector<std::string> &outFileLines) override
     {
         fs_read_lines_called += 1;
         return fs_read_lines_stub(fs_read_lines_called, filePath, outFileLines);
+    }
+
+    // launch_file_in_browser_stub
+    std::function<aww::Result(const std::string&)>
+        launch_file_in_browser_stub = [this]([[maybe_unused]]const std::string &url) -> aww::Result
+    {
+        return aww::Result::ok();
+    };
+    int launch_file_in_browser_called = 0;
+
+    aww::Result launch_file_in_browser(const std::string &url) override
+    {
+        launch_file_in_browser_called += 1;
+        return launch_file_in_browser_stub(url);
+    }
+
+    // show_notification_stub
+    std::function<void(const std::string&, const std::string&)>
+        show_notification_stub = [this]([[maybe_unused]]const std::string &title, [[maybe_unused]]const std::string &message)
+    {
+        // empty
+    };
+
+    int show_notification_called = 0;
+
+
+    void show_notification(const std::string &title, const std::string &message) override
+    {
+        show_notification_called += 1;
+        show_notification_stub(title, message);
     }
 };
 

@@ -113,22 +113,18 @@ namespace aww::internal::aww_git_open
     std::cout << "Converted to web url: " << webUrl << "\n";
 
     // extract gitRepo from optionalFileToOpen
-    fs::path gitRepoAbsolute = fs::absolute(gitRepo);
+    fs::path gitRepoAbsolute = deps.fs_get_absolute_path(gitRepo);
 
     // TODO Error handling and logging
 
     if (!optionalPathAbsolute.empty())
     {
       std::string webPath;
-      aww::Result webPathConverted = get_relative_url_path(
-          gitRepoAbsolute,
-          optionalPathAbsolute,
-          webPath);
 
-      if (webPathConverted.is_failed())
+      if (aww::Result res = get_relative_url_path(gitRepoAbsolute, optionalPathAbsolute, webPath); res.is_failed())
       {
         std::cout << "Failed to convert path to web url"
-                  << webPathConverted.error()
+                  << res.error()
                   << "\n";
         return 1;
       }
@@ -137,16 +133,15 @@ namespace aww::internal::aww_git_open
       std::cout << "Opening file: " << webUrl << "\n";
     }
 
-    aww::Result launchFileRes = aww::os::actions::launch_file(webUrl);
-    if (launchFileRes.is_failed())
+    if (aww::Result res = deps.launch_file_in_browser(webUrl); res.is_failed())
     {
-      std::cout << "Failed to launch file" << launchFileRes.error() << "\n";
-      aww::os::actions::show_notification("aww git open", "Failed to open file in browser");
+      std::cout << "Failed to launch file" << res.error() << "\n";
+      deps.show_notification("aww git open", "Failed to open file in browser");
       return 1;
     }
-    std::cout << "Launched file"
-              << "\n";
-    aww::os::actions::show_notification("aww git open", "The file was opened in browser");
+    std::cout << "Launched file\n";
+
+    deps.show_notification("aww git open", "The file was opened in browser");
     return 0;
   }
 

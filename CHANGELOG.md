@@ -1,6 +1,28 @@
 # aww-tools changelog
 
+## 2023-08-12
+
+My current unit-testing strategy feels overwhelming:
+
+Dependency: 
+
+- Interface, implementation 
+- Test implementation, manual stubs
+
+It requires some time and discipline, but it seems to be working. 
+
+For instance, now I can write unit-tests or experiment by replacing parts of the 
+
+tool with something new and keep the previous implementation for other tools. 
+
+The Dependency patterns gives me this flexibility. 
+
+Today, I have hopefully replaces all dependencies in `aww-git-open`
+
+
+
 ## 2023-06-30
+
 - Tiny refactoring for aww-git-open. Ready for making unit-tests.
 
 ## 2023-06-22
