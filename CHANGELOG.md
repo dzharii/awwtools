@@ -2,6 +2,8 @@
 
 ## 2023-08-12
 
+### aww git open
+
 My current unit-testing strategy feels overwhelming:
 
 Dependency: 
@@ -18,6 +20,94 @@ tool with something new and keep the previous implementation for other tools.
 The Dependency patterns gives me this flexibility. 
 
 Today, I have hopefully replaces all dependencies in `aww-git-open`
+
+### aww guid
+
+I have designed an new prompt to assist me with stub generation for unit-tests, here it is:
+
+
+
+#### GPT Prompt
+
+When I say a command !implement: followed by function signature, I want you to write the implementation for the C++ function.
+Do not put any extra boilerplate code (like class definitions), just give me the implementation close to the example below.
+Example, my request:
+
+```
+!implement:
+virtual inline aww::Result launch_file_in_browser(const std::string &url) = 0;
+```
+
+Your response:
+file `io_dependencies_interface`:
+```cpp
+        /**
+         * Launch a file in the default browser.
+         * @param url The url to launch.
+         * @return Aww::Result indicating the success or failure of the operation.
+         */
+        virtual inline aww::Result launch_file_in_browser(const std::string &url) = 0;
+```
+
+file `io_dependencies`:
+```cpp
+        inline aww::Result launch_file_in_browser(const std::string &url) override
+        {
+          // TODO: implement me
+        }
+```
+
+file `io_dependencies_stub`:
+```cpp
+        // always define a default stub function (do not put this comment in the resulting code)
+        std::function<aww::Result(const std::string&)>
+            launch_file_in_browser_stub = [this]([[maybe_unused]]const std::string &url) -> aww::Result
+        {
+            return aww::Result::ok();
+        };
+        // always define a counter (do not put this comment in the resulting code)
+        int launch_file_in_browser_called = 0;
+
+        // always call the stub function and increment the call counter (do not put this comment in the resulting code)
+        aww::Result launch_file_in_browser(const std::string &url) override
+        {
+            launch_file_in_browser_called += 1;
+            return launch_file_in_browser_stub(url);
+        }
+```
+
+
+
+Also  [dot-awwtools/aww-scripts/mdtree.ps1 at main · dzharii/dot-awwtools · GitHub](https://github.com/dzharii/dot-awwtools/blob/main/aww-scripts/mdtree.ps1) helps a lot for setting GPT context and asking it to generate tests. 
+
+```
+aww run mdtree -FilterName ".*aww-guid.*"
+```
+
+### And the unit-testing prompt worked well
+
+
+I want you to be an expert developer in Test in modern C++ language who:
+
+- writes solid and simple-to-understand unit-test for C++ projects
+- uses doctest/doctest.h library for unit-testing
+- prioritizes the most important tests to cover the most important code first
+- writes bug-free and elegant code.
+
+In my next message, I will give you a task; before providing your answer with the code,
+brainstorm it internally:
+
+- find and fix possible bugs
+- make code organization more elegant
+- ensure the code is testable and advice how to improve testability
+- ensure there are no security vulnerabilities.
+
+Codding style:
+- for unused parameters use `[[maybe_unused]]` attribute
+
+Attempt to fix the issues from discovered in the brainstorm and only then provide the answer to my request.
+Say "Ack" to acknowledge or ask me any questions that may improve your response.
+And then wait for my next request with the task for you.
 
 
 

@@ -127,7 +127,8 @@ int aww_main(const std::vector<std::string> &cmdArgs)
     }
     case AwwTool::Guid:
     {
-      return aww::internal::aww_guid::aww_guid_main(awwExecutableArgs);
+      aww::internal::aww_guid::aww_guid_io_dependencies deps;
+      return aww::internal::aww_guid::aww_guid_main(awwExecutableArgs, deps);
     }
     case AwwTool::Open:
     {

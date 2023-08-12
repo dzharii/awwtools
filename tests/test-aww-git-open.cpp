@@ -109,7 +109,6 @@ public:
 
     int show_notification_called = 0;
 
-
     void show_notification(const std::string &title, const std::string &message) override
     {
         show_notification_called += 1;
