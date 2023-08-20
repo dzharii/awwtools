@@ -6,12 +6,13 @@
 #include <array>
 
 #include "aww-common.hpp"
+#include "internal/aww-open.hpp"
 
 namespace aww::internal::aww_open
 {
   namespace fs = std::filesystem;
 
-  int aww_open_main(const std::vector<std::string> &cmdArgs)
+  int aww_open_main(const std::vector<std::string> &cmdArgs, aww_open_io_dependencies_interface &deps)
   {
     bool useDefaultInput = cmdArgs.size() == 0;
 
@@ -27,15 +28,15 @@ namespace aww::internal::aww_open
 
     fileToOpen = aww::fs::normalize_file_path(fileToOpen);
 
-    if (aww::Result res = aww::os::actions::launch_file(fileToOpen); res.is_failed())
+    if (aww::Result res = deps.launch_file(fileToOpen); res.is_failed())
     {
       std::cout << "Failed to launch file " << res.error() << "\n";
-      aww::os::actions::show_notification("aww open", "Failed to open file: " + fileToOpen);
+      deps.show_notification("aww open", "Failed to open file: " + fileToOpen);
       return 1;
     }
     std::cout << "Launched file"
               << "\n";
-    aww::os::actions::show_notification("aww open", "The file was opened");
+    deps.show_notification("aww open", "The file was opened");
     return 0;
   }
 }

@@ -1,5 +1,19 @@
 # aww-tools changelog
 
+
+
+## 2023-08-20
+
+`aww-open` refactored with io dependency and unit tests
+
+```
+aww run mdtree -FilterName ".*aww-open.*" -Output dev-experiments-unit-tests\output-aww-open.md
+```
+
+
+
+
+
 ## 2023-08-12
 
 ### aww git open
