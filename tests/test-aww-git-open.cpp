@@ -178,12 +178,14 @@ TEST_CASE("find_git_repo accepatance tests")
     aww_git_open_io_dependencies_stub deps;
 
     SUBCASE("when executed from a valid nested folder of git repo, it should return the root git repo path") {
-        const std::filesystem::path dirPath = "C:\\Repo\\A\\B\\C";
+        const std::filesystem::path root = "/";
+        const std::filesystem::path dirPath = root / "Repo" / "A" / "B" / "C";
         std::filesystem::path gitRepoPath;
 
-        deps.fs_exists_stub = []([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &target) -> bool
+        deps.fs_exists_stub = [&]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &target) -> bool
         {
-            if (target == "C:\\Repo\\.git")
+            const std::filesystem::path gitRepoRoot = root / "Repo" / ".git";
+            if (target == gitRepoRoot)
             {
                 return true;
             }
@@ -192,17 +194,22 @@ TEST_CASE("find_git_repo accepatance tests")
         };
 
         bool result = aww::internal::aww_git_open::find_git_repo(dirPath, gitRepoPath, deps);
+
+        std::filesystem::path expectedPath = root / "Repo";
+
         CHECK(result == true);
-        CHECK(gitRepoPath == "C:\\Repo");
+        CHECK(gitRepoPath ==  expectedPath);
     }
 
     SUBCASE("when executed from a valid root folder of git repo, it should return the root git repo path") {
-        const std::filesystem::path dirPath = "C:\\Repo\\";
+        const std::filesystem::path root = "/";
+        const std::filesystem::path dirPath = root / "Repo";
         std::filesystem::path gitRepoPath;
 
-        deps.fs_exists_stub = []([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &target) -> bool
+        deps.fs_exists_stub = [&]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &target) -> bool
         {
-            if (target == "C:\\Repo\\.git")
+            const std::filesystem::path gitRepoRoot = root / "Repo" / ".git";
+            if (target == gitRepoRoot)
             {
                 return true;
             }
@@ -212,7 +219,7 @@ TEST_CASE("find_git_repo accepatance tests")
 
         bool result = aww::internal::aww_git_open::find_git_repo(dirPath, gitRepoPath, deps);
         CHECK(result == true);
-        CHECK(gitRepoPath == "C:\\Repo");
+        CHECK(gitRepoPath == root / "Repo");
     }
 
     SUBCASE("should fail when there is no .git folder in the path") {
