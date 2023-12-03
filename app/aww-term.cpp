@@ -1,44 +1,24 @@
-// Executables must have the following defined if the library contains
-// doctest definitions. For builds with this disabled, e.g. code shipped to
-// users, this can be left out.
-#ifdef ENABLE_DOCTEST_IN_LIBRARY
-#define DOCTEST_CONFIG_IMPLEMENT
-#include "doctest/doctest.h"
-#endif
-
 #include <iostream>
-#include <string>
 #include <vector>
-#include <filesystem>
-#include <map>
-#include <array>
+#include <string>
+#include "internal/aww-term.hpp"
 
-#include "aww-common.hpp"
-
-namespace fs = std::filesystem;
-
-
-int main(int, char**)
+int main(int argc, char **argv)
 {
-  // open new terminal with bash in new window
-  std::string launchTerm;
-
-  const aww::os::Platform platform = aww::os::OSPlatform;
-
-  if constexpr (platform == aww::os::Platform::Windows)
+  try
   {
-    launchTerm = "start cmd.exe @cmd /k";
-  } else if constexpr (platform == aww::os::Platform::Linux){
-    launchTerm = "x-terminal-emulator -e bash &";
-  } else {
-    std::cerr << "Error: Unsupported platform" << "\n";
+    std::vector<std::string> cmdArgs(argv, argv + argc);
+    cmdArgs.erase(cmdArgs.begin()); // remove first element
+    return aww::internal::aww_term::aww_term_main(cmdArgs);
+  }
+  catch (std::exception &ex)
+  {
+    std::cerr << ex.what() << "\n";
     return 1;
   }
-  int retValue = std::system(launchTerm.c_str());
-  if (retValue != 0)
+  catch (...)
   {
-    std::cerr << "Error: " << retValue << "\n";
+    std::cerr << "Caught unknown exception.\n";
+    return 1;
   }
-  return retValue;
 }
-

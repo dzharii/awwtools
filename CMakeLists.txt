@@ -42,12 +42,27 @@ set(SOURCES          # All .cpp files in src/
     src/aww-common.cpp
     src/aww-app-manifest.cpp
     src/aww-inspiration.cpp
-    src/aww-inernal-aww-tag.cpp
+    src/internal/aww-date.cpp
+    src/internal/aww-create.cpp
+    src/internal/aww-git-open.cpp
+    src/internal/aww-guid.cpp
+    src/internal/aww-open.cpp
+    src/internal/aww-run.cpp
+    src/internal/aww-tag.cpp
+    src/internal/aww-term.cpp
+    src/internal/aww-toast.cpp
+    src/internal/aww.cpp
 )
 if(WIN32)
-    list(APPEND SOURCES src/aww-common-windows.cpp)
+    list(APPEND SOURCES
+        src/aww-common-windows.cpp
+        src/aww-banner-windows.cpp
+    )
 elseif(UNIX)
-    list(APPEND SOURCES src/aww-common-linux.cpp)
+    list(APPEND SOURCES
+        src/aww-common-linux.cpp
+        src/aww-banner-linux.cpp
+    )
 else()
     list(APPEND SOURCES src/aww-common-unknown.cpp)
 endif()

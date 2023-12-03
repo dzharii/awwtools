@@ -1,38 +1,26 @@
-// Executables must have the following defined if the library contains
-// doctest definitions. For builds with this disabled, e.g. code shipped to
-// users, this can be left out.
-#ifdef ENABLE_DOCTEST_IN_LIBRARY
-#define DOCTEST_CONFIG_IMPLEMENT
-#include "doctest/doctest.h"
-#endif
-
 #include <iostream>
+#include <vector>
 #include <string>
+#include "internal/aww-guid.hpp"
 
-#include "clip.h"
-#include "aww-common.hpp"
-
-int main(void)
+int main(int argc, char **argv)
 {
-
-  std::string guid;
-  aww::Result result = aww::util::getGuid(guid);
-
-  if (result.isFailed())
+  try
   {
-    std::cout << "Failed to get GUID" << result.error() << "\n";
+    std::vector<std::string> cmdArgs(argv, argv + argc);
+    cmdArgs.erase(cmdArgs.begin()); // remove first element
+
+    aww::internal::aww_guid::aww_guid_io_dependencies deps;
+    return aww::internal::aww_guid::aww_guid_main(cmdArgs, deps);
+  }
+  catch (std::exception &ex)
+  {
+    std::cerr << ex.what() << "\n";
     return 1;
   }
-
-  if (clip::set_text(guid))
+  catch (...)
   {
-    std::cout << "Copied to clipboard:\n" << guid << "\n";
-    aww::os::actions::showNotification("aww guid", "The guid has been copied to the clipboard");
+    std::cerr << "Caught unknown exception.\n";
+    return 1;
   }
-  else
-  {
-    std::cout << "Failed to copy to clipboard:\n" << guid << "\n";
-    aww::os::actions::showNotification("aww guid", "Failed to copy the guid to the clipboard");
-  }
-  return 0;
 }

@@ -1,51 +1,26 @@
-// Executables must have the following defined if the library contains
-// doctest definitions. For builds with this disabled, e.g. code shipped to
-// users, this can be left out.
-#ifdef ENABLE_DOCTEST_IN_LIBRARY
-#define DOCTEST_CONFIG_IMPLEMENT
-#include "doctest/doctest.h"
-#endif
-
 #include <iostream>
+#include <vector>
 #include <string>
-#include <regex>
-
-#include "clip.h"
-#include "spdlog/spdlog.h"
-#include "aww-common.hpp"
-#include "fmt/core.h"
+#include "internal/aww-date.hpp"
 
 int main(int argc, char **argv)
 {
-  spdlog::info("Hello spdlog");
-  fmt::print("Hello, world from fmt PLEASE REMOVE THIS \b!\n");
+  try
+  {
+    std::vector<std::string> cmdArgs(argv, argv + argc);
+    cmdArgs.erase(cmdArgs.begin()); // remove first element
 
-  std::string currentDate = aww::date::getDateYYYYMMDD();
-
-  std::vector<std::string> cmdArgs(argv, argv + argc);
-  cmdArgs.erase(cmdArgs.begin()); // remove first element
-
-  std::string fileName = aww::string::join(cmdArgs, "-");
-  std::regex replaceFilenameUnsafeChars("[^\\._a-zA-Z0-9-]");
-  std::string safeFileName = std::regex_replace(fileName, replaceFilenameUnsafeChars, "-");
-
-  std::string result = currentDate;
-
-  if (!safeFileName.empty()) {
-    result = result + "-" + safeFileName;
+    aww::internal::aww_date::aww_date_io_dependencies deps;
+    return aww::internal::aww_date::aww_date_main(cmdArgs, deps);
   }
-  if (clip::set_text(result)) {
-    std::cout << "Copied to clipboard: " << result << "\n";
-    aww::os::actions::showNotification("aww date", "The date has been copied to the clipboard");
-  } else {
-    std::cout << "Failed to copy to clipboard: " << result << "\n";
-    aww::os::actions::showNotification("aww date", "Failed to copy the date to the clipboard");
+  catch (std::exception &ex)
+  {
+    std::cerr << ex.what() << "\n";
+    return 1;
   }
-
-  std::cout << "Result:"
-            << "\n"
-            << result
-            << "\n";
-
-  return 0;
+  catch (...)
+  {
+    std::cerr << "Caught unknown exception.\n";
+    return 1;
+  }
 }
