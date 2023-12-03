@@ -61,7 +61,7 @@ Where:
 So, instead of this:
 
 ```json
-{"message":"Failed to launch file","error":"File does not exist","fileToOpen":"${fileToOpen}"}
+{"message":"Failed to launch file","error":"File does not exist","fileToOpen":"C:\\hello\\world.txt","tag":"vkmnmvq0sis"}
 ```
 
 
@@ -69,6 +69,6 @@ So, instead of this:
 I can have this:
 
 ```cpp
-"#vkmnmvq0sis Failed to launch #fileToOpen='${fileToOpen}'; #error='File does not exist'}"
+#vkmnmvq0sis Failed to launch #fileToOpen='C:\hello\world.txt'; #error='File does not exist'
 ```
 

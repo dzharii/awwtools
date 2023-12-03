@@ -288,7 +288,7 @@ aww create my-notes.md date
 <h3>aww tag</h2>
   <div class="text-date-added">2023-03-28</div>
   <pre><code>
-aww tag # generates unique alpha-numerical tag, like "svfg8hgix0i"; 
+aww tag # generates unique alpha-numerical tag, like "svfg8hgix0i";
 aww-tag
 aww tag 20 # sets length of the generated tag to 20 chars "ddet1frpfzza20bzxsrf"
 # default is 11
@@ -301,6 +301,27 @@ aww tag 20 # sets length of the generated tag to 20 chars "ddet1frpfzza20bzxsrf"
   <p>
     generates unique alpha-numerical tag, 11 characters by default.
   </p>
+
+<h2>Notes</h2>
+
+<ul>
+  <li>
+    <a href="https://github.com/dzharii/awwtools/blob/main/doc-dev-articles/2023-12-02-aww-tools-structured-logging.md" target="_blank">
+      2023-12-02 - aww structured logging
+    </a> - this note proposes the new logging structure logging format for aww tools.
+    <blockquote>
+      <p>
+          #vkmnmvq0sis Failed to launch #fileToOpen='C:\hello\world.txt'; #error='File does not exist'
+      </p>
+      <p>
+        as an alternative to:
+      </p>
+      <p>
+          {"message":"Failed to launch file","error":"File does not exist","fileToOpen":"C:\\hello\\world.txt","tag":"vkmnmvq0sis"}
+      </p>
+    </blockquote>
+  </li>
+</ul>
 
 <h2>Q&A</h2>
 
