@@ -1,6 +1,11 @@
 # aww-tools changelog
 
 
+## 2023-12-02
+Added first dev sketch: 
+
+aww structured logging
+./doc-dev-articles\2023-12-02-aww-tools-structured-logging.md
 
 ## 2023-08-20
 
