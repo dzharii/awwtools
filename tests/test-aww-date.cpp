@@ -18,18 +18,18 @@ public:
   std::string show_notification_last_message = "";
   int show_notification_called = 0;
 
-  std::string get_date_yyyymmdd() override {
+  std::string get_date_yyyymmdd([[maybe_unused]] aww::call_tag_t tag) override {
     get_date_yyyymmdd_called += 1;
     return get_date_yyyymmdd_returns;
   }
 
-  bool clipboard_set_text(const std::string& text) override {
+  bool clipboard_set_text(const std::string& text, [[maybe_unused]] aww::call_tag_t tag) override {
     clipboard_set_text_called += 1;
     clipboard_set_text_last_text = text;
     return clipboard_set_text_returns;
   }
 
-  void show_notification(const std::string& title, const std::string& message) override {
+  void show_notification(const std::string& title, const std::string& message, [[maybe_unused]] aww::call_tag_t tag) override {
     show_notification_called += 1;
     show_notification_last_title = title;
     show_notification_last_message = message;

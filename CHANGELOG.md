@@ -1,7 +1,79 @@
 # aww-tools changelog
 
 
+
+## 2023-12-10
+
+
+
+My most used and most simple aww tool `aww-date` got some experimental update. 
+
+I have found that tracking the input/output dependencies calls is tricky, since, for instance, `fs_file_exists()`
+
+can be called multiple times in the code for different cases. In the test cases, I want to somehow recreate the complex code path, but 
+
+tracking the right calls by their call order (number of times same function was called) or by the input parameters is too brittle, how can I precisely find  the call I need? at first, for a long time, my idea was to rename `fs_file_exists()` to a case specific name, like:
+
+- if `fs_template_folder_exists()`
+  - if `fs_template_file_exists()`
+    - do something
+  - else if `fs_template_file_with_specification_exists()`
+    - do something else
+
+but to support this case I have to: 
+
+- add these function to `aww_create_io_dependencies_interface`
+- then implement in `aww_create_io_dependencies`
+- then create a mock in `aww_create_io_dependencies_stub`
+
+This simple does not scale, so I have decided to tag these calls at compile time and keep the generic name. 
+
+New code added:
+
+`include\aww-common.hpp`
+
+```cpp
+// CallTag struct definition
+struct call_tag_t {
+constexpr explicit call_tag_t(unsigned long long value) : value(value) {}
+
+const unsigned long long value;
+};
+
+// Compile-time hash function
+constexpr unsigned long long _compiletime_hash(const char* str, unsigned long long hash = 0, size_t index = 0) {
+return str[index] ? _compiletime_hash(str, (hash * 131) + str[index], index + 1) : hash;
+}
+
+// call_tag function with compile-time length check for string literals
+template <size_t N>
+constexpr call_tag_t call_tag(const char (&str)[N]) {
+  static_assert(N > 11, "Tag string must be at least 11 characters long."); // N includes the null terminator
+  return call_tag_t(_compiletime_hash(str));
+}
+```
+
+
+
+Usage at `src\internal\aww-date.cpp`
+
+```cpp
+if (deps.clipboard_set_text(result, aww::call_tag("t7svmrrhai0"))) {
+    std::cout << "Copied to clipboard: " << result << "\n";
+    deps.show_notification("aww date", "The date has been copied to the clipboard", aww::call_tag("tssis4p5ta2"));
+} else {
+    std::cout << "Failed to copy to clipboard: " << result << "\n";
+    deps.show_notification("aww date", "Failed to copy the date to the clipboard", aww::call_tag("730v5jc2d3o"));
+    return 1;
+}
+```
+
+
+
+
+
 ## 2023-12-02
+
 Added first dev sketch: 
 
 aww structured logging
