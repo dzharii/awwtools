@@ -27,13 +27,13 @@ namespace aww
 {
   // CallTag struct definition
   struct call_tag_t {
-    constexpr explicit call_tag_t(unsigned long long value) : value(value) {}
+    constexpr explicit call_tag_t(std::uint64_t value) : value(value) {}
 
-    const unsigned long long value;
+    const std::uint64_t value;
   };
 
   // Compile-time hash function
-  constexpr unsigned long long _compiletime_hash(const char* str, unsigned long long hash = 0, size_t index = 0) {
+  constexpr std::uint64_t _compiletime_hash(const char* str, std::uint64_t hash = 0, size_t index = 0) {
     return str[index] ? _compiletime_hash(str, (hash * 131) + str[index], index + 1) : hash;
   }
 
