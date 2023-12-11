@@ -9,11 +9,3 @@ TEST_CASE("aww::date::getDateYYYYMMDD returns valid date string")
   CHECK_MESSAGE(date[4] == '-', "Date string should have a dash at position 4");
   CHECK_MESSAGE(date[7] == '-', "Date string should have a dash at position 7");
 }
-
-
-
-
-
-
-
-

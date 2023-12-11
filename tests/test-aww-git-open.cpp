@@ -11,7 +11,7 @@ class aww_git_open_io_dependencies_stub : public aww::internal::aww_git_open::aw
 public:
     // fs_get_absolute_path_stub
     std::function<std::filesystem::path(int, const std::filesystem::path &)>
-        fs_get_absolute_path_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &path) -> std::filesystem::path
+        fs_get_absolute_path_stub = [this](int callCount, const std::filesystem::path &path) -> std::filesystem::path
     {
         return path;
     };
@@ -26,7 +26,7 @@ public:
 
     // fs_get_current_directory_absolute_path_stub
     std::function<aww::Result(int, std::filesystem::path &)>
-        fs_get_current_directory_absolute_path_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] std::filesystem::path &result) -> aww::Result
+        fs_get_current_directory_absolute_path_stub = [this](int callCount, std::filesystem::path &result) -> aww::Result
     {
         result = "/";
         return aww::Result::ok();
@@ -42,7 +42,7 @@ public:
 
     // fs_exists_stub
     std::function<bool(int, const std::filesystem::path &)>
-        fs_exists_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &target) -> bool
+        fs_exists_stub = [this](int callCount, const std::filesystem::path &target) -> bool
     {
         return true;
     };
@@ -57,7 +57,7 @@ public:
 
     // fs_is_directory_stub
     std::function<bool(int, const std::filesystem::path &)>
-        fs_is_directory_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &path) -> bool
+        fs_is_directory_stub = [this](int callCount, const std::filesystem::path &path) -> bool
     {
         return true;
     };
@@ -72,7 +72,7 @@ public:
 
     // fs_read_lines_stub
     std::function<aww::Result(int, const std::filesystem::path &, std::vector<std::string> &)>
-        fs_read_lines_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &filePath, [[maybe_unused]] std::vector<std::string> &outFileLines) -> aww::Result
+        fs_read_lines_stub = [this](int callCount, const std::filesystem::path &filePath, std::vector<std::string> &outFileLines) -> aww::Result
     {
         outFileLines.push_back("url = https://github.com/user/repo.git");
         return aww::Result::ok();
@@ -87,8 +87,8 @@ public:
     }
 
     // launch_file_in_browser_stub
-    std::function<aww::Result(const std::string&)>
-        launch_file_in_browser_stub = [this]([[maybe_unused]]const std::string &url) -> aww::Result
+    std::function<aww::Result(const std::string &)>
+        launch_file_in_browser_stub = [this](const std::string &url) -> aww::Result
     {
         return aww::Result::ok();
     };
@@ -101,8 +101,8 @@ public:
     }
 
     // show_notification_stub
-    std::function<void(const std::string&, const std::string&)>
-        show_notification_stub = [this]([[maybe_unused]]const std::string &title, [[maybe_unused]]const std::string &message)
+    std::function<void(const std::string &, const std::string &)>
+        show_notification_stub = [this](const std::string &title, const std::string &message)
     {
         // empty
     };
@@ -177,12 +177,13 @@ TEST_CASE("find_git_repo accepatance tests")
 {
     aww_git_open_io_dependencies_stub deps;
 
-    SUBCASE("when executed from a valid nested folder of git repo, it should return the root git repo path") {
+    SUBCASE("when executed from a valid nested folder of git repo, it should return the root git repo path")
+    {
         const std::filesystem::path root = "/";
         const std::filesystem::path dirPath = root / "Repo" / "A" / "B" / "C";
         std::filesystem::path gitRepoPath;
 
-        deps.fs_exists_stub = [&]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &target) -> bool
+        deps.fs_exists_stub = [&](int callCount, const std::filesystem::path &target) -> bool
         {
             const std::filesystem::path gitRepoRoot = root / "Repo" / ".git";
             if (target == gitRepoRoot)
@@ -198,15 +199,16 @@ TEST_CASE("find_git_repo accepatance tests")
         std::filesystem::path expectedPath = root / "Repo";
 
         CHECK(result == true);
-        CHECK(gitRepoPath ==  expectedPath);
+        CHECK(gitRepoPath == expectedPath);
     }
 
-    SUBCASE("when executed from a valid root folder of git repo, it should return the root git repo path") {
+    SUBCASE("when executed from a valid root folder of git repo, it should return the root git repo path")
+    {
         const std::filesystem::path root = "/";
         const std::filesystem::path dirPath = root / "Repo";
         std::filesystem::path gitRepoPath;
 
-        deps.fs_exists_stub = [&]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &target) -> bool
+        deps.fs_exists_stub = [&](int callCount, const std::filesystem::path &target) -> bool
         {
             const std::filesystem::path gitRepoRoot = root / "Repo" / ".git";
             if (target == gitRepoRoot)
@@ -222,11 +224,12 @@ TEST_CASE("find_git_repo accepatance tests")
         CHECK(gitRepoPath == root / "Repo");
     }
 
-    SUBCASE("should fail when there is no .git folder in the path") {
+    SUBCASE("should fail when there is no .git folder in the path")
+    {
         const std::filesystem::path dirPath = "C:\\Repo\\A\\B\\C";
         std::filesystem::path gitRepoPath;
 
-        deps.fs_exists_stub = []([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &target) -> bool
+        deps.fs_exists_stub = [](int callCount, const std::filesystem::path &target) -> bool
         {
             return false;
         };
@@ -236,7 +239,8 @@ TEST_CASE("find_git_repo accepatance tests")
     }
 }
 
-TEST_CASE("get_relative_url_path acceptance tests") {
+TEST_CASE("get_relative_url_path acceptance tests")
+{
     aww_git_open_io_dependencies_stub deps;
     std::filesystem::path parentAbsPath = "/repo";
     std::filesystem::path childAbsPath = "/repo/subdir/file.txt";

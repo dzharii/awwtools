@@ -10,7 +10,7 @@ class aww_create_io_dependencies_stub : public aww::internal::aww_create::aww_cr
 {
 public:
   std::function<std::string(int)>
-      get_date_yyyymmdd_stub = [this]([[maybe_unused]] int count)
+      get_date_yyyymmdd_stub = [this](int count)
   {
     return "2023-06-02";
   };
@@ -23,43 +23,43 @@ public:
   };
   int fs_get_current_executable_path_called = 0;
 
-  std::function<bool(int, const std::filesystem::path&)>
-      fs_exists_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &target) -> bool
+  std::function<bool(int, const std::filesystem::path &)>
+      fs_exists_stub = [this](int callCount, const std::filesystem::path &target) -> bool
   {
     return true;
   };
   int fs_exists_called = 0;
 
   std::function<bool(int, const std::filesystem::path &)>
-      fs_create_directories_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &path) -> bool
+      fs_create_directories_stub = [this](int callCount, const std::filesystem::path &path) -> bool
   {
     return true;
   };
   int fs_create_directories_called = 0;
 
   std::function<aww::Result(int, const std::filesystem::path &)>
-      fs_create_empty_file_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &path) -> aww::Result
+      fs_create_empty_file_stub = [this](int callCount, const std::filesystem::path &path) -> aww::Result
   {
     return aww::Result::ok();
   };
   int fs_create_empty_file_called = 0;
 
   std::function<aww::Result(int, const std::filesystem::path &, std::vector<std::string> &)>
-      fs_read_lines_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &filePath, [[maybe_unused]] std::vector<std::string> &outFileLines) -> aww::Result
+      fs_read_lines_stub = [this](int callCount, const std::filesystem::path &filePath, std::vector<std::string> &outFileLines) -> aww::Result
   {
     return aww::Result::ok();
   };
   int fs_read_lines_called = 0;
 
   std::function<aww::Result(int, const std::filesystem::path &, const std::vector<std::string> &)>
-      fs_write_lines_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::filesystem::path &filePath, [[maybe_unused]] const std::vector<std::string> &lines) -> aww::Result
+      fs_write_lines_stub = [this](int callCount, const std::filesystem::path &filePath, const std::vector<std::string> &lines) -> aww::Result
   {
     return aww::Result::ok();
   };
   int fs_write_lines_called = 0;
 
   std::function<void(int, const std::string &, const std::string &)>
-      show_notification_stub = [this]([[maybe_unused]] int callCount, [[maybe_unused]] const std::string &title, [[maybe_unused]] const std::string &message) {
+      show_notification_stub = [this](int callCount, const std::string &title, const std::string &message) {
 
       };
   int show_notification_called = 0;
@@ -127,8 +127,8 @@ TEST_CASE("aww::internal::aww_create::assume_template_path")
   {
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
-                                        [[maybe_unused]] int callCount,
-                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
+                                        int callCount,
+                                        const std::filesystem::path &target) -> bool
     {
       // check if template file exists
       if (target.filename() == "template-hello.md")
@@ -157,8 +157,8 @@ TEST_CASE("aww::internal::aww_create::assume_template_path")
   {
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
-                                        [[maybe_unused]] int callCount,
-                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
+                                        int callCount,
+                                        const std::filesystem::path &target) -> bool
     {
       return false;
     };
@@ -182,8 +182,8 @@ TEST_CASE("aww::internal::aww_create::assume_template_path")
     templateModifier = "";
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
-                                        [[maybe_unused]] int callCount,
-                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
+                                        int callCount,
+                                        const std::filesystem::path &target) -> bool
     {
       return false;
     };
@@ -213,8 +213,8 @@ TEST_CASE("aww::internal::aww_create::try_create_file_by_path")
   {
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
-                                        [[maybe_unused]] int callCount,
-                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
+                                        int callCount,
+                                        const std::filesystem::path &target) -> bool
     {
       return true;
     };
@@ -225,16 +225,15 @@ TEST_CASE("aww::internal::aww_create::try_create_file_by_path")
     // ASSERT
     CHECK_MESSAGE(
         result.is_failed(),
-        "Result should be failed because file already exists"
-    );
+        "Result should be failed because file already exists");
   }
 
   SUBCASE("Invalid path")
   {
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
-                                        [[maybe_unused]] int callCount,
-                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
+                                        int callCount,
+                                        const std::filesystem::path &target) -> bool
     {
       return false;
     };
@@ -245,23 +244,22 @@ TEST_CASE("aww::internal::aww_create::try_create_file_by_path")
     // ASSERT
     CHECK_MESSAGE(
         result.is_failed(),
-        "Result should be failed because path is invalid"
-    );
+        "Result should be failed because path is invalid");
   }
 
   SUBCASE("Create file in existing directory")
   {
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
-                                        [[maybe_unused]] int callCount,
-                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
+                                        int callCount,
+                                        const std::filesystem::path &target) -> bool
     {
       return false;
     };
 
     ioDependencies.fs_create_empty_file_stub = [&](
-                                                [[maybe_unused]] int callCount,
-                                                [[maybe_unused]] const std::filesystem::path& path) -> aww::Result
+                                                   int callCount,
+                                                   const std::filesystem::path &path) -> aww::Result
     {
       return aww::Result::ok();
     };
@@ -272,30 +270,29 @@ TEST_CASE("aww::internal::aww_create::try_create_file_by_path")
     // ASSERT
     CHECK_MESSAGE(
         result.is_ok(),
-        "Result should be successful"
-    );
+        "Result should be successful");
   }
 
   SUBCASE("Create file with nested directories")
   {
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
-                                        [[maybe_unused]] int callCount,
-                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
+                                        int callCount,
+                                        const std::filesystem::path &target) -> bool
     {
       return false;
     };
 
     ioDependencies.fs_create_directories_stub = [&](
-                                                  [[maybe_unused]] int callCount,
-                                                  [[maybe_unused]] const std::filesystem::path& path) -> bool
+                                                    int callCount,
+                                                    const std::filesystem::path &path) -> bool
     {
       return true;
     };
 
     ioDependencies.fs_create_empty_file_stub = [&](
-                                                [[maybe_unused]] int callCount,
-                                                [[maybe_unused]] const std::filesystem::path& path) -> aww::Result
+                                                   int callCount,
+                                                   const std::filesystem::path &path) -> aww::Result
     {
       return aww::Result::ok();
     };
@@ -306,8 +303,7 @@ TEST_CASE("aww::internal::aww_create::try_create_file_by_path")
     // ASSERT
     CHECK_MESSAGE(
         result.is_ok(),
-        "Result should be successful"
-    );
+        "Result should be successful");
   }
 }
 
@@ -320,8 +316,8 @@ TEST_CASE("aww::internal::aww_create::create_new_directory_scenario")
   {
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
-                                        [[maybe_unused]] int callCount,
-                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
+                                        int callCount,
+                                        const std::filesystem::path &target) -> bool
     {
       return false;
     };
@@ -332,23 +328,22 @@ TEST_CASE("aww::internal::aww_create::create_new_directory_scenario")
     // ASSERT
     CHECK_MESSAGE(
         result.is_ok(),
-        "Result should be successful even if directory already exists"
-    );
+        "Result should be successful even if directory already exists");
   }
 
   SUBCASE("Create directory")
   {
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
-                                        [[maybe_unused]] int callCount,
-                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
+                                        int callCount,
+                                        const std::filesystem::path &target) -> bool
     {
       return false;
     };
 
     ioDependencies.fs_create_directories_stub = [&](
-                                                  [[maybe_unused]] int callCount,
-                                                  [[maybe_unused]] const std::filesystem::path& path) -> bool
+                                                    int callCount,
+                                                    const std::filesystem::path &path) -> bool
     {
       return true;
     };
@@ -359,23 +354,22 @@ TEST_CASE("aww::internal::aww_create::create_new_directory_scenario")
     // ASSERT
     CHECK_MESSAGE(
         result.is_ok(),
-        "Result should be successful"
-    );
+        "Result should be successful");
   }
 
   SUBCASE("Failed to create directory")
   {
     // ARRANGE
     ioDependencies.fs_exists_stub = [&](
-                                        [[maybe_unused]] int callCount,
-                                        [[maybe_unused]] const std::filesystem::path &target) -> bool
+                                        int callCount,
+                                        const std::filesystem::path &target) -> bool
     {
       return false;
     };
 
     ioDependencies.fs_create_directories_stub = [&](
-                                                  [[maybe_unused]] int callCount,
-                                                  [[maybe_unused]] const std::filesystem::path& path) -> bool
+                                                    int callCount,
+                                                    const std::filesystem::path &path) -> bool
     {
       return false;
     };
@@ -386,8 +380,7 @@ TEST_CASE("aww::internal::aww_create::create_new_directory_scenario")
     // ASSERT
     CHECK_MESSAGE(
         result.is_failed(),
-        "Result should be failed if failed to create directory"
-    );
+        "Result should be failed if failed to create directory");
   }
 }
 
@@ -401,9 +394,9 @@ TEST_CASE("aww::internal::aww_create::append_template_content_to_new_file_scenar
   {
     // ARRANGE
     ioDependencies.fs_read_lines_stub = [&](
-        [[maybe_unused]] int callCount,
-        [[maybe_unused]] const std::filesystem::path& filePath,
-        [[maybe_unused]] std::vector<std::string>& outFileLines) -> aww::Result
+                                            int callCount,
+                                            const std::filesystem::path &filePath,
+                                            std::vector<std::string> &outFileLines) -> aww::Result
     {
       return aww::Result::fail("Failed to read template file");
     };
@@ -414,8 +407,7 @@ TEST_CASE("aww::internal::aww_create::append_template_content_to_new_file_scenar
     // ASSERT
     CHECK_MESSAGE(
         result.is_failed(),
-        "Result should be failed if failed to read template file"
-    );
+        "Result should be failed if failed to read template file");
   }
 
   SUBCASE("Successful template content append - processing")
@@ -426,18 +418,18 @@ TEST_CASE("aww::internal::aww_create::append_template_content_to_new_file_scenar
     std::vector<std::string> expectedLines = {"Existing Line 1", "new_file", "NEW_FILE"};
 
     ioDependencies.fs_read_lines_stub = [&](
-        [[maybe_unused]] int callCount,
-        [[maybe_unused]] const std::filesystem::path& filePath,
-        [[maybe_unused]] std::vector<std::string>& outFileLines) -> aww::Result
+                                            int callCount,
+                                            const std::filesystem::path &filePath,
+                                            std::vector<std::string> &outFileLines) -> aww::Result
     {
       outFileLines = templateLines;
       return aww::Result::ok();
     };
 
     ioDependencies.fs_write_lines_stub = [&](
-        [[maybe_unused]] int callCount,
-        [[maybe_unused]] const std::filesystem::path& filePath,
-        [[maybe_unused]] const std::vector<std::string>& lines) -> aww::Result
+                                             int callCount,
+                                             const std::filesystem::path &filePath,
+                                             const std::vector<std::string> &lines) -> aww::Result
     {
       newFileLines = lines;
       return aww::Result::ok();
@@ -449,15 +441,15 @@ TEST_CASE("aww::internal::aww_create::append_template_content_to_new_file_scenar
     // ASSERT
     CHECK_MESSAGE(
         result.is_ok(),
-        "Result should be successful"
-    );
+        "Result should be successful");
 
     CHECK_MESSAGE(
         newFileLines == expectedLines,
         "New file lines should match the expected lines. "
-        << "\nExpected:\n" <<  aww::string::join(expectedLines, "\n")
-        << "\nActual:\n" << aww::string::join(newFileLines, "\n")
-    );
+            << "\nExpected:\n"
+            << aww::string::join(expectedLines, "\n")
+            << "\nActual:\n"
+            << aww::string::join(newFileLines, "\n"));
   }
 
   SUBCASE("Failed to write file")
@@ -466,18 +458,18 @@ TEST_CASE("aww::internal::aww_create::append_template_content_to_new_file_scenar
     std::vector<std::string> templateLines = {"Line 1", "Line 2", "Line 3"};
 
     ioDependencies.fs_read_lines_stub = [&](
-        [[maybe_unused]] int callCount,
-        [[maybe_unused]] const std::filesystem::path& filePath,
-        [[maybe_unused]] std::vector<std::string>& outFileLines) -> aww::Result
+                                            int callCount,
+                                            const std::filesystem::path &filePath,
+                                            std::vector<std::string> &outFileLines) -> aww::Result
     {
       outFileLines = templateLines;
       return aww::Result::ok();
     };
 
     ioDependencies.fs_write_lines_stub = [&](
-        [[maybe_unused]] int callCount,
-        [[maybe_unused]] const std::filesystem::path& filePath,
-        [[maybe_unused]] const std::vector<std::string>& lines) -> aww::Result
+                                             int callCount,
+                                             const std::filesystem::path &filePath,
+                                             const std::vector<std::string> &lines) -> aww::Result
     {
       return aww::Result::fail("Failed to write file");
     };
@@ -488,7 +480,6 @@ TEST_CASE("aww::internal::aww_create::append_template_content_to_new_file_scenar
     // ASSERT
     CHECK_MESSAGE(
         result.is_failed(),
-        "Result should be failed if failed to write file"
-    );
+        "Result should be failed if failed to write file");
   }
 }

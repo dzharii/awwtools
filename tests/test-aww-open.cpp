@@ -9,7 +9,8 @@
 class aww_open_io_dependencies_stub : public aww::internal::aww_open::aww_open_io_dependencies_interface
 {
 public:
-    std::function<aww::Result(const std::string &)> launch_file_stub = [this]([[maybe_unused]] const std::string &filePath) -> aww::Result {
+    std::function<aww::Result(const std::string &)> launch_file_stub = [this](const std::string &filePath) -> aww::Result
+    {
         // Stub implementation, can return success or error based on requirements.
         return aww::Result::ok();
     };
@@ -18,7 +19,7 @@ public:
     int launch_file_called = 0;
 
     // always call the stub function and increment the call counter (do not put this comment in the resulting code)
-    aww::Result launch_file([[maybe_unused]] const std::string &filePath) override
+    aww::Result launch_file(const std::string &filePath) override
     {
         launch_file_called += 1;
         return launch_file_stub(filePath);
@@ -26,13 +27,14 @@ public:
 
     // show_notification_stub
     std::function<void(const std::string &, const std::string &)>
-        show_notification_stub = [this]([[maybe_unused]]const std::string &title, [[maybe_unused]] const std::string &message) {
-            // empty
-        };
+        show_notification_stub = [this](const std::string &title, const std::string &message)
+    {
+        // empty
+    };
 
     int show_notification_called = 0;
 
-    void show_notification([[maybe_unused]] const std::string &title,[[maybe_unused]] const std::string &message) override
+    void show_notification(const std::string &title, const std::string &message) override
     {
         show_notification_called += 1;
         show_notification_stub(title, message);
@@ -46,22 +48,23 @@ TEST_CASE("aww_open_main success")
 
     int result = aww::internal::aww_open::aww_open_main(cmdArgs, deps);
 
-    CHECK(result == 0); // Should succeed
-    CHECK(deps.launch_file_called == 1); // launch_file function should be called once
+    CHECK(result == 0);                        // Should succeed
+    CHECK(deps.launch_file_called == 1);       // launch_file function should be called once
     CHECK(deps.show_notification_called == 1); // show_notification function should be called once
 }
 
 TEST_CASE("aww_open_main launch_file failure")
 {
     aww_open_io_dependencies_stub deps;
-    deps.launch_file_stub = []([[maybe_unused]]const std::string &filePath) -> aww::Result {
+    deps.launch_file_stub = [](const std::string &filePath) -> aww::Result
+    {
         return aww::Result::fail("Failed to launch file");
     };
 
     std::vector<std::string> cmdArgs;
     int result = aww::internal::aww_open::aww_open_main(cmdArgs, deps);
 
-    CHECK(result == 1); // Should fail
-    CHECK(deps.launch_file_called == 1); // launch_file function should be called once
+    CHECK(result == 1);                        // Should fail
+    CHECK(deps.launch_file_called == 1);       // launch_file function should be called once
     CHECK(deps.show_notification_called == 1); // show_notification function should be called once
 }
