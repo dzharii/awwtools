@@ -2,7 +2,9 @@
 
 ## 2024-01-19
 
-Tiny update to CXX 20. No issues so far
+Tiny update to CXX 20. No issues so far.
+
+
 
 ## 2023-12-10
 
