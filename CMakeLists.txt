@@ -12,6 +12,8 @@ cmake_minimum_required(VERSION 3.14)
 # the source. See exampleConfig.h.in for some more details.
 project(AwwTools VERSION 0.0.1 LANGUAGES CXX)
 
+#2024-01-27 DISABLE warning C4996: warning STL4043: ed_array_iterator, and related factory functions are non-Standard extensions and will be removed in the future...
+add_definitions(-D_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING)
 
 # Options: Things you can set via commandline options to cmake (e.g. -DENABLE_LTO=[ON|OFF])
 option(ENABLE_WARNINGS_SETTINGS "Allow target_set_warnings to add flags and defines.
@@ -22,7 +24,6 @@ option(ENABLE_DOCTESTS "Include tests in the library. Setting this to OFF will r
 
 # Include stuff. No change needed.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
-option(ALLOW_AWW_APP "Allow the aww app to be built" OFF)
 
 include(ConfigSafeGuards)
 include(Colors)
@@ -40,7 +41,6 @@ find_lto(CXX)
 # --------------------------------------------------------------------------------
 set(SOURCES          # All .cpp files in src/
     src/aww-common.cpp
-    src/aww-app-manifest.cpp
     src/aww-inspiration.cpp
     src/internal/aww-date.cpp
     src/internal/aww-create.cpp
@@ -93,20 +93,9 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt-9.1.0/include
 )
 
-if(ALLOW_AWW_APP)
-    # mark webview.h as system header to suppress clang warnings
-    target_include_directories(${LIBRARY_NAME} SYSTEM PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/third-party/webview-dbc7864/src
-    )
-endif()
-
-
+                 
 # we add the sub-directories that we want CMake to scan
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5)
-
-if(ALLOW_AWW_APP)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/webview-dbc7864)
-endif()
 
 ## nlohmann-json
 set(JSON_BuildTests OFF CACHE INTERNAL "")
@@ -123,13 +112,6 @@ target_link_libraries(
     doctest
     clip
 )
-
-if(ALLOW_AWW_APP)
-    target_link_libraries(
-        ${LIBRARY_NAME} PUBLIC
-        webview
-    )
-endif()
 
 if(WIN32)
     target_include_directories(${LIBRARY_NAME} PUBLIC
@@ -210,15 +192,7 @@ target_link_libraries(aww-tag PRIVATE ${LIBRARY_NAME})  # Link the executable to
 target_set_warnings(aww-tag ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(aww-tag optimized)  # enable link-time-optimization if available for non-debug configurations
 
-if(ALLOW_AWW_APP)
-    ## Aww app
-    add_executable(aww-app app/aww-app.cpp)   # Name of exec. and location of file.
-    target_link_libraries(aww-app PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
-    target_set_warnings(aww-app ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
-    target_enable_lto(aww-app optimized)  # enable link-time-optimization if available for non-debug configurations
-endif()
 # Set the properties you require, e.g. what C++ standard to use. Here applied to library and aww (change as needed).
-
 set(PROJECTS
     ${LIBRARY_NAME}
     aww
@@ -232,11 +206,6 @@ set(PROJECTS
     aww-guid
     aww-tag
 )
-
-if(ALLOW_AWW_APP)
-    list(APPEND PROJECTS aww-app)
-endif()
-
 
 add_custom_target(copy-runtime-files ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory

@@ -1,5 +1,15 @@
 # aww-tools changelog
 
+
+
+## 2024-01-27
+
+Code cleanup:
+
+I've removed the [webview/webview](https://github.com/webview/webview) dependency, a tiny cross-platform webview library for C/C++ using  WebKit and Edge WebView2. While it's an awesome tool for building  cross-platform browser GUIs, I couldn't find a suitable application for  it in the awwtools project. It might be better suited for a standalone  project.
+
+
+
 ## 2024-01-19
 
 Tiny update to CXX 20. No issues so far.
