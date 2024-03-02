@@ -1,2 +1,0 @@
-REM cmake -H. -G Ninja -Bbuild -DCMAKE_C_FLAGS=TRUE -DCMAKE_CXX_FLAGS=TRUE -DCMAKE_C_COMPILER="C:/Program Files/LLVM/bin/clang.exe" -DCMAKE_CXX_COMPILER="C:/Program Files/LLVM/bin/clang.exe" -DCMAKE_LINKER="C:/Program Files/LLVM/bin/lld-link.exe"
-cmake -H. -Bcmake-build-clang -DCMAKE_BUILD_TYPE=DEBUG -G Ninja -DCMAKE_CXX_COMPILER=clang++.exe -DCMAKE_C_COMPILER=clang.exe -DCMAKE_LINKER=lld-link.exe
