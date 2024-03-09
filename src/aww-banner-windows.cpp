@@ -7,7 +7,6 @@
 
 namespace aww::banner
 {
-
   // Defines where to place the notification window
   enum class NotificationPosition
   {
@@ -117,13 +116,24 @@ namespace aww::banner
       titleText = my_class->getTitle();
       messageText = my_class->getMessage();
 
+      // Convert std::string to std::wstring
+      int titleLen = MultiByteToWideChar(CP_UTF8, 0, titleText.c_str(), -1, NULL, 0);
+      std::wstring wideTitleText(titleLen, 0);
+      MultiByteToWideChar(CP_UTF8, 0, titleText.c_str(), -1, &wideTitleText[0], titleLen);
+
+      int messageLen = MultiByteToWideChar(CP_UTF8, 0, messageText.c_str(), -1, NULL, 0);
+      std::wstring wideMessageText(messageLen, 0);
+      MultiByteToWideChar(CP_UTF8, 0, messageText.c_str(), -1, &wideMessageText[0], messageLen);
+
       std::cout << "WM_PAINT Title: " << my_class->getTitle() << "\n";
       std::cout << "WM_PAINT Message: " << my_class->getMessage() << "\n";
 
       PAINTSTRUCT ps;
       HDC hdc = BeginPaint(hwnd, &ps);
-      TextOut(hdc, 0, 0, titleText.c_str(), static_cast<int>(titleText.length()));
-      TextOut(hdc, 0, 16, messageText.c_str(), static_cast<int>(messageText.length()));
+
+      TextOutW(hdc, 0, 0, wideTitleText.c_str(), static_cast<int>(wideTitleText.length()));
+      TextOutW(hdc, 0, 16, wideMessageText.c_str(), static_cast<int>(wideMessageText.length()));
+
       EndPaint(hwnd, &ps);
 
       SetLayeredWindowAttributes(
@@ -172,14 +182,18 @@ namespace aww::banner
     wc.lpfnWndProc = WndProc;
     wc.hInstance = hInstance;
     wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-    wc.lpszClassName = "myWindowClass";
+    wc.lpszClassName = L"myWindowClass";
     RegisterClass(&wc);
+
+    int titleLen = MultiByteToWideChar(CP_UTF8, 0, title.c_str(), -1, NULL, 0);
+    std::wstring wideTitleText(titleLen, 0);
+    MultiByteToWideChar(CP_UTF8, 0, title.c_str(), -1, &wideTitleText[0], titleLen);
 
     // Create a window
     const HWND hwnd = CreateWindowEx(
         WS_EX_CLIENTEDGE | WS_EX_LAYERED,
-        "myWindowClass",
-        title.c_str(),
+        L"myWindowClass",
+        wideTitleText.c_str(),
         WS_POPUP | WS_VISIBLE | WS_BORDER,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
@@ -205,7 +219,7 @@ namespace aww::banner
         CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, TEXT("Arial"));
 
     SendMessage(hwnd, WM_SETFONT, (WPARAM)font, TRUE);
-    SendMessage(hwnd, WM_SETTEXT, 0, (LPARAM)title.c_str());
+    SendMessage(hwnd, WM_SETTEXT, 0, (LPARAM)wideTitleText.c_str());
 
     ShowWindow(hwnd, SW_SHOW);
 
