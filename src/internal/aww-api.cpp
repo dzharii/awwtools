@@ -22,11 +22,22 @@ namespace aww::internal::aww_api
 
     int aww_api_main([[maybe_unused]] const std::vector<std::string> &cmdArgs, aww_api_io_dependencies_interface &deps)
     {
+        /*
+        * NOTE: Read Poco samples at
+        * third-party/poco-poco-1.13.2-release/Net/samples
+        */
+
         spdlog::info("Hello spdlog");
         fmt::print("Hello, world from fmt PLEASE REMOVE THIS \b!\n");
 
+        std::string requestUrl = "http://example.com";
+        if (cmdArgs.size() > 0 && !cmdArgs[0].empty() && std::regex_match(cmdArgs[0], std::regex("https?://.*")))
+        {
+            requestUrl = cmdArgs[0];
+        }
+        
         // The URI we are requesting data from
-        URI uri("http://example.com");
+        URI uri(requestUrl);
         std::string path(uri.getPathAndQuery());
         if (path.empty())
             path = "/";
