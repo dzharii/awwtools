@@ -111,10 +111,6 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt-9.1.0)
 ## end of fmt
 
-## poco
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/poco-poco-1.13.2-release)
-##
-
 # There's also (probably) doctests within the library, so we need to see this as well.
 target_link_libraries(
     ${LIBRARY_NAME} PUBLIC
@@ -133,6 +129,10 @@ if(WIN32)
 
     target_link_libraries(${LIBRARY_NAME} PUBLIC wintoastlib)
 endif()
+
+## poco
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/poco-poco-1.13.2-release)
+##
 
 target_link_libraries(${LIBRARY_NAME} PRIVATE nlohmann_json::nlohmann_json)
 
