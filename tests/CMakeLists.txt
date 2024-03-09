@@ -12,6 +12,7 @@ set(TESTFILES        # All .cpp files in tests/
     test-aww-git-open.cpp
     test-aww-guid.cpp
     test-aww-open.cpp
+    test-aww-api.cpp
 )
 
 set(TEST_MAIN unit_tests)   # Default name for test executable (change if you wish).
