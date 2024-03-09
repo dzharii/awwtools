@@ -110,6 +110,7 @@ Thumbs.db
 *.exp
 *.idb
 *.rc
+!DLLVersion.rc
 *.res
 *.manifest
 *.tlog
