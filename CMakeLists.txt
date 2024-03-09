@@ -92,6 +92,10 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2/single_include
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/spdlog-1.11.0/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt-9.1.0/include
+    # Include Poco directories
+    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/poco-poco-1.13.2-release/Foundation/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/poco-poco-1.13.2-release/Net/include
+
 )
 
                  
@@ -106,6 +110,10 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2)
 ## fmt
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt-9.1.0)
 ## end of fmt
+
+## poco
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/poco-poco-1.13.2-release)
+##
 
 # There's also (probably) doctests within the library, so we need to see this as well.
 target_link_libraries(
@@ -127,6 +135,8 @@ if(WIN32)
 endif()
 
 target_link_libraries(${LIBRARY_NAME} PRIVATE nlohmann_json::nlohmann_json)
+
+target_link_libraries(${LIBRARY_NAME} PRIVATE Poco::Foundation Poco::Net)
 
 # Set the compile options you want (change as needed).
 target_set_warnings(${LIBRARY_NAME} ENABLE ALL AS_ERROR ALL DISABLE Annoying)
