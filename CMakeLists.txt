@@ -95,10 +95,13 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
     # Include Poco directories
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/poco-poco-1.13.2-release/Foundation/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/poco-poco-1.13.2-release/Net/include
-
 )
 
-                 
+target_include_directories(${LIBRARY_NAME}
+    SYSTEM PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/webview-adbb85d-2024-03-09/src
+)
+
 # we add the sub-directories that we want CMake to scan
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5)
 
@@ -111,11 +114,16 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt-9.1.0)
 ## end of fmt
 
+## webview
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/webview-adbb85d-2024-03-09)
+## webview 
+
 # There's also (probably) doctests within the library, so we need to see this as well.
 target_link_libraries(
     ${LIBRARY_NAME} PUBLIC
     doctest
     clip
+    webview
 )
 
 if(WIN32)
