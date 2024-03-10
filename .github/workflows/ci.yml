@@ -41,9 +41,11 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v2
 
-    - name: Configure (${{ matrix.configuration }})
+    - name: Configure ubuntu-latest
       if: matrix.os == 'ubuntu-latest'
       run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
+
+    - name: Configure windows-latest
       if: matrix.os == 'windows-latest'
       run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DCMAKE_CXX_FLAGS="/DPOCO_EXTERNAL_OPENSSL_SLPRO"
 
