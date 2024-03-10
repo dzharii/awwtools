@@ -32,12 +32,6 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: sudo apt-get update && sudo apt-get install -y build-essential libgtk-3-dev libwebkit2gtk-4.0-dev xvfb
     
-    - name: Install dependencies WINDOWS
-      if: matrix.os == 'windows-latest'
-      run: |
-        choco install openssl
-        echo "OpenSSL_DIR=C:/Program Files/OpenSSL-Win64" >> $GITHUB_ENV
-
     - name: Checkout Code
       uses: actions/checkout@v2
 
@@ -47,7 +41,7 @@ jobs:
 
     - name: Configure windows-latest
       if: matrix.os == 'windows-latest'
-      run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -DCMAKE_CXX_FLAGS="/DPOCO_EXTERNAL_OPENSSL_SLPRO"
+      run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
 
     - name: Build with ${{ matrix.compiler }}
       run: cmake --build build
