@@ -4,7 +4,7 @@
 
 #include "spdlog/spdlog.h"
 #include "fmt/core.h"
-#include <cpr/cpr.h>
+/* #include <cpr/cpr.h> */
 
 #include "internal/aww-api.hpp"
 
@@ -21,13 +21,14 @@ namespace aww::internal::aww_api
         {
             requestUrl = cmdArgs[0];
         }
+        /*
 
         cpr::Response r = cpr::Get(cpr::Url{requestUrl});
 
         fmt::print("Status code: {}\n", r.status_code);
         fmt::print("Content type: {}\n", r.header["content-type"]);
         fmt::print("Text: {}\n", r.text);
-
+        */
         deps.show_notification("aww api", "It works", aww::call_tag("9mnoizxrhdw"));
         return 0;
     }

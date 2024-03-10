@@ -104,8 +104,6 @@ target_include_directories(${LIBRARY_NAME}
 # we add the sub-directories that we want CMake to scan
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5)
 
-
-
 ## fmt
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt-9.1.0)
 ## end of fmt
@@ -133,11 +131,6 @@ if(WIN32)
 
     target_link_libraries(${LIBRARY_NAME} PUBLIC wintoastlib)
 endif()
-
-## cpr
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/cpr-1.10.5)
-target_link_libraries(${LIBRARY_NAME} PRIVATE cpr)
-## cpr
 
 ## nlohmann-json
 set(JSON_BuildTests OFF CACHE INTERNAL "")
