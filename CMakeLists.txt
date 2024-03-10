@@ -93,9 +93,7 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2/single_include
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/spdlog-1.11.0/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt-9.1.0/include
-    # Include Poco directories
-    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/poco-poco-1.13.2-release/Foundation/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/poco-poco-1.13.2-release/Net/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/cpr-1.10.5/include
 )
 
 target_include_directories(${LIBRARY_NAME}
@@ -106,10 +104,7 @@ target_include_directories(${LIBRARY_NAME}
 # we add the sub-directories that we want CMake to scan
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5)
 
-## nlohmann-json
-set(JSON_BuildTests OFF CACHE INTERNAL "")
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2)
-## end of nlohmann-json
+
 
 ## fmt
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt-9.1.0)
@@ -117,7 +112,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt-9.1.0)
 
 ## webview
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/webview-adbb85d-2024-03-09)
-## webview 
+## webview
 
 # There's also (probably) doctests within the library, so we need to see this as well.
 target_link_libraries(
@@ -139,13 +134,16 @@ if(WIN32)
     target_link_libraries(${LIBRARY_NAME} PUBLIC wintoastlib)
 endif()
 
-## poco
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/poco-poco-1.13.2-release)
-##
+## cpr
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/cpr-1.10.5)
+target_link_libraries(${LIBRARY_NAME} PRIVATE cpr)
+## cpr
 
+## nlohmann-json
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2)
 target_link_libraries(${LIBRARY_NAME} PRIVATE nlohmann_json::nlohmann_json)
-
-target_link_libraries(${LIBRARY_NAME} PRIVATE Poco::Foundation Poco::Net)
+## end of nlohmann-json
 
 # Set the compile options you want (change as needed).
 target_set_warnings(${LIBRARY_NAME} ENABLE ALL AS_ERROR ALL DISABLE Annoying)
