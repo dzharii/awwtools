@@ -52,6 +52,8 @@ set(SOURCES          # All .cpp files in src/
     src/internal/aww-term.cpp
     src/internal/aww-toast.cpp
     src/internal/aww-api.cpp
+    src/internal/aww-web.cpp
+    #nf78vfbcr2j new aww tool? add sources here!
     src/internal/aww.cpp
 )
 if(WIN32)
@@ -217,6 +219,13 @@ target_link_libraries(aww-api PRIVATE ${LIBRARY_NAME})  # Link the executable to
 target_set_warnings(aww-api ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(aww-api optimized)  # enable link-time-optimization if available for non-debug configurations
 
+## aww-web
+add_executable(aww-web app/aww-web.cpp)   # Name of exec. and location of file.
+target_link_libraries(aww-web PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
+target_set_warnings(aww-web ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_enable_lto(aww-web optimized)  # enable link-time-optimization if available for non-debug configurations
+
+#fia2wwtog0r new aww tool? add entry here!
 
 # Set the properties you require, e.g. what C++ standard to use. Here applied to library and aww (change as needed).
 set(PROJECTS
@@ -232,6 +241,8 @@ set(PROJECTS
     aww-guid
     aww-tag
     aww-api
+    aww-web
+    #9x1eam6faab new aww tool? add entry here!
 )
 
 add_custom_target(copy-runtime-files ALL
