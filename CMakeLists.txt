@@ -83,9 +83,6 @@ set(JSON_BuildTests OFF CACHE INTERNAL "")
 #                            Build! (Change as needed)
 # --------------------------------------------------------------------------------
 
-# LINK : fatal error LNK1104: cannot open file 'libcrypto.lib' [D:\a\awwtools\awwtools\build\third-party\poco-poco-1.13.2-release\Crypto\Crypto.vcxproj]
-target_compile_definitions(Crypto PUBLIC POCO_EXTERNAL_OPENSSL=2)
-
 # Compile all sources into a library.
 add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
 
