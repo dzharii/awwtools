@@ -16,7 +16,7 @@ jobs:
           - windows-msvc
 
         configuration:
-          - Release
+          - Debug
 
         include:
           - toolchain: linux-gcc
