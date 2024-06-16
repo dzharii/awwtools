@@ -16,7 +16,6 @@
 #include "internal/aww-term.hpp"
 #include "internal/aww-toast.hpp"
 #include "internal/aww-api.hpp"
-#include "internal/aww-web.hpp"
 
 enum class AwwTool
 {
@@ -31,7 +30,6 @@ enum class AwwTool
   Term,
   Toast,
   Api,
-  Web,
 };
 
 AwwTool getAwwTool(const std::string &awwTool)
@@ -77,10 +75,6 @@ AwwTool getAwwTool(const std::string &awwTool)
   else if (awwToolLower == "aww-api")
   {
     return AwwTool::Api;
-  }
-  else if (awwToolLower == "aww-web")
-  {
-    return AwwTool::Web;
   }
   return AwwTool::None;
 }
@@ -167,11 +161,6 @@ int aww_main(const std::vector<std::string> &cmdArgs)
     {
       aww::internal::aww_api::aww_api_io_dependencies deps;
       return aww::internal::aww_api::aww_api_main(awwExecutableArgs, deps);
-    }
-    case AwwTool::Web:
-    {
-      aww::internal::aww_web::aww_web_io_dependencies deps;
-      return aww::internal::aww_web::aww_web_main(awwExecutableArgs, deps);
     }
     default:
     {
