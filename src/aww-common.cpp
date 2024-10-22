@@ -22,6 +22,7 @@ namespace aww::date
 
 namespace aww::string
 {
+  // 2024-10-21 renamed to join_vector (aww tag #oibw1sg0jpv)
   std::string join(const std::vector<std::string> &v, const std::string &delimiter)
   {
     // Glen Knowles - https://stackoverflow.com/a/40497964

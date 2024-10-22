@@ -2,6 +2,16 @@
 
 
 
+## 2024-10-21
+
+Started lib experimental migration to [dzharii/awwlib-cpp: [aww project internal\] awwlib is cross-platform C++ utility library that provides commonly used helper functions for handling environment variables, string manipulations, and date/time conversions.](https://github.com/dzharii/awwlib-cpp)
+
+Migrated:
+
+
+
+
+
 ## 2024-03-10
 
 Returned webview! 
