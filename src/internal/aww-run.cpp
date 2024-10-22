@@ -8,6 +8,8 @@
 #include "aww-common.hpp"
 #include "internal/aww-run.hpp"
 
+#include <spdlog/spdlog.h>
+
 namespace fs = std::filesystem;
 
 namespace aww::internal::aww_run
@@ -16,7 +18,7 @@ namespace aww::internal::aww_run
   {
     if (cmdArgs.size() == 0)
     {
-      std::cout << "No arguments provided\n";
+      spdlog::warn("No arguments provided");
       return 1;
     }
 
@@ -27,20 +29,20 @@ namespace aww::internal::aww_run
       {
         char &lastChar = line.back();
         std::string endOfLine = lastChar == '\n' ? "" : "\n";
-        std::cout << line <<  endOfLine;
+        std::cout << line << endOfLine;
       });
     proc.onStdErr(
       [](std::string line)
       {
         char &lastChar = line.back();
         std::string endOfLine = lastChar == '\n' ? "" : "\n";
-        std::cout << line <<  endOfLine;
+        std::cerr << line << endOfLine;
       });
 
     proc.onExit(
       [&](int code)
       {
-        std::cout << "Exit code: " << code << "\n";
+        spdlog::warn("Exit code: {}", code);
         exitCode = code;
       });
 
@@ -55,10 +57,11 @@ namespace aww::internal::aww_run
     aww::Result scriptFound = find_script(awwCommand, maybeScriptPath);
     if (scriptFound.is_ok())
     {
-      std::cout << "Found script: " << maybeScriptPath << "\n";
+      spdlog::warn("Found script: {}", maybeScriptPath.string());
       std::string scriptExtension = maybeScriptPath.extension().string();
 
-      bool isPowerShell = scriptExtension == ".ps1" || scriptExtension == ".PS1";
+      bool isPowerShell = scriptExtension == ".ps1" ||
+                          scriptExtension == ".PS1";
       bool isBash = scriptExtension == ".sh" || scriptExtension == ".SH";
       const aww::os::Platform platform = aww::os::OSPlatform;
 
@@ -67,7 +70,8 @@ namespace aww::internal::aww_run
       case aww::os::Platform::Windows:
         if (isPowerShell)
         {
-          awwCommand = "powershell.exe -executionpolicy unrestricted -File \"" + maybeScriptPath.string() + "\"";
+          awwCommand = "powershell.exe -executionpolicy unrestricted -File \"" +
+                       maybeScriptPath.string() + "\"";
         }
         else
         {
@@ -89,14 +93,13 @@ namespace aww::internal::aww_run
         }
         break;
       case aww::os::Platform::Unknown:
-        std::cout << "Unknown platform"
-                  << "\n";
+        spdlog::warn("Unknown platform");
         return 1;
       }
     }
     else
     {
-      std::cout << "Aww command was not found: " << awwCommand << "\n";
+      spdlog::warn("Aww command was not found: {}", awwCommand);
     }
 
     std::vector<std::string> cmdArgsCopy = cmdArgs;
@@ -108,7 +111,7 @@ namespace aww::internal::aww_run
     }
 
     std::string cmd = aww::string::join(cmdArgsCopy, " ");
-    std::cout << "Running command: " << cmd << "\n";
+    spdlog::warn("Running command: {}", cmd);
 
     // measure time
     auto start = std::chrono::high_resolution_clock::now();
@@ -117,20 +120,26 @@ namespace aww::internal::aww_run
 
     // print time
     auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    std::cout << "Command took " << duration.count() << "ms\n";
+    auto duration = std::chrono::duration_cast<
+        std::chrono::milliseconds>(end - start);
+    spdlog::warn("Command took {}ms", duration.count());
 
     if (exitCode != 0)
     {
-      aww::os::actions::show_notification("aww run", "Failed to run command");
-    } else {
-      aww::os::actions::show_notification("aww run", "The command finished successfully");
+      aww::os::actions::show_notification("aww run",
+                                          "Failed to run command");
+    }
+    else
+    {
+      aww::os::actions::show_notification("aww run",
+                                          "The command finished successfully");
     }
 
     return exitCode;
   }
 
-  aww::Result find_script_windows(const std::string &scriptName, fs::path &outScriptPath)
+  aww::Result find_script_windows(const std::string &scriptName,
+                                  fs::path &outScriptPath)
   {
     // check if scriptName is not empty
     if (scriptName.empty())
@@ -140,20 +149,30 @@ namespace aww::internal::aww_run
 
     const fs::path currentDir = fs::absolute(fs::current_path());
     const fs::path awwScriptsDir = currentDir / "aww-scripts";
-    const fs::path awwDotScriptsDir = aww::os::env::get_aww_dot_dir() / "aww-scripts";
+    const fs::path awwDotScriptsDir =
+        aww::os::env::get_aww_dot_dir() / "aww-scripts";
     const fs::path awwDir = currentDir / "aww";
 
-    const fs::path batCurrentDirPath = currentDir / (scriptName + ".bat");
-    const fs::path cmdCurrentDirPath = currentDir / (scriptName + ".cmd");
-    const fs::path ps1CurrentDirPath = currentDir / (scriptName + ".ps1");
+    const fs::path batCurrentDirPath =
+        currentDir / (scriptName + ".bat");
+    const fs::path cmdCurrentDirPath =
+        currentDir / (scriptName + ".cmd");
+    const fs::path ps1CurrentDirPath =
+        currentDir / (scriptName + ".ps1");
 
-    const fs::path batAwwScriptsPath = awwScriptsDir / (scriptName + ".bat");
-    const fs::path cmdAwwScriptsPath = awwScriptsDir / (scriptName + ".cmd");
-    const fs::path ps1AwwScriptsPath = awwScriptsDir / (scriptName + ".ps1");
+    const fs::path batAwwScriptsPath =
+        awwScriptsDir / (scriptName + ".bat");
+    const fs::path cmdAwwScriptsPath =
+        awwScriptsDir / (scriptName + ".cmd");
+    const fs::path ps1AwwScriptsPath =
+        awwScriptsDir / (scriptName + ".ps1");
 
-    const fs::path batAwwDotScriptsPath = awwDotScriptsDir / (scriptName + ".bat");
-    const fs::path cmdAwwDotScriptsPath = awwDotScriptsDir / (scriptName + ".cmd");
-    const fs::path ps1AwwDotScriptsPath = awwDotScriptsDir / (scriptName + ".ps1");
+    const fs::path batAwwDotScriptsPath =
+        awwDotScriptsDir / (scriptName + ".bat");
+    const fs::path cmdAwwDotScriptsPath =
+        awwDotScriptsDir / (scriptName + ".cmd");
+    const fs::path ps1AwwDotScriptsPath =
+        awwDotScriptsDir / (scriptName + ".ps1");
 
     const fs::path batAwwPath = awwDir / (scriptName + ".bat");
     const fs::path cmdAwwPath = awwDir / (scriptName + ".cmd");
@@ -190,7 +209,8 @@ namespace aww::internal::aww_run
     return aww::Result::fail("Script not found");
   }
 
-  aww::Result find_script_linux(const std::string &scriptName, fs::path &outScriptPath)
+  aww::Result find_script_linux(const std::string &scriptName,
+                                fs::path &outScriptPath)
   {
     if (scriptName.empty())
     {
@@ -199,22 +219,30 @@ namespace aww::internal::aww_run
 
     const fs::path currentDir = fs::absolute(fs::current_path());
     const fs::path awwScriptsDir = currentDir / "aww-scripts";
-    const fs::path awwDotScriptsDir = aww::os::env::get_aww_dot_dir() / "aww-scripts";
+    const fs::path awwDotScriptsDir =
+        aww::os::env::get_aww_dot_dir() / "aww-scripts";
     const fs::path awwDir = currentDir / "aww";
 
-    const fs::path shCurrentDirPath = currentDir / (scriptName + ".sh");
-    const fs::path shAwwScriptsPath = awwScriptsDir / (scriptName + ".sh");
-    const fs::path shAwwDotScriptsPath = awwDotScriptsDir / (scriptName + ".sh");
+    const fs::path shCurrentDirPath =
+        currentDir / (scriptName + ".sh");
+    const fs::path shAwwScriptsPath =
+        awwScriptsDir / (scriptName + ".sh");
+    const fs::path shAwwDotScriptsPath =
+        awwDotScriptsDir / (scriptName + ".sh");
     const fs::path shAwwPath = awwDir / (scriptName + ".sh");
 
-    const fs::path ps1CurrentDirPath = currentDir / (scriptName + ".ps1");
-    const fs::path ps1AwwScriptsPath = awwScriptsDir / (scriptName + ".ps1");
-    const fs::path ps1AwwDotScriptsPath = awwDotScriptsDir / (scriptName + ".ps1");
+    const fs::path ps1CurrentDirPath =
+        currentDir / (scriptName + ".ps1");
+    const fs::path ps1AwwScriptsPath =
+        awwScriptsDir / (scriptName + ".ps1");
+    const fs::path ps1AwwDotScriptsPath =
+        awwDotScriptsDir / (scriptName + ".ps1");
     const fs::path ps1AwwPath = awwDir / (scriptName + ".ps1");
 
     const fs::path emptyCurrentDirPath = currentDir / scriptName;
     const fs::path emptyAwwScriptsPath = awwScriptsDir / scriptName;
-    const fs::path emptyAwwDotScriptsPath = awwScriptsDir / scriptName;
+    const fs::path emptyAwwDotScriptsPath =
+        awwDotScriptsDir / scriptName;
     const fs::path emptyPath = awwDir / scriptName;
 
     const std::array<fs::path, 8> shLookupPath = {
@@ -257,7 +285,8 @@ namespace aww::internal::aww_run
     return aww::Result::fail("Script not found");
   }
 
-  aww::Result find_script(const std::string &scriptName, fs::path &outScriptPath)
+  aww::Result find_script(const std::string &scriptName,
+                          fs::path &outScriptPath)
   {
     if (scriptName.empty())
     {
