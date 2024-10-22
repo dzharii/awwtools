@@ -27,16 +27,12 @@ namespace aww::internal::aww_run
     proc.onStdOut(
       [](std::string line)
       {
-        char &lastChar = line.back();
-        std::string endOfLine = lastChar == '\n' ? "" : "\n";
-        std::cout << line << endOfLine;
+        std::cout << line;
       });
     proc.onStdErr(
       [](std::string line)
       {
-        char &lastChar = line.back();
-        std::string endOfLine = lastChar == '\n' ? "" : "\n";
-        std::cerr << line << endOfLine;
+        std::cerr << line;
       });
 
     proc.onExit(
