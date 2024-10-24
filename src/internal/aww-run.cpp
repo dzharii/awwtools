@@ -14,9 +14,44 @@ namespace fs = std::filesystem;
 
 namespace aww::internal::aww_run
 {
+
+  /**
+   * @brief Remove a flag from the arguments
+   * @param args The arguments to remove the flag from
+   * @param flag The flag name to remove
+   * @returns true if the flag was found and removed, false otherwise
+   */
+  bool erase_flag_from_args(std::vector<std::string> &args, const std::string &flag)
+  {
+    auto it = std::find(args.begin(), args.end(), flag);
+    if (it != args.end())
+    {
+      args.erase(it);
+      return true;
+    }
+    return false;
+  }
+
   int aww_run_main(const std::vector<std::string> &cmdArgs)
   {
-    if (cmdArgs.size() == 0)
+    auto mutableCmdArgs = cmdArgs;
+
+    // Flag to disable logging
+    const std::string flagNoLogging = "--aww-no-logging";
+    const std::string flagNoNotifications = "--aww-no-notifications";
+
+    bool noLogging = erase_flag_from_args(mutableCmdArgs, flagNoLogging);
+    bool noNotifications = erase_flag_from_args(mutableCmdArgs, flagNoNotifications);
+
+    // Configure spdlog based on the flag
+    if (noLogging) {
+        spdlog::set_level(spdlog::level::off);
+    } else {
+        spdlog::set_level(spdlog::level::info); // Set desired log level
+    }
+
+
+    if (mutableCmdArgs.size() == 0)
     {
       spdlog::warn("No arguments provided");
       return 1;
@@ -47,7 +82,7 @@ namespace aww::internal::aww_run
     // and the correct one will be selected based on the OS
     // Sample:
     //        aww run build
-    std::string awwCommand = cmdArgs[0];
+    std::string awwCommand = mutableCmdArgs[0];
     fs::path maybeScriptPath;
 
     aww::Result scriptFound = find_script(awwCommand, maybeScriptPath);
@@ -98,7 +133,7 @@ namespace aww::internal::aww_run
       spdlog::warn("Aww command was not found: {}", awwCommand);
     }
 
-    std::vector<std::string> cmdArgsCopy = cmdArgs;
+    std::vector<std::string> cmdArgsCopy = mutableCmdArgs;
 
     // replace aww command with the full path to the script
     if (scriptFound.is_ok())
@@ -122,13 +157,21 @@ namespace aww::internal::aww_run
 
     if (exitCode != 0)
     {
-      aww::os::actions::show_notification("aww run",
-                                          "Failed to run command");
+      if (!noNotifications)
+      {
+        aww::os::actions::show_notification("aww run",
+                                            "Failed to run command");
+      }
+      // describe what command failed and exitCode
+      spdlog::error("Failed to run command: '{}'; ErrorCode: {}", cmd, exitCode);
     }
     else
     {
-      aww::os::actions::show_notification("aww run",
-                                          "The command finished successfully");
+      if (!noNotifications)
+      {
+        aww::os::actions::show_notification("aww run",
+                                            "The command finished successfully");
+      }
     }
 
     return exitCode;
