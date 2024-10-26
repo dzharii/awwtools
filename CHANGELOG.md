@@ -2,6 +2,18 @@
 
 
 
+## 2024-10-25 Fri
+
+clang-format 'em all!
+
+```powershell
+Get-ChildItem -Recurse -Include *.cpp, *.h, *.c, *.hpp | Where-Object { $_.FullName -notlike '*\third-party\*' } | ForEach-Object { clang-format.exe -i $_.FullName }
+```
+
+
+
+
+
 ## 2024-10-21
 
 Started lib experimental migration to [dzharii/awwlib-cpp: [aww project internal\] awwlib is cross-platform C++ utility library that provides commonly used helper functions for handling environment variables, string manipulations, and date/time conversions.](https://github.com/dzharii/awwlib-cpp)

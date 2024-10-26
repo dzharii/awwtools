@@ -1,8 +1,8 @@
-#include "doctest/doctest.h"
 #include "aww-common.hpp"
-#include <vector>
-#include <string>
+#include "doctest/doctest.h"
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 TEST_CASE("aww::Result creates a successful result") {
   aww::Result result = aww::Result::ok();
