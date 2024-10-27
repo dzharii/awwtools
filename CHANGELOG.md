@@ -2,6 +2,97 @@
 
 
 
+## 2024-10-27 Sun
+
+I wanted to test if I can apply "Curiously recurring template pattern (CRTP)" instead of using virtual polymorphism. 
+
+CRTP offers compile time polymorphism, which, I suppose can be faster, but it requires some hacks. 
+
+And the main hack, is that instead of this in the interface declaration:
+
+```cpp
+int aww_date_main(const std::vector<std::string>& cmdArgs,
+                  aww_date_io_dependencies_interface& deps);
+}
+```
+
+I would need to do this:
+
+```cpp
+int aww_date_main(const std::vector<std::string>& cmdArgs,
+                  auto& deps);
+}
+```
+
+which makes the interface ambiguous for the reader. I really want to declare that the tool needs `aww_date_io_dependencies_interface&`. 
+
+Read more:
+
+- [c++ - What is the curiously recurring template pattern (CRTP)? - Stack Overflow](https://stackoverflow.com/questions/4173254/what-is-the-curiously-recurring-template-pattern-crtp) { stackoverflow.com }
+- 2024-10-27 [4. Polymorphism and CRTP](https://blog.zharii.com/blog/2024/09/01/links-from-my-inbox#4-polymorphism-and-crtp) { blog.zharii.com }
+
+Here is the converted CRTP code without fix:
+
+```cpp
+#pragma once
+#ifndef AWW_DATE_HPP
+#define AWW_DATE_HPP
+
+#include <string>
+#include <vector>
+
+#include "aww-common.hpp"
+#include "clip.h"
+
+namespace aww::internal::aww_date {
+
+template <typename Derived> class aww_date_io_dependencies_interface {
+public:
+  ~aww_date_io_dependencies_interface() = default;
+
+  std::string get_date_yyyymmdd([[maybe_unused]] aww::call_tag_t tag) {
+    return static_cast<const Derived*>(this)->get_date_yyyymmdd(tag);
+  }
+
+  bool clipboard_set_text(const std::string& text, [[maybe_unused]] aww::call_tag_t tag) {
+    return static_cast<const Derived*>(this)->clipboard_set_text(text, tag);
+  }
+
+  void show_notification(const std::string& title, const std::string& message,
+                         [[maybe_unused]] aww::call_tag_t tag) {
+    static_cast<const Derived*>(this)->show_notification(title, message, tag);
+  }
+};
+
+class aww_date_io_dependencies
+    : public aww_date_io_dependencies_interface<aww_date_io_dependencies> {
+public:
+  std::string get_date_yyyymmdd([[maybe_unused]] aww::call_tag_t tag) {
+    return aww::date::get_date_YYYYMMDD();
+  }
+
+  bool clipboard_set_text(const std::string& text, [[maybe_unused]] aww::call_tag_t tag) {
+    return clip::set_text(text);
+  }
+
+  void show_notification(const std::string& title, const std::string& message,
+                         [[maybe_unused]] aww::call_tag_t tag) {
+    aww::os::actions::show_notification(title, message);
+  }
+};
+
+int aww_date_main(const std::vector<std::string>& cmdArgs,
+                  aww_date_io_dependencies_interface& deps);
+} // namespace aww::internal::aww_date
+
+#endif
+
+```
+
+**Revert!** 
+
+
+
 ## 2024-10-25 Fri
 
 clang-format 'em all!
