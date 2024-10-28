@@ -31,6 +31,29 @@ Read more:
 - [c++ - What is the curiously recurring template pattern (CRTP)? - Stack Overflow](https://stackoverflow.com/questions/4173254/what-is-the-curiously-recurring-template-pattern-crtp) { stackoverflow.com }
 - 2024-10-27 [4. Polymorphism and CRTP](https://blog.zharii.com/blog/2024/09/01/links-from-my-inbox#4-polymorphism-and-crtp) { blog.zharii.com }
 
+
+
+Update: Oh, I found this, so the problematic `auto` code can be expressed as:
+
+```cpp
+template<typename T>
+int aww_date_main(const std::vector<std::string>& cmdArgs,
+                  aww_date_io_dependencies_interface<T>& deps);
+}
+```
+
+I might return back to this note and reconsider CRTP
+
+2024-10-28 📌 [The Curiously Recurring Template Pattern (CRTP) - Fluent C++](https://www.fluentcpp.com/2017/05/12/curiously-recurring-template-pattern/) { www.fluentcpp.com }
+
+> - The CRTP, episode One: [Definition](https://www.fluentcpp.com/2017/05/12/curiously-recurring-template-pattern/)
+> - The CRTP, episode Two: What the CRTP can bring to your code
+> - The CRTP, episode Three: [An implementation helper for the CRTP](https://www.fluentcpp.com/2017/05/19/crtp-helper/)
+
+
+
+
+
 Here is the converted CRTP code without fix:
 
 ```cpp
