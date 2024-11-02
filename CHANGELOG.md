@@ -1,3 +1,20 @@
+## TODO:
+
+- 2024-11-02 [oatpp/oatpp: 🌱Light and powerful C++ web framework for highly scalable and resource-efficient web application. It's zero-dependency and easy-portable.](https://github.com/oatpp/oatpp) { github.com } http server / framework
+  - 2024-11-02 [Example ApiClient | Oat++](https://oatpp.io/examples/api-client/) { oatpp.io }
+
+> Oat++ is an open-source C++ web framework for highly scalable and resource-efficient web applications.
+> It provides all the necessary components for production-grade development, including:
+>
+> - Advanced REST framework with request parameters mapping and Swagger-UI annotations. See [Api Controller](https://oatpp.io/docs/components/api-controller/) and [Api Client](https://oatpp.io/docs/components/api-client/).
+> - ORM Framework. See [Object-Relational Mapping (ORM)](https://oatpp.io/docs/components/orm/)
+> - WebSocket framework. See [5-million connections benchmark](https://oatpp.io/benchmark/websocket/5-million/).
+> - Object Mapping. See [Data Transfer Object (DTO)](https://oatpp.io/docs/components/dto/).
+> - Dependency Injection
+> - Swagger-UI. See [oatpp-swagger](https://oatpp.io/docs/modules/oatpp-swagger/) module.
+>
+> It's zero-dependency, easy-portable, and high-performance
+
 # aww-tools changelog
 
 
