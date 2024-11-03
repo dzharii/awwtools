@@ -24,11 +24,6 @@ int aww_date_main(const std::vector<std::string>& cmdArgs,
     spdlog::set_level(spdlog::level::info); // Set desired log level
   }
 
-  if (mutableCmdArgs.size() == 0) {
-    spdlog::warn("No arguments provided");
-    return 1;
-  }
-
   std::string currentDate = deps.get_date_yyyymmdd(aww::call_tag("1rfpeonkhns"));
 
   std::string fileName = aww::string::join(mutableCmdArgs, "-");
