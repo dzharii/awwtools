@@ -73,7 +73,7 @@ endif()
 set(TESTFILES        # All .cpp files in tests/
     tests/aww.cpp
 )
-set(LIBRARY_NAME awwlib)  # Default name for the library built from src/*.cpp (change if you wish)
+set(LIBRARY_NAME libawwtools)  # Default name for the library built from src/*.cpp (change if you wish)
 
 ## Third-party
 # https://github.com/nlohmann/json
@@ -103,9 +103,21 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt-9.1.0)
 ## end of fmt
 
+## AwwLib
+
+FetchContent_Declare(
+    awwlib
+    GIT_REPOSITORY https://github.com/dzharii/awwlib-cpp.git
+    GIT_TAG        dmytro_zharii/2024-10-13-dev
+    GIT_SHALLOW TRUE
+)
+
+FetchContent_MakeAvailable(awwlib)
+
 # There's also (probably) doctests within the library, so we need to see this as well.
 target_link_libraries(
     ${LIBRARY_NAME} PUBLIC
+    awwlib
     doctest
     clip
 )

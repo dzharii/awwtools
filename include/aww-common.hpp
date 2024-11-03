@@ -16,6 +16,8 @@
 #include <string_view>
 #include <thread>
 
+#include <aww-collection/aww-collection.hpp>
+
 // Windows tricks for aww::os::Proccess
 #ifdef _WIN32
 #define popen _popen
@@ -24,6 +26,16 @@
 #endif
 
 namespace aww {
+
+// CONSTANTS
+namespace constants {
+
+// CPMMON COMMANDLINE FLAGS
+const std::string CMD_FLAG_NO_LOGGING = "--aww-no-logging";
+const std::string CMD_FLAG_NO_NOTIFICATIONS = "--aww-no-notifications";
+
+} // namespace constants
+
 // CallTag struct definition
 struct call_tag_t {
   constexpr explicit call_tag_t(std::uint64_t value) : value(value) {}
@@ -44,6 +56,17 @@ template <size_t N> constexpr call_tag_t call_tag(const char (&str)[N]) {
   return call_tag_t(_compiletime_hash(str));
 }
 
+// COLLECTIONS
+
+/**
+ * @brief Remove a flag from the arguments
+ * @param args The arguments to remove the flag from
+ * @param flag The flag name to remove
+ * @returns true if the flag was found and removed, false otherwise
+ */
+bool erase_flag_from_args(std::vector<std::string>& args, const std::string& flag);
+
+// RESULT
 class Result {
 public:
   /* Create a successful result */

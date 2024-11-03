@@ -14,30 +14,12 @@ namespace fs = std::filesystem;
 
 namespace aww::internal::aww_run {
 
-/**
- * @brief Remove a flag from the arguments
- * @param args The arguments to remove the flag from
- * @param flag The flag name to remove
- * @returns true if the flag was found and removed, false otherwise
- */
-bool erase_flag_from_args(std::vector<std::string>& args, const std::string& flag) {
-  auto it = std::find(args.begin(), args.end(), flag);
-  if (it != args.end()) {
-    args.erase(it);
-    return true;
-  }
-  return false;
-}
-
 int aww_run_main(const std::vector<std::string>& cmdArgs) {
   auto mutableCmdArgs = cmdArgs;
 
-  // Flag to disable logging
-  const std::string flagNoLogging = "--aww-no-logging";
-  const std::string flagNoNotifications = "--aww-no-notifications";
-
-  bool noLogging = erase_flag_from_args(mutableCmdArgs, flagNoLogging);
-  bool noNotifications = erase_flag_from_args(mutableCmdArgs, flagNoNotifications);
+  bool noLogging = aww::erase_flag_from_args(mutableCmdArgs, aww::constants::CMD_FLAG_NO_LOGGING);
+  bool noNotifications =
+      aww::erase_flag_from_args(mutableCmdArgs, aww::constants::CMD_FLAG_NO_NOTIFICATIONS);
 
   // Configure spdlog based on the flag
   if (noLogging) {
