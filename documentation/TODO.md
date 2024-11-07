@@ -321,3 +321,9 @@ This one may have a repository with recommended software to view the file in con
 Type aww cat  -- and it will recommend a tool to view the file.
 
 
+
+## aww-create
+
+- [ ] 2024-11-06 somehow allow creating multifile templates. Maybe the template for this case can be **folder**.  Or combine multiple templates into one in same file.
+- [ ] 2024-11-06 aww-create name **clip** clip is a psydo command which allows insert data from clipboard. 
+- [ ] 2024-11-06 aww-create with LUA support? Imagine dynamic templates, wow!
