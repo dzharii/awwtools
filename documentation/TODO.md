@@ -80,6 +80,12 @@ create aww::Result and partially try it in aww::create.
 
 - [ ] Should definitely support  dot files, like `.awwtools` but also would be great to support a separate git repository for the configuration, like `my-awwtools`. The  awwtools can provide commands to manage configuration, like `aww config push` `aww config pull`
 
+## Inspiration
+
+2024-11-07 [Useful built-in macOS command-line utilities](https://weiyen.net/articles/useful-macos-cmd-line-utilities) { weiyen.net }
+
+
+
 ## The Tools
 
 ### Git
