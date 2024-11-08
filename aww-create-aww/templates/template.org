@@ -1,0 +1,18 @@
+#+title: ___FILE_NAME___
+#+subtitle: docs
+#+date: <___CURRENT_DATE___>
+#+language: en
+
+* Summary
+___RANDOM_INSPIRATION___
+
+* Examples
+
+#+begin_src emacs-lisp
+
+#+end_src
+
+
+#+begin_example emacs-lisp
+
+#+end_example

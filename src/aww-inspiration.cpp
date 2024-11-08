@@ -1,13 +1,12 @@
-#include <array>
-#include <string_view>
 #include "aww-inspiration.hpp"
+#include <array>
 #include <cstdlib>
 #include <ctime>
+#include <string_view>
 
-namespace aww::inspiration
-{
-  // array of strings with predefined inspirational quotes
-  constexpr std::array quotes = {
+namespace aww::inspiration {
+// array of strings with predefined inspirational quotes
+constexpr std::array quotes = {
     "I trust in my abilities and the power of my words.",
     "I am worthy of success and will put in the necessary work to achieve it.",
     "I am open to new ideas and perspectives.",
@@ -58,14 +57,14 @@ namespace aww::inspiration
     "I will seek out new experiences and perspectives to fuel my creativity.",
     "I will take time for self-reflection and listen to my inner voice.",
     "I will believe in myself and my ability to create something valuable.",
-  };
+};
 
-  constexpr size_t quotesLen = quotes.size();
+constexpr size_t quotesLen = quotes.size();
 
-  std::string getInspiration(void) {
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
-    const std::size_t randomIndex = static_cast<std::size_t>(
-      static_cast<unsigned int>(std::rand()) % quotesLen);
-    return quotes[randomIndex];
-  }
+std::string getInspiration(void) {
+  std::srand(static_cast<unsigned int>(std::time(nullptr)));
+  const std::size_t randomIndex =
+      static_cast<std::size_t>(static_cast<unsigned int>(std::rand()) % quotesLen);
+  return quotes[randomIndex];
 }
+} // namespace aww::inspiration

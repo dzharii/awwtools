@@ -1,1 +1,0 @@
-start cmd /C "%~dp0\cmake-build\Debug\main.exe && pause || pause"

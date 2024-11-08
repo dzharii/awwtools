@@ -1,7 +1,266 @@
+## TODO:
+
+- 2024-11-02 [oatpp/oatpp: 🌱Light and powerful C++ web framework for highly scalable and resource-efficient web application. It's zero-dependency and easy-portable.](https://github.com/oatpp/oatpp) { github.com } http server / framework
+  - 2024-11-02 [Example ApiClient | Oat++](https://oatpp.io/examples/api-client/) { oatpp.io }
+
+> Oat++ is an open-source C++ web framework for highly scalable and resource-efficient web applications.
+> It provides all the necessary components for production-grade development, including:
+>
+> - Advanced REST framework with request parameters mapping and Swagger-UI annotations. See [Api Controller](https://oatpp.io/docs/components/api-controller/) and [Api Client](https://oatpp.io/docs/components/api-client/).
+> - ORM Framework. See [Object-Relational Mapping (ORM)](https://oatpp.io/docs/components/orm/)
+> - WebSocket framework. See [5-million connections benchmark](https://oatpp.io/benchmark/websocket/5-million/).
+> - Object Mapping. See [Data Transfer Object (DTO)](https://oatpp.io/docs/components/dto/).
+> - Dependency Injection
+> - Swagger-UI. See [oatpp-swagger](https://oatpp.io/docs/modules/oatpp-swagger/) module.
+>
+> It's zero-dependency, easy-portable, and high-performance
+
 # aww-tools changelog
 
 
+
+## 2024-11-07 Thu
+
+Despite the number of changes in this pull request and the many files modified, most of this is due to the introduction of a new styling format with `clang-format`. I reformatted a lot of files, fixed some bugs (which I don't fully recall), and made a major change by working to migrate and extract library functions from `awwlib` into a separate repository also named `awwlib`.
+
+The plan moving forward is to integrate Lua as the language for configuration and scripting, with support for `aww-run`. To proceed with these next steps, I need to merge these changes now and start with a clean slate.
+
+
+
+## 2024-10-27 Sun
+
+I wanted to test if I can apply "Curiously recurring template pattern (CRTP)" instead of using virtual polymorphism. 
+
+CRTP offers compile time polymorphism, which, I suppose can be faster, but it requires some hacks. 
+
+And the main hack, is that instead of this in the interface declaration:
+
+```cpp
+int aww_date_main(const std::vector<std::string>& cmdArgs,
+                  aww_date_io_dependencies_interface& deps);
+}
+```
+
+I would need to do this:
+
+```cpp
+int aww_date_main(const std::vector<std::string>& cmdArgs,
+                  auto& deps);
+}
+```
+
+which makes the interface ambiguous for the reader. I really want to declare that the tool needs `aww_date_io_dependencies_interface&`. 
+
+Read more:
+
+- [c++ - What is the curiously recurring template pattern (CRTP)? - Stack Overflow](https://stackoverflow.com/questions/4173254/what-is-the-curiously-recurring-template-pattern-crtp) { stackoverflow.com }
+- 2024-10-27 [4. Polymorphism and CRTP](https://blog.zharii.com/blog/2024/09/01/links-from-my-inbox#4-polymorphism-and-crtp) { blog.zharii.com }
+
+
+
+Update: Oh, I found this, so the problematic `auto` code can be expressed as:
+
+```cpp
+template<typename T>
+int aww_date_main(const std::vector<std::string>& cmdArgs,
+                  aww_date_io_dependencies_interface<T>& deps);
+}
+```
+
+I might return back to this note and reconsider CRTP
+
+2024-10-28 📌 [The Curiously Recurring Template Pattern (CRTP) - Fluent C++](https://www.fluentcpp.com/2017/05/12/curiously-recurring-template-pattern/) { www.fluentcpp.com }
+
+> - The CRTP, episode One: [Definition](https://www.fluentcpp.com/2017/05/12/curiously-recurring-template-pattern/)
+> - The CRTP, episode Two: What the CRTP can bring to your code
+> - The CRTP, episode Three: [An implementation helper for the CRTP](https://www.fluentcpp.com/2017/05/19/crtp-helper/)
+
+
+
+
+
+Here is the converted CRTP code without fix:
+
+```cpp
+#pragma once
+#ifndef AWW_DATE_HPP
+#define AWW_DATE_HPP
+
+#include <string>
+#include <vector>
+
+#include "aww-common.hpp"
+#include "clip.h"
+
+namespace aww::internal::aww_date {
+
+template <typename Derived> class aww_date_io_dependencies_interface {
+public:
+  ~aww_date_io_dependencies_interface() = default;
+
+  std::string get_date_yyyymmdd([[maybe_unused]] aww::call_tag_t tag) {
+    return static_cast<const Derived*>(this)->get_date_yyyymmdd(tag);
+  }
+
+  bool clipboard_set_text(const std::string& text, [[maybe_unused]] aww::call_tag_t tag) {
+    return static_cast<const Derived*>(this)->clipboard_set_text(text, tag);
+  }
+
+  void show_notification(const std::string& title, const std::string& message,
+                         [[maybe_unused]] aww::call_tag_t tag) {
+    static_cast<const Derived*>(this)->show_notification(title, message, tag);
+  }
+};
+
+class aww_date_io_dependencies
+    : public aww_date_io_dependencies_interface<aww_date_io_dependencies> {
+public:
+  std::string get_date_yyyymmdd([[maybe_unused]] aww::call_tag_t tag) {
+    return aww::date::get_date_YYYYMMDD();
+  }
+
+  bool clipboard_set_text(const std::string& text, [[maybe_unused]] aww::call_tag_t tag) {
+    return clip::set_text(text);
+  }
+
+  void show_notification(const std::string& title, const std::string& message,
+                         [[maybe_unused]] aww::call_tag_t tag) {
+    aww::os::actions::show_notification(title, message);
+  }
+};
+
+int aww_date_main(const std::vector<std::string>& cmdArgs,
+                  aww_date_io_dependencies_interface& deps);
+} // namespace aww::internal::aww_date
+
+#endif
+
+```
+
+**Revert!** 
+
+
+
+## 2024-10-25 Fri
+
+clang-format 'em all!
+
+```powershell
+Get-ChildItem -Recurse -Include *.cpp, *.h, *.c, *.hpp | Where-Object { $_.FullName -notlike '*\third-party\*' } | ForEach-Object { clang-format.exe -i $_.FullName }
+```
+
+
+
+
+
+## 2024-10-21
+
+Started lib experimental migration to [dzharii/awwlib-cpp: [aww project internal\] awwlib is cross-platform C++ utility library that provides commonly used helper functions for handling environment variables, string manipulations, and date/time conversions.](https://github.com/dzharii/awwlib-cpp)
+
+Migrated:
+
+
+
+
+
+## 2024-03-10
+
+Returned webview! 
+
+Working on integration with: 
+
+2024-03-10 [libcpr/cpr: C++ Requests: Curl for People, a spiritual port of Python Requests.](https://github.com/libcpr/cpr)
+
+With some compilation issues / dll sharing issues. 
+
+
+
+## 2024-01-27
+
+Code cleanup:
+
+I've removed the [webview/webview](https://github.com/webview/webview) dependency, a tiny cross-platform webview library for C/C++ using  WebKit and Edge WebView2. While it's an awesome tool for building  cross-platform browser GUIs, I couldn't find a suitable application for  it in the awwtools project. It might be better suited for a standalone  project.
+
+
+
+## 2024-01-19
+
+Tiny update to CXX 20. No issues so far.
+
+
+
+## 2023-12-10
+
+
+
+My most used and most simple aww tool `aww-date` got some experimental update. 
+
+I have found that tracking the input/output dependencies calls is tricky, since, for instance, `fs_file_exists()`
+
+can be called multiple times in the code for different cases. In the test cases, I want to somehow recreate the complex code path, but 
+
+tracking the right calls by their call order (number of times same function was called) or by the input parameters is too brittle, how can I precisely find  the call I need? at first, for a long time, my idea was to rename `fs_file_exists()` to a case specific name, like:
+
+- if `fs_template_folder_exists()`
+  - if `fs_template_file_exists()`
+    - do something
+  - else if `fs_template_file_with_specification_exists()`
+    - do something else
+
+but to support this case I have to: 
+
+- add these function to `aww_create_io_dependencies_interface`
+- then implement in `aww_create_io_dependencies`
+- then create a mock in `aww_create_io_dependencies_stub`
+
+This simple does not scale, so I have decided to tag these calls at compile time and keep the generic name. 
+
+New code added:
+
+`include\aww-common.hpp`
+
+```cpp
+// CallTag struct definition
+struct call_tag_t {
+constexpr explicit call_tag_t(unsigned long long value) : value(value) {}
+
+const unsigned long long value;
+};
+
+// Compile-time hash function
+constexpr unsigned long long _compiletime_hash(const char* str, unsigned long long hash = 0, size_t index = 0) {
+return str[index] ? _compiletime_hash(str, (hash * 131) + str[index], index + 1) : hash;
+}
+
+// call_tag function with compile-time length check for string literals
+template <size_t N>
+constexpr call_tag_t call_tag(const char (&str)[N]) {
+  static_assert(N > 11, "Tag string must be at least 11 characters long."); // N includes the null terminator
+  return call_tag_t(_compiletime_hash(str));
+}
+```
+
+
+
+Usage at `src\internal\aww-date.cpp`
+
+```cpp
+if (deps.clipboard_set_text(result, aww::call_tag("t7svmrrhai0"))) {
+    std::cout << "Copied to clipboard: " << result << "\n";
+    deps.show_notification("aww date", "The date has been copied to the clipboard", aww::call_tag("tssis4p5ta2"));
+} else {
+    std::cout << "Failed to copy to clipboard: " << result << "\n";
+    deps.show_notification("aww date", "Failed to copy the date to the clipboard", aww::call_tag("730v5jc2d3o"));
+    return 1;
+}
+```
+
+
+
+
+
 ## 2023-12-02
+
 Added first dev sketch: 
 
 aww structured logging

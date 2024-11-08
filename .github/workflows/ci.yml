@@ -30,12 +30,17 @@ jobs:
     steps:
     - name: Install dependencies UBUNTU
       if: matrix.os == 'ubuntu-latest'
-      run: sudo apt-get update && sudo apt-get install -y build-essential libgtk-3-dev libwebkit2gtk-4.0-dev xvfb
-
+      run: sudo apt-get update && sudo apt-get install -y build-essential #webview: libgtk-3-dev libwebkit2gtk-4.0-dev xvfb
+    
     - name: Checkout Code
       uses: actions/checkout@v2
 
-    - name: Configure (${{ matrix.configuration }})
+    - name: Configure ubuntu-latest
+      if: matrix.os == 'ubuntu-latest'
+      run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
+
+    - name: Configure windows-latest
+      if: matrix.os == 'windows-latest'
       run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
 
     - name: Build with ${{ matrix.compiler }}

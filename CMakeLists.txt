@@ -12,6 +12,8 @@ cmake_minimum_required(VERSION 3.14)
 # the source. See exampleConfig.h.in for some more details.
 project(AwwTools VERSION 0.0.1 LANGUAGES CXX)
 
+#2024-01-27 DISABLE warning C4996: warning STL4043: ed_array_iterator, and related factory functions are non-Standard extensions and will be removed in the future...
+add_definitions(-D_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING)
 
 # Options: Things you can set via commandline options to cmake (e.g. -DENABLE_LTO=[ON|OFF])
 option(ENABLE_WARNINGS_SETTINGS "Allow target_set_warnings to add flags and defines.
@@ -22,7 +24,6 @@ option(ENABLE_DOCTESTS "Include tests in the library. Setting this to OFF will r
 
 # Include stuff. No change needed.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
-option(ALLOW_AWW_APP "Allow the aww app to be built" OFF)
 
 include(ConfigSafeGuards)
 include(Colors)
@@ -31,6 +32,7 @@ include(Doctest)
 include(LTO)
 include(Misc)
 include(Warnings)
+include(FetchContent)
 
 # Check for LTO support.
 find_lto(CXX)
@@ -40,7 +42,6 @@ find_lto(CXX)
 # --------------------------------------------------------------------------------
 set(SOURCES          # All .cpp files in src/
     src/aww-common.cpp
-    src/aww-app-manifest.cpp
     src/aww-inspiration.cpp
     src/internal/aww-date.cpp
     src/internal/aww-create.cpp
@@ -51,6 +52,8 @@ set(SOURCES          # All .cpp files in src/
     src/internal/aww-tag.cpp
     src/internal/aww-term.cpp
     src/internal/aww-toast.cpp
+    src/internal/aww-api.cpp
+    #nf78vfbcr2j new aww tool? add sources here!
     src/internal/aww.cpp
 )
 if(WIN32)
@@ -70,7 +73,7 @@ endif()
 set(TESTFILES        # All .cpp files in tests/
     tests/aww.cpp
 )
-set(LIBRARY_NAME awwlib)  # Default name for the library built from src/*.cpp (change if you wish)
+set(LIBRARY_NAME libawwtools)  # Default name for the library built from src/*.cpp (change if you wish)
 
 ## Third-party
 # https://github.com/nlohmann/json
@@ -79,7 +82,6 @@ set(JSON_BuildTests OFF CACHE INTERNAL "")
 # --------------------------------------------------------------------------------
 #                            Build! (Change as needed)
 # --------------------------------------------------------------------------------
-
 
 # Compile all sources into a library.
 add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
@@ -91,45 +93,34 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2/single_include
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/spdlog-1.11.0/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt-9.1.0/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/cpr-1.10.5/include
 )
-
-if(ALLOW_AWW_APP)
-    # mark webview.h as system header to suppress clang warnings
-    target_include_directories(${LIBRARY_NAME} SYSTEM PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/third-party/webview-dbc7864/src
-    )
-endif()
-
 
 # we add the sub-directories that we want CMake to scan
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5)
-
-if(ALLOW_AWW_APP)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/webview-dbc7864)
-endif()
-
-## nlohmann-json
-set(JSON_BuildTests OFF CACHE INTERNAL "")
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2)
-## end of nlohmann-json
 
 ## fmt
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt-9.1.0)
 ## end of fmt
 
+## AwwLib
+
+FetchContent_Declare(
+    awwlib
+    GIT_REPOSITORY https://github.com/dzharii/awwlib-cpp.git
+    GIT_TAG        dmytro_zharii/2024-10-13-dev
+    GIT_SHALLOW TRUE
+)
+
+FetchContent_MakeAvailable(awwlib)
+
 # There's also (probably) doctests within the library, so we need to see this as well.
 target_link_libraries(
     ${LIBRARY_NAME} PUBLIC
+    awwlib
     doctest
     clip
 )
-
-if(ALLOW_AWW_APP)
-    target_link_libraries(
-        ${LIBRARY_NAME} PUBLIC
-        webview
-    )
-endif()
 
 if(WIN32)
     target_include_directories(${LIBRARY_NAME} PUBLIC
@@ -143,7 +134,21 @@ if(WIN32)
     target_link_libraries(${LIBRARY_NAME} PUBLIC wintoastlib)
 endif()
 
+## nlohmann-json
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2)
 target_link_libraries(${LIBRARY_NAME} PRIVATE nlohmann_json::nlohmann_json)
+## end of nlohmann-json
+
+
+## cpr
+# FetchContent_Declare(cpr GIT_REPOSITORY https://github.com/libcpr/cpr.git
+#                          GIT_TAG 3b15fa82ea74739b574d705fea44959b58142eb8) # Replace with your desired git commit from: https://github.com/libcpr/cpr/releases
+# FetchContent_MakeAvailable(cpr)
+# target_link_libraries(${LIBRARY_NAME} PRIVATE cpr::cpr)
+## cpr
+
+
 
 # Set the compile options you want (change as needed).
 target_set_warnings(${LIBRARY_NAME} ENABLE ALL AS_ERROR ALL DISABLE Annoying)
@@ -210,15 +215,16 @@ target_link_libraries(aww-tag PRIVATE ${LIBRARY_NAME})  # Link the executable to
 target_set_warnings(aww-tag ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(aww-tag optimized)  # enable link-time-optimization if available for non-debug configurations
 
-if(ALLOW_AWW_APP)
-    ## Aww app
-    add_executable(aww-app app/aww-app.cpp)   # Name of exec. and location of file.
-    target_link_libraries(aww-app PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
-    target_set_warnings(aww-app ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
-    target_enable_lto(aww-app optimized)  # enable link-time-optimization if available for non-debug configurations
-endif()
-# Set the properties you require, e.g. what C++ standard to use. Here applied to library and aww (change as needed).
+## aww-api
+add_executable(aww-api app/aww-api.cpp)   # Name of exec. and location of file.
+target_link_libraries(aww-api PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
+target_set_warnings(aww-api ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_enable_lto(aww-api optimized)  # enable link-time-optimization if available for non-debug configurations
 
+
+#fia2wwtog0r new aww tool? add entry here!
+
+# Set the properties you require, e.g. what C++ standard to use. Here applied to library and aww (change as needed).
 set(PROJECTS
     ${LIBRARY_NAME}
     aww
@@ -231,12 +237,9 @@ set(PROJECTS
     aww-create
     aww-guid
     aww-tag
+    aww-api
+    #9x1eam6faab new aww tool? add entry here!
 )
-
-if(ALLOW_AWW_APP)
-    list(APPEND PROJECTS aww-app)
-endif()
-
 
 add_custom_target(copy-runtime-files ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -248,7 +251,7 @@ add_custom_target(copy-runtime-files ALL
 set_target_properties(
         ${PROJECTS}
       PROPERTIES
-        CXX_STANDARD 17
+        CXX_STANDARD 20
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS NO
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
