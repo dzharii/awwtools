@@ -21,6 +21,26 @@
 
 ## 2024-11-07 Thu
 
+The next steps:
+
+Add lua as the configuration language
+
+Add lua as aww-run executable script
+
+Lua with CMake: 
+
+2024-11-08 [marovira/lua: The Lua Programming Language with Modern CMake](https://github.com/marovira/lua?path=) { github.com }
+
+Download fresh Lua from official site:
+
+[Lua: download](https://www.lua.org/download.html)
+
+
+
+
+
+## 2024-11-07 Thu
+
 Despite the number of changes in this pull request and the many files modified, most of this is due to the introduction of a new styling format with `clang-format`. I reformatted a lot of files, fixed some bugs (which I don't fully recall), and made a major change by working to migrate and extract library functions from `awwlib` into a separate repository also named `awwlib`.
 
 The plan moving forward is to integrate Lua as the language for configuration and scripting, with support for `aww-run`. To proceed with these next steps, I need to merge these changes now and start with a clean slate.
