@@ -19,6 +19,12 @@
 
 
 
+## 2024-11-07 Thu
+
+
+
+
+
 ## 2024-10-27 Sun
 
 I wanted to test if I can apply "Curiously recurring template pattern (CRTP)" instead of using virtual polymorphism. 
