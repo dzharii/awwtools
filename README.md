@@ -10,7 +10,7 @@ While these tools are experimental and iteratively improved, they are fully func
 [aww tools](https://github.com/dzharii/awwtools) is my exploration into productivity, built through iterative, early-stage releases. 
 Code here isn’t perfect; it’s a space for testing, refining, and sharing ideas with the community.
 
-> "You owe me an aww!"
+> "You owe me aww!"
 > — *Red Dragon* by Thomas Harris (rephrased)
 
 *But actually, you don’t owe me anything, of course. ;)*
