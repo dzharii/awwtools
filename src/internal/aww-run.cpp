@@ -8,6 +8,7 @@
 #include "aww-common.hpp"
 #include "internal/aww-run.hpp"
 
+#include <lua.hpp> // Include Lua header
 #include <spdlog/spdlog.h>
 
 namespace fs = std::filesystem;
@@ -25,7 +26,7 @@ int aww_run_main(const std::vector<std::string>& cmdArgs) {
   if (noLogging) {
     spdlog::set_level(spdlog::level::off);
   } else {
-    spdlog::set_level(spdlog::level::info); // Set desired log level
+    spdlog::set_level(spdlog::level::info);
   }
 
   if (mutableCmdArgs.size() == 0) {
@@ -33,21 +34,6 @@ int aww_run_main(const std::vector<std::string>& cmdArgs) {
     return 1;
   }
 
-  aww::os::Proccess proc;
-  int exitCode = 0;
-  proc.onStdOut([](std::string line) { std::cout << line; });
-  proc.onStdErr([](std::string line) { std::cerr << line; });
-
-  proc.onExit([&](int code) {
-    spdlog::warn("Exit code: {}", code);
-    exitCode = code;
-  });
-
-  // aww command is a shell script name without extension
-  // so that we can have "build.sh" and "build.bat" in the same folder
-  // and the correct one will be selected based on the OS
-  // Sample:
-  //        aww run build
   std::string awwCommand = mutableCmdArgs[0];
   fs::path maybeScriptPath;
 
@@ -56,6 +42,37 @@ int aww_run_main(const std::vector<std::string>& cmdArgs) {
     spdlog::warn("Found script: {}", maybeScriptPath.string());
     std::string scriptExtension = maybeScriptPath.extension().string();
 
+    // Check if the script is a Lua file
+    if (scriptExtension == ".lua" || scriptExtension == ".LUA") {
+      // Initialize Lua
+      lua_State* L = luaL_newstate();
+      luaL_openlibs(L);
+
+      // Measure time
+      auto start = std::chrono::high_resolution_clock::now();
+
+      // Execute Lua script file
+      if (luaL_dofile(L, maybeScriptPath.string().c_str()) != LUA_OK) {
+        std::cerr << "Error executing Lua script: " << lua_tostring(L, -1) << std::endl;
+        lua_pop(L, 1);
+        lua_close(L);
+        return 1;
+      }
+
+      lua_close(L);
+
+      // Calculate and log time taken
+      auto end = std::chrono::high_resolution_clock::now();
+      auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+      spdlog::warn("Lua script execution took {}ms", duration.count());
+
+      if (!noNotifications) {
+        aww::os::actions::show_notification("aww run", "Lua script finished successfully");
+      }
+      return 0;
+    }
+
+    // Existing functionality for other scripts
     bool isPowerShell = scriptExtension == ".ps1" || scriptExtension == ".PS1";
     bool isBash = scriptExtension == ".sh" || scriptExtension == ".SH";
     const aww::os::Platform platform = aww::os::OSPlatform;
@@ -88,7 +105,7 @@ int aww_run_main(const std::vector<std::string>& cmdArgs) {
 
   std::vector<std::string> cmdArgsCopy = mutableCmdArgs;
 
-  // replace aww command with the full path to the script
+  // Replace aww command with the full path to the script
   if (scriptFound.is_ok()) {
     cmdArgsCopy[0] = awwCommand;
   }
@@ -96,12 +113,19 @@ int aww_run_main(const std::vector<std::string>& cmdArgs) {
   std::string cmd = aww::string::join(cmdArgsCopy, " ");
   spdlog::warn("Running command: {}", cmd);
 
-  // measure time
+  aww::os::Proccess proc;
+  int exitCode = 0;
+  proc.onStdOut([](std::string line) { std::cout << line; });
+  proc.onStdErr([](std::string line) { std::cerr << line; });
+
+  proc.onExit([&](int code) {
+    spdlog::warn("Exit code: {}", code);
+    exitCode = code;
+  });
+
+  // Measure time
   auto start = std::chrono::high_resolution_clock::now();
-
   proc.run(cmd);
-
-  // print time
   auto end = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
   spdlog::warn("Command took {}ms", duration.count());
@@ -110,7 +134,6 @@ int aww_run_main(const std::vector<std::string>& cmdArgs) {
     if (!noNotifications) {
       aww::os::actions::show_notification("aww run", "Failed to run command");
     }
-    // describe what command failed and exitCode
     spdlog::error("Failed to run command: '{}'; ErrorCode: {}", cmd, exitCode);
   } else {
     if (!noNotifications) {
@@ -135,29 +158,30 @@ aww::Result find_script_windows(const std::string& scriptName, fs::path& outScri
   const fs::path batCurrentDirPath = currentDir / (scriptName + ".bat");
   const fs::path cmdCurrentDirPath = currentDir / (scriptName + ".cmd");
   const fs::path ps1CurrentDirPath = currentDir / (scriptName + ".ps1");
+  const fs::path luaCurrentDirPath = currentDir / (scriptName + ".lua");
 
   const fs::path batAwwScriptsPath = awwScriptsDir / (scriptName + ".bat");
   const fs::path cmdAwwScriptsPath = awwScriptsDir / (scriptName + ".cmd");
   const fs::path ps1AwwScriptsPath = awwScriptsDir / (scriptName + ".ps1");
+  const fs::path luaAwwScriptsPath = awwScriptsDir / (scriptName + ".lua");
 
   const fs::path batAwwDotScriptsPath = awwDotScriptsDir / (scriptName + ".bat");
   const fs::path cmdAwwDotScriptsPath = awwDotScriptsDir / (scriptName + ".cmd");
   const fs::path ps1AwwDotScriptsPath = awwDotScriptsDir / (scriptName + ".ps1");
+  const fs::path luaAwwDotScriptsPath = awwDotScriptsDir / (scriptName + ".lua");
 
   const fs::path batAwwPath = awwDir / (scriptName + ".bat");
   const fs::path cmdAwwPath = awwDir / (scriptName + ".cmd");
   const fs::path ps1AwwPath = awwDir / (scriptName + ".ps1");
+  const fs::path luaAwwPath = awwDir / (scriptName + ".lua");
 
-  const size_t totalDirItems = 3 * 4;
+  const size_t totalDirItems = 4 * 4;
 
   std::array<fs::path, totalDirItems> lookupPath = {
-      batCurrentDirPath,    cmdCurrentDirPath,    ps1CurrentDirPath,
-
-      batAwwScriptsPath,    cmdAwwScriptsPath,    ps1AwwScriptsPath,
-
-      batAwwDotScriptsPath, cmdAwwDotScriptsPath, ps1AwwDotScriptsPath,
-
-      batAwwPath,           cmdAwwPath,           ps1AwwPath,
+      batCurrentDirPath,    cmdCurrentDirPath,    ps1CurrentDirPath,    luaCurrentDirPath,
+      batAwwScriptsPath,    cmdAwwScriptsPath,    ps1AwwScriptsPath,    luaAwwScriptsPath,
+      batAwwDotScriptsPath, cmdAwwDotScriptsPath, ps1AwwDotScriptsPath, luaAwwDotScriptsPath,
+      batAwwPath,           cmdAwwPath,           ps1AwwPath,           luaAwwPath,
   };
 
   for (const fs::path& path : lookupPath) {
@@ -189,15 +213,20 @@ aww::Result find_script_linux(const std::string& scriptName, fs::path& outScript
   const fs::path ps1AwwDotScriptsPath = awwDotScriptsDir / (scriptName + ".ps1");
   const fs::path ps1AwwPath = awwDir / (scriptName + ".ps1");
 
+  const fs::path luaCurrentDirPath = currentDir / (scriptName + ".lua");
+  const fs::path luaAwwScriptsPath = awwScriptsDir / (scriptName + ".lua");
+  const fs::path luaAwwDotScriptsPath = awwDotScriptsDir / (scriptName + ".lua");
+  const fs::path luaAwwPath = awwDir / (scriptName + ".lua");
+
   const fs::path emptyCurrentDirPath = currentDir / scriptName;
   const fs::path emptyAwwScriptsPath = awwScriptsDir / scriptName;
   const fs::path emptyAwwDotScriptsPath = awwDotScriptsDir / scriptName;
   const fs::path emptyPath = awwDir / scriptName;
 
-  const std::array<fs::path, 8> shLookupPath = {
+  const std::array<fs::path, 12> shLookupPath = {
       shCurrentDirPath,  shAwwScriptsPath,  shAwwDotScriptsPath,  shAwwPath,
-
       ps1CurrentDirPath, ps1AwwScriptsPath, ps1AwwDotScriptsPath, ps1AwwPath,
+      luaCurrentDirPath, luaAwwScriptsPath, luaAwwDotScriptsPath, luaAwwPath,
   };
 
   const std::array<fs::path, 4> emptyLookupPath = {
