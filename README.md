@@ -1,5 +1,7 @@
 # aww tools
 
+[o:ʊ to͞oz] 
+
 For developers who work across Windows, Linux, and potentially other environments, finding and learning a new set of tools for each platform can be time-consuming and complex. 
 Each system often requires a unique workflow, which adds friction to what should be simple tasks.
 
@@ -16,6 +18,18 @@ Code here isn’t perfect; it’s a space for testing, refining, and sharing ide
 *But actually, you don’t owe me anything, of course. ;)*
 
 
+
+Project moto:
+
+---
+
+
+
+<center><i>Embrace the AWW!</i></center>
+
+
+
+---
 
 **Thank you:**
 
