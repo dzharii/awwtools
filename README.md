@@ -1,23 +1,16 @@
 # aww tools
 
-[o:ʊ to͞oz] 
+[o:ʊ to͞olz] 
 
 For developers who work across Windows, Linux, and potentially other environments, finding and learning a new set of tools for each platform can be time-consuming and complex. 
 Each system often requires a unique workflow, which adds friction to what should be simple tasks.
 
-[aww tools](https://github.com/dzharii/awwtools) goal is to offer a streamlined, cross-platform toolkit built in C++ to simplify productivity workflows across different systems. 
+[aww tools](https://github.com/dzharii/awwtools) goal is to offer a  cross-platform toolkit built in C++ to simplify productivity workflows across different systems. 
 By prioritizing simplicity and early releases, these tools are designed to provide lightweight, accessible functionality without the need to re-learn tools on each OS. 
 While these tools are experimental and iteratively improved, they are fully functional for daily use, helping developers (me!) explore, test, and even contribute to new ideas as the toolkit evolves.
 
 [aww tools](https://github.com/dzharii/awwtools) is my exploration into productivity, built through iterative, early-stage releases. 
-Code here isn’t perfect; it’s a space for testing, refining, and sharing ideas with the community.
-
-> "You owe me aww!"
-> — *Red Dragon* by Thomas Harris (rephrased)
-
-*But actually, you don’t owe me anything, of course. ;)*
-
-
+Code here isn’t perfect; it’s a space for testing, refining, and sharing ideas.
 
 Project moto:
 
