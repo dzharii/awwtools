@@ -270,6 +270,11 @@ and execute template:
 
 ## aww run!
 
+- [ ] Can I show UI banner with progress? The script outputs some data, and that updates UI banner with progress. Configuration profiles per 
+  process. Profiles in lua? 
+
+- [ ] Console colors support
+
 - [ ] Handle gracefull cancelation Ctrl+C for pipe
 
 - [ ] Consider: 2022-12-10 [Enable tab completion - .NET CLI Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/core/tools/enable-tab-autocomplete)
