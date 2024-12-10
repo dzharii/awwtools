@@ -3,6 +3,18 @@ Date: 2024-12-07
 
 
 
+2024-12-08 [jdx/mise: dev tools, env vars, task runner](https://github.com/jdx/mise) { github.com }
+
+> - Like [asdf](https://asdf-vm.com/) (or [nvm](https://github.com/nvm-sh/nvm) or [pyenv](https://github.com/pyenv/pyenv) but for any language) it manages [dev tools](https://mise.jdx.dev/dev-tools/) like node, python, cmake, terraform, and [hundreds more](https://mise.jdx.dev/plugins.html).
+> - Like [direnv](https://github.com/direnv/direnv) it manages [environment variables](https://mise.jdx.dev/environments.html) for different project directories.
+> - Like [make](https://www.gnu.org/software/make/manual/make.html) it manages [tasks](https://mise.jdx.dev/tasks/) used to build and test projects.
+>
+> 2024-12-08 [Mise: Dev tools, env vars, task runner | Hacker News](https://news.ycombinator.com/item?id=42347917) { news.ycombinator.com }
+>
+> 2024-12-08 [Home | mise-en-place](https://mise.jdx.dev/) { mise.jdx.dev }
+>
+> ![image-20241208121428571](aww-app-ideas-similar-software.assets/image-20241208121428571.png)
+
 
 
 2024-12-07✨ [casey/just: 🤖 Just a command runner](https://github.com/casey/just) { github.com } { aww run}
