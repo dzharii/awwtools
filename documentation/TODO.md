@@ -277,6 +277,8 @@ and execute template:
 
 ## aww run!
 
+- [ ] Implement Lua arg support 2024-12-26 [interactive lua: command line arguments - Stack Overflow](https://stackoverflow.com/questions/2945819/interactive-lua-command-line-arguments) {stackoverflow.com}. See **./lua-samples/argy.lua**
+  
 - [ ] Can I show UI banner with progress? The script outputs some data, and that updates UI banner with progress. Configuration profiles per 
   process. Profiles in lua? 
 
