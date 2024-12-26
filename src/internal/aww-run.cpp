@@ -35,12 +35,12 @@ int aww_run_main(const std::vector<std::string>& cmdArgs) {
   }
 
   std::string awwCommand = mutableCmdArgs[0];
-  fs::path maybeScriptPath;
+  fs::path scriptPath;
 
-  aww::Result scriptFound = find_script(awwCommand, maybeScriptPath);
+  aww::Result scriptFound = find_script(awwCommand, scriptPath);
   if (scriptFound.is_ok()) {
-    spdlog::warn("Found script: {}", maybeScriptPath.string());
-    std::string scriptExtension = maybeScriptPath.extension().string();
+    spdlog::warn("Found script: {}", scriptPath.string());
+    std::string scriptExtension = scriptPath.extension().string();
 
     // Check if the script is a Lua file
     if (scriptExtension == ".lua" || scriptExtension == ".LUA") {
@@ -48,11 +48,30 @@ int aww_run_main(const std::vector<std::string>& cmdArgs) {
       lua_State* L = luaL_newstate();
       luaL_openlibs(L);
 
+      // Populate Lua's 'arg' table with command-line arguments
+      lua_newtable(L); // Create a new table
+
+      // add the script path as the first argument
+      constexpr int LUA_TABLE_INDEX = -3; // Index of the table in the Lua stack
+      lua_Number luaCmdIndex = 1;
+      lua_pushnumber(L, luaCmdIndex);
+      lua_pushstring(L, scriptPath.string().c_str());
+      lua_settable(L, LUA_TABLE_INDEX);
+
+      // starts from 1 because the first argument is the script path which is already added
+      for (size_t i = 1; i < mutableCmdArgs.size(); ++i) {
+        luaCmdIndex += 1.0;
+        lua_pushnumber(L, luaCmdIndex);               // Push the index (Lua uses 1-based indexing)
+        lua_pushstring(L, mutableCmdArgs[i].c_str()); // Push the argument string
+        lua_settable(L, LUA_TABLE_INDEX);             // Set table[arg_index] = arg_value
+      }
+      lua_setglobal(L, "arg"); // Set the table as the global 'arg'
+
       // Measure time
       auto start = std::chrono::high_resolution_clock::now();
 
       // Execute Lua script file
-      if (luaL_dofile(L, maybeScriptPath.string().c_str()) != LUA_OK) {
+      if (luaL_dofile(L, scriptPath.string().c_str()) != LUA_OK) {
         std::cerr << "Error executing Lua script: " << lua_tostring(L, -1) << std::endl;
         lua_pop(L, 1);
         lua_close(L);
@@ -80,19 +99,19 @@ int aww_run_main(const std::vector<std::string>& cmdArgs) {
     switch (platform) {
     case aww::os::Platform::Windows:
       if (isPowerShell) {
-        awwCommand = "powershell.exe -executionpolicy unrestricted -File \"" +
-                     maybeScriptPath.string() + "\"";
+        awwCommand =
+            "powershell.exe -executionpolicy unrestricted -File \"" + scriptPath.string() + "\"";
       } else {
-        awwCommand = "\"" + maybeScriptPath.string() + "\"";
+        awwCommand = "\"" + scriptPath.string() + "\"";
       }
       break;
     case aww::os::Platform::Linux:
       if (isPowerShell) {
-        awwCommand = "pwsh -File \"" + maybeScriptPath.string() + "\"";
+        awwCommand = "pwsh -File \"" + scriptPath.string() + "\"";
       } else if (isBash) {
-        awwCommand = "bash \"" + maybeScriptPath.string() + "\"";
+        awwCommand = "bash \"" + scriptPath.string() + "\"";
       } else {
-        awwCommand = "\"" + maybeScriptPath.string() + "\"";
+        awwCommand = "\"" + scriptPath.string() + "\"";
       }
       break;
     case aww::os::Platform::Unknown:

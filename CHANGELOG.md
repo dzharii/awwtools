@@ -19,6 +19,51 @@
 
 
 
+## 2024-12-25 Implement lua arg in aww run
+
+- [x] Implement Lua arg support 2024-12-26 [interactive lua: command line arguments - Stack Overflow](https://stackoverflow.com/questions/2945819/interactive-lua-command-line-arguments) {stackoverflow.com}. See **./lua-samples/argy.lua**
+
+So, no this script works:
+
+```lua
+print("ARGUMENTS!")
+for i,v in ipairs(arg) do
+    print("Argument " .. i .. ": " .. v)
+end
+```
+
+Implementation:
+
+```cpp
+      // Populate Lua's 'arg' table with command-line arguments
+      lua_newtable(L); // Create a new table
+
+      // add the script path as the first argument
+      constexpr int LUA_TABLE_INDEX = -3; // Index of the table in the Lua stack
+      lua_Number luaCmdIndex = 1;
+      lua_pushnumber(L, luaCmdIndex);
+      lua_pushstring(L, scriptPath.string().c_str());
+      lua_settable(L, LUA_TABLE_INDEX);
+
+      // starts from 1 because the first argument is the script path which is already added
+      for (size_t i = 1; i < mutableCmdArgs.size(); ++i) {
+        luaCmdIndex += 1.0;
+        lua_pushnumber(L, luaCmdIndex);               // Push the index (Lua uses 1-based indexing)
+        lua_pushstring(L, mutableCmdArgs[i].c_str()); // Push the argument string
+        lua_settable(L, LUA_TABLE_INDEX);             // Set table[arg_index] = arg_value
+      }
+      lua_setglobal(L, "arg"); // Set the table as the global 'arg'
+
+```
+
+I have also modified the script in LUA TODO -- luatext.lua
+
+The change is: lua scripts will use global table `arg` instead of any custom ones.
+
+🟠 The Lua `arg[1]` will always be the full and absolute path to the current script. I was confused when I discovered that in C++, the value of `argv[0]` depends on the operating system and is generally not reliable.
+
+
+
 ## 2024-12-14 LUA TODO
 
 
@@ -27,7 +72,6 @@
 
 ```
 aww.clipboard.getClipboardText() -- returns current clipboard as a string
-aww.cmd.getArgs() -- returns array of string
 ```
 
 ```
@@ -86,21 +130,14 @@ Commands:
 end
 
 -- Main execution
-local args = aww.cmd.getArgs()
-if #args < 1 then
+if #args < 2 then
     print("Error: Command is required.")
     os.exit(1)
 end
 
-execute_command(args[1])
+execute_command(args[2])
 
 ```
-
-
-
-
-
-
 
 
 
