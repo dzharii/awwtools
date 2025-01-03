@@ -21,6 +21,63 @@
 
 # aww-tools changelog
 
+## 2025-01-03 Fri
+
+Oh, cool! Reduced copy pasta in aww-run. 
+
+Created new function 
+
+```cpp
+std::vector<fs::path> get_script_search_locations(std::string scriptName,
+                                                  const script_search_locations& searchLocations,
+                                                  const script_extensions& extensions) {
+```
+
+Which considers all possible locations for script (not that many) and returns list of candidates. 
+
+Started experiment with value objects: 
+
+```cpp
+struct script_search_locations {
+  std::vector<fs::path> values;
+
+  explicit script_search_locations(std::initializer_list<fs::path> paths) {
+    for (const auto& path : paths) {
+      values.emplace_back(path);
+    }
+  }
+};
+
+struct script_extensions {
+  std::vector<std::string> values;
+
+  // Constructor accepting initializer list of strings
+  explicit script_extensions(std::initializer_list<std::string> extensions) {
+    for (const auto& extension : extensions) {
+      values.emplace_back(extension);
+    }
+  }
+};
+```
+
+Look stylish when initialized:
+
+```cpp
+  const fs::path currentDir = fs::absolute(fs::current_path());
+  const fs::path awwScriptsDir = currentDir / "aww-scripts";
+  const fs::path awwDotScriptsDir = aww::os::env::get_aww_dot_dir() / "aww-scripts";
+  const fs::path awwDir = currentDir / "aww";
+
+  const script_search_locations searchLocations{currentDir, awwScriptsDir, awwDotScriptsDir,
+                                                awwDir};
+```
+
+- [ ] 🚩I can move some duplicate logic higher 
+- [ ] 🚩 try to fix the aww term bug on ubuntu with  no terminal, instead call the `/bin/env bash`
+- [ ] 🚩 Why do I need aww::os::can_execute ????
+
+
+
 
 
 ## 2024-12-25 Implement lua arg in aww run
