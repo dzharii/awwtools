@@ -21,6 +21,12 @@
 
 # aww-tools changelog
 
+## 2025-01-08 Wed
+
+Added new tool `aww-stuff` to simplify integration testing and experiments with external APIs. 
+
+
+
 ## 2025-01-03 Fri
 
 Oh, cool! Reduced copy pasta in aww-run. 

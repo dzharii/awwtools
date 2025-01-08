@@ -53,6 +53,7 @@ set(SOURCES          # All .cpp files in src/
     src/internal/aww-term.cpp
     src/internal/aww-toast.cpp
     src/internal/aww-api.cpp
+    src/internal/aww-stuff.cpp
     #nf78vfbcr2j new aww tool? add sources here!
     src/internal/aww.cpp
 )
@@ -221,6 +222,11 @@ target_link_libraries(aww-api PRIVATE ${LIBRARY_NAME})  # Link the executable to
 target_set_warnings(aww-api ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(aww-api optimized)  # enable link-time-optimization if available for non-debug configurations
 
+## aww-stuff
+add_executable(aww-stuff app/aww-stuff.cpp)   # Name of exec. and location of file.
+target_link_libraries(aww-stuff PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
+target_set_warnings(aww-stuff ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_enable_lto(aww-stuff optimized)  # enable link-time-optimization if available for non-debug configurations
 
 #fia2wwtog0r new aww tool? add entry here!
 
@@ -238,6 +244,7 @@ set(PROJECTS
     aww-guid
     aww-tag
     aww-api
+    aww-stuff
     #9x1eam6faab new aww tool? add entry here!
 )
 

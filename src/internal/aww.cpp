@@ -16,6 +16,7 @@
 #include "internal/aww-tag.hpp"
 #include "internal/aww-term.hpp"
 #include "internal/aww-toast.hpp"
+#include "internal/aww-stuff.hpp"
 
 enum class AwwTool {
   None,
@@ -29,6 +30,7 @@ enum class AwwTool {
   Term,
   Toast,
   Api,
+  Stuff,
 };
 
 AwwTool getAwwTool(const std::string& awwTool) {
@@ -53,6 +55,8 @@ AwwTool getAwwTool(const std::string& awwTool) {
   } else if (awwToolLower == "aww-toast") {
     return AwwTool::Toast;
   } else if (awwToolLower == "aww-api") {
+    return AwwTool::Api;
+  } else if (awwToolLower == "aww-stuff") {
     return AwwTool::Api;
   }
   return AwwTool::None;
@@ -123,6 +127,10 @@ int aww_main(const std::vector<std::string>& cmdArgs) {
     case AwwTool::Api: {
       aww::internal::aww_api::aww_api_io_dependencies deps;
       return aww::internal::aww_api::aww_api_main(awwExecutableArgs, deps);
+    }
+    case AwwTool::Stuff: {
+      aww::internal::aww_stuff::aww_stuff_io_dependencies deps;
+      return aww::internal::aww_stuff::aww_stuff_main(awwExecutableArgs, deps);
     }
     default: {
       std::cerr << "No aww executable found\n";
