@@ -11,6 +11,8 @@
 
 namespace aww::internal::aww_stuff {
 
+// Put command functions
+
 int aww_stuff_main([[maybe_unused]] const std::vector<std::string>& cmdArgs,
                    [[maybe_unused]] aww_stuff_io_dependencies_interface& deps) {
   spdlog::info("aww stuff is a test tool to to do all kinds of stuff");
