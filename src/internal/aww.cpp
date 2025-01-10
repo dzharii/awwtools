@@ -13,10 +13,10 @@
 #include "internal/aww-guid.hpp"
 #include "internal/aww-open.hpp"
 #include "internal/aww-run.hpp"
+#include "internal/aww-stuff.hpp"
 #include "internal/aww-tag.hpp"
 #include "internal/aww-term.hpp"
 #include "internal/aww-toast.hpp"
-#include "internal/aww-stuff.hpp"
 
 enum class AwwTool {
   None,
@@ -57,7 +57,7 @@ AwwTool getAwwTool(const std::string& awwTool) {
   } else if (awwToolLower == "aww-api") {
     return AwwTool::Api;
   } else if (awwToolLower == "aww-stuff") {
-    return AwwTool::Api;
+    return AwwTool::Stuff;
   }
   return AwwTool::None;
 }

@@ -15,23 +15,40 @@
 >
 > It's zero-dependency, easy-portable, and high-performance
 
-
-
 - [ ] 🚩 2025-01-01 aww tools internal events: I have been considering the current implementation of notifications in aww tools. Currently, it calls `aww::os::actions::show_notification("aww run", "The command finished successfully")`, which runs a bash command in Linux or an API in Windows. One major issue is that this call is synchronous. Additionally, it lacks flexibility, using only one sink: OS messages. This could be an opportunity to test the internal events architecture, introducing a publisher, a type-safe event (not just a string), and subscribers that respond according to the raised event type. Inspired by [LuaCircuitNetwork - Runtime Docs | Factorio](https://lua-api.factorio.com/latest/classes/LuaCircuitNetwork.html) { lua-api.factorio.com }
 
 # aww-tools changelog
 
+## 2025-01-09 Thu
+
+Added new functionality to `aww-stuff`:
+
+- `save-clipboard-to-file`: Saves the current clipboard text to a file.
+- `set-clipboard-from-file <file_name>`: Sets the clipboard text from the specified file.
+
+The interesting research question is if I need to do anything special for handling UTF-8 text? The only issue I see right now is incorrect console output on windows, because console is not UTF-8 by default. This can be fixed by setting the console to UTF-8 mode:
+
+```sh
+chcp 65001
+```
+
+Once it is set, the console will display UTF-8 characters correctly. Even this ones:
+
+> Привет 🌍 こんにちは 
+
+![image-20250109170426133](CHANGELOG.assets/image-20250109170426133.png)
+
+Replaced `deps.show_notification` calls with `spdlog` logging calls for better logging and error handling.
+
 ## 2025-01-08 Wed
 
-Added new tool `aww-stuff` to simplify integration testing and experiments with external APIs. 
-
-
+Added new tool `aww-stuff` to simplify integration testing and experiments with external APIs.
 
 ## 2025-01-03 Fri
 
-Oh, cool! Reduced copy pasta in aww-run. 
+Oh, cool! Reduced copy pasta in aww-run.
 
-Created new function 
+Created new function
 
 ```cpp
 std::vector<fs::path> get_script_search_locations(std::string scriptName,
@@ -39,9 +56,9 @@ std::vector<fs::path> get_script_search_locations(std::string scriptName,
                                                   const script_extensions& extensions) {
 ```
 
-Which considers all possible locations for script (not that many) and returns list of candidates. 
+Which considers all possible locations for script (not that many) and returns list of candidates.
 
-Started experiment with value objects: 
+Started experiment with value objects:
 
 ```cpp
 struct script_search_locations {
@@ -78,13 +95,9 @@ Look stylish when initialized:
                                                 awwDir};
 ```
 
-- [ ] 🚩I can move some duplicate logic higher 
-- [ ] 🚩 try to fix the aww term bug on ubuntu with  no terminal, instead call the `/bin/env bash`
+- [ ] 🚩I can move some duplicate logic higher
+- [ ] 🚩 try to fix the aww term bug on ubuntu with no terminal, instead call the `/bin/env bash`
 - [ ] 🚩 Why do I need aww::os::can_execute ????
-
-
-
-
 
 ## 2024-12-25 Implement lua arg in aww run
 
@@ -129,11 +142,7 @@ The change is: lua scripts will use global table `arg` instead of any custom one
 
 🟠 The Lua `arg[1]` will always be the full and absolute path to the current script. I was confused when I discovered that in C++, the value of `argv[0]` depends on the operating system and is generally not reliable.
 
-
-
 ## 2024-12-14 LUA TODO
-
-
 
 - [ ] 🚩 Implement lua support for the sample file: 2024-12-14 [dot-awwtools/aww-scripts/luatext.lua](https://github.com/dzharii/dot-awwtools/blob/main/aww-scripts/luatext.lua) { github.com }
 
@@ -144,8 +153,6 @@ aww.clipboard.getClipboardText() -- returns current clipboard as a string
 ```
 luatext.lua
 ```
-
-
 
 ```lua
 --[[
@@ -206,23 +213,17 @@ execute_command(args[2])
 
 ```
 
-
-
 ## 2024-11-09
 
-Added LUA... via aww lib... via 
+Added LUA... via aww lib... via
 
 2024-11-09 [marovira/lua: The Lua Programming Language with Modern CMake](https://github.com/marovira/lua/tree/master) { github.com }
 
 ![logo](CHANGELOG.assets/logo.png)
 
-
-
 Lua is published under the MIT license and can be viewed [here](https://github.com/marovira/lua/blob/master/LUA_LICENSE). For more information, please see their official website [here](https://www.lua.org/).
 
 This bundle is published under the BSD-3 license can be viewed [here](https://github.com/marovira/lua/blob/master/LICENSE)
-
-
 
 ## 2024-11-07 Thu
 
@@ -232,7 +233,7 @@ Add lua as the configuration language
 
 Add lua as aww-run executable script
 
-Lua with CMake: 
+Lua with CMake:
 
 2024-11-08 [marovira/lua: The Lua Programming Language with Modern CMake](https://github.com/marovira/lua?path=) { github.com }
 
@@ -240,23 +241,17 @@ Download fresh Lua from official site:
 
 [Lua: download](https://www.lua.org/download.html)
 
-
-
-
-
 ## 2024-11-07 Thu
 
 Despite the number of changes in this pull request and the many files modified, most of this is due to the introduction of a new styling format with `clang-format`. I reformatted a lot of files, fixed some bugs (which I don't fully recall), and made a major change by working to migrate and extract library functions from `awwlib` into a separate repository also named `awwlib`.
 
 The plan moving forward is to integrate Lua as the language for configuration and scripting, with support for `aww-run`. To proceed with these next steps, I need to merge these changes now and start with a clean slate.
 
-
-
 ## 2024-10-27 Sun
 
-I wanted to test if I can apply "Curiously recurring template pattern (CRTP)" instead of using virtual polymorphism. 
+I wanted to test if I can apply "Curiously recurring template pattern (CRTP)" instead of using virtual polymorphism.
 
-CRTP offers compile time polymorphism, which, I suppose can be faster, but it requires some hacks. 
+CRTP offers compile time polymorphism, which, I suppose can be faster, but it requires some hacks.
 
 And the main hack, is that instead of this in the interface declaration:
 
@@ -274,14 +269,12 @@ int aww_date_main(const std::vector<std::string>& cmdArgs,
 }
 ```
 
-which makes the interface ambiguous for the reader. I really want to declare that the tool needs `aww_date_io_dependencies_interface&`. 
+which makes the interface ambiguous for the reader. I really want to declare that the tool needs `aww_date_io_dependencies_interface&`.
 
 Read more:
 
 - [c++ - What is the curiously recurring template pattern (CRTP)? - Stack Overflow](https://stackoverflow.com/questions/4173254/what-is-the-curiously-recurring-template-pattern-crtp) { stackoverflow.com }
 - 2024-10-27 [4. Polymorphism and CRTP](https://blog.zharii.com/blog/2024/09/01/links-from-my-inbox#4-polymorphism-and-crtp) { blog.zharii.com }
-
-
 
 Update: Oh, I found this, so the problematic `auto` code can be expressed as:
 
@@ -299,10 +292,6 @@ I might return back to this note and reconsider CRTP
 > - The CRTP, episode One: [Definition](https://www.fluentcpp.com/2017/05/12/curiously-recurring-template-pattern/)
 > - The CRTP, episode Two: What the CRTP can bring to your code
 > - The CRTP, episode Three: [An implementation helper for the CRTP](https://www.fluentcpp.com/2017/05/19/crtp-helper/)
-
-
-
-
 
 Here is the converted CRTP code without fix:
 
@@ -362,9 +351,7 @@ int aww_date_main(const std::vector<std::string>& cmdArgs,
 
 ```
 
-**Revert!** 
-
-
+**Revert!**
 
 ## 2024-10-25 Fri
 
@@ -374,57 +361,41 @@ clang-format 'em all!
 Get-ChildItem -Recurse -Include *.cpp, *.h, *.c, *.hpp | Where-Object { $_.FullName -notlike '*\third-party\*' } | ForEach-Object { clang-format.exe -i $_.FullName }
 ```
 
-
-
-
-
 ## 2024-10-21
 
 Started lib experimental migration to [dzharii/awwlib-cpp: [aww project internal\] awwlib is cross-platform C++ utility library that provides commonly used helper functions for handling environment variables, string manipulations, and date/time conversions.](https://github.com/dzharii/awwlib-cpp)
 
 Migrated:
 
-
-
-
-
 ## 2024-03-10
 
-Returned webview! 
+Returned webview!
 
-Working on integration with: 
+Working on integration with:
 
 2024-03-10 [libcpr/cpr: C++ Requests: Curl for People, a spiritual port of Python Requests.](https://github.com/libcpr/cpr)
 
-With some compilation issues / dll sharing issues. 
-
-
+With some compilation issues / dll sharing issues.
 
 ## 2024-01-27
 
 Code cleanup:
 
-I've removed the [webview/webview](https://github.com/webview/webview) dependency, a tiny cross-platform webview library for C/C++ using  WebKit and Edge WebView2. While it's an awesome tool for building  cross-platform browser GUIs, I couldn't find a suitable application for  it in the awwtools project. It might be better suited for a standalone  project.
-
-
+I've removed the [webview/webview](https://github.com/webview/webview) dependency, a tiny cross-platform webview library for C/C++ using WebKit and Edge WebView2. While it's an awesome tool for building cross-platform browser GUIs, I couldn't find a suitable application for it in the awwtools project. It might be better suited for a standalone project.
 
 ## 2024-01-19
 
 Tiny update to CXX 20. No issues so far.
 
-
-
 ## 2023-12-10
 
-
-
-My most used and most simple aww tool `aww-date` got some experimental update. 
+My most used and most simple aww tool `aww-date` got some experimental update.
 
 I have found that tracking the input/output dependencies calls is tricky, since, for instance, `fs_file_exists()`
 
-can be called multiple times in the code for different cases. In the test cases, I want to somehow recreate the complex code path, but 
+can be called multiple times in the code for different cases. In the test cases, I want to somehow recreate the complex code path, but
 
-tracking the right calls by their call order (number of times same function was called) or by the input parameters is too brittle, how can I precisely find  the call I need? at first, for a long time, my idea was to rename `fs_file_exists()` to a case specific name, like:
+tracking the right calls by their call order (number of times same function was called) or by the input parameters is too brittle, how can I precisely find the call I need? at first, for a long time, my idea was to rename `fs_file_exists()` to a case specific name, like:
 
 - if `fs_template_folder_exists()`
   - if `fs_template_file_exists()`
@@ -432,13 +403,13 @@ tracking the right calls by their call order (number of times same function was 
   - else if `fs_template_file_with_specification_exists()`
     - do something else
 
-but to support this case I have to: 
+but to support this case I have to:
 
 - add these function to `aww_create_io_dependencies_interface`
 - then implement in `aww_create_io_dependencies`
 - then create a mock in `aww_create_io_dependencies_stub`
 
-This simple does not scale, so I have decided to tag these calls at compile time and keep the generic name. 
+This simple does not scale, so I have decided to tag these calls at compile time and keep the generic name.
 
 New code added:
 
@@ -465,8 +436,6 @@ constexpr call_tag_t call_tag(const char (&str)[N]) {
 }
 ```
 
-
-
 Usage at `src\internal\aww-date.cpp`
 
 ```cpp
@@ -480,13 +449,9 @@ if (deps.clipboard_set_text(result, aww::call_tag("t7svmrrhai0"))) {
 }
 ```
 
-
-
-
-
 ## 2023-12-02
 
-Added first dev sketch: 
+Added first dev sketch:
 
 aww structured logging
 ./doc-dev-articles\2023-12-02-aww-tools-structured-logging.md
@@ -499,36 +464,30 @@ aww structured logging
 aww run mdtree -FilterName ".*aww-open.*" -Output dev-experiments-unit-tests\output-aww-open.md
 ```
 
-
-
-
-
 ## 2023-08-12
 
 ### aww git open
 
 My current unit-testing strategy feels overwhelming:
 
-Dependency: 
+Dependency:
 
-- Interface, implementation 
+- Interface, implementation
 - Test implementation, manual stubs
 
-It requires some time and discipline, but it seems to be working. 
+It requires some time and discipline, but it seems to be working.
 
-For instance, now I can write unit-tests or experiment by replacing parts of the 
+For instance, now I can write unit-tests or experiment by replacing parts of the
 
-tool with something new and keep the previous implementation for other tools. 
+tool with something new and keep the previous implementation for other tools.
 
-The Dependency patterns gives me this flexibility. 
+The Dependency patterns gives me this flexibility.
 
 Today, I have hopefully replaces all dependencies in `aww-git-open`
 
 ### aww guid
 
 I have designed an new prompt to assist me with stub generation for unit-tests, here it is:
-
-
 
 #### GPT Prompt
 
@@ -543,6 +502,7 @@ virtual inline aww::Result launch_file_in_browser(const std::string &url) = 0;
 
 Your response:
 file `io_dependencies_interface`:
+
 ```cpp
         /**
          * Launch a file in the default browser.
@@ -553,6 +513,7 @@ file `io_dependencies_interface`:
 ```
 
 file `io_dependencies`:
+
 ```cpp
         inline aww::Result launch_file_in_browser(const std::string &url) override
         {
@@ -561,6 +522,7 @@ file `io_dependencies`:
 ```
 
 file `io_dependencies_stub`:
+
 ```cpp
         // always define a default stub function (do not put this comment in the resulting code)
         std::function<aww::Result(const std::string&)>
@@ -579,16 +541,13 @@ file `io_dependencies_stub`:
         }
 ```
 
-
-
-Also  [dot-awwtools/aww-scripts/mdtree.ps1 at main · dzharii/dot-awwtools · GitHub](https://github.com/dzharii/dot-awwtools/blob/main/aww-scripts/mdtree.ps1) helps a lot for setting GPT context and asking it to generate tests. 
+Also [dot-awwtools/aww-scripts/mdtree.ps1 at main · dzharii/dot-awwtools · GitHub](https://github.com/dzharii/dot-awwtools/blob/main/aww-scripts/mdtree.ps1) helps a lot for setting GPT context and asking it to generate tests.
 
 ```
 aww run mdtree -FilterName ".*aww-guid.*"
 ```
 
 ### And the unit-testing prompt worked well
-
 
 I want you to be an expert developer in Test in modern C++ language who:
 
@@ -606,13 +565,12 @@ brainstorm it internally:
 - ensure there are no security vulnerabilities.
 
 Codding style:
+
 - for unused parameters use `[[maybe_unused]]` attribute
 
 Attempt to fix the issues from discovered in the brainstorm and only then provide the answer to my request.
 Say "Ack" to acknowledge or ask me any questions that may improve your response.
 And then wait for my next request with the task for you.
-
-
 
 ## 2023-06-30
 
@@ -651,12 +609,11 @@ The exception situation is truly should be !! exceptional !!, so I'd rather hand
 global handler.
 
 ## 2023-06-19
+
 The idea about returning aw::Result from each I/O operation adds lots of ugly error handling code.
 
 nope, maybe some global try/cath will be better.
-Maybe I should whitch back to std::* io opearions.
-
-
+Maybe I should whitch back to std::\* io opearions.
 
 ```
     fs::path currentDir;
@@ -670,12 +627,12 @@ Maybe I should whitch back to std::* io opearions.
 
 ```
 
-
 ## 2023-06-19
 
 aww::Result improving experiment
 
 2023-06-20 [if statement - cppreference.com](https://en.cppreference.com/w/cpp/language/if)
+
 ```cpp
     if (aww::Result res = deps.fs_get_current_directory_absolute_path(currentDir); res.is_failed())
     {
@@ -686,12 +643,9 @@ aww::Result improving experiment
     }
 ```
 
-
-
 ## 2023-06-17
 
 - `aww_git_open` started refactoring to extract I/O dependencies
-
 
 ## 2023-06-08
 
@@ -699,36 +653,39 @@ aww::Result improving experiment
   - `aww::fs::` file_or_dir_exists, create_directories,
   - Rename camel case to snake case
 
-
 ## 2023-06-07
 
 - Use `aww-run-aww` for custom cmd, sh and ps1 scripts
-
 
 ## 2023-06-05
 
 - The Great Unit testing refactoring
 - Introduced dependency pattern for input/output dependencies.
 - refactored `aww date` and `aww create` to use dependency injection and covered
-the utils with unit-tests.
+  the utils with unit-tests.
 - `CPP_HEADER_FILE_NAME` renamed to `CAPITALIZED_FILE_NAME`
-This is important milestone to make code more stable and perform less manual adhoc tests.
+  This is important milestone to make code more stable and perform less manual adhoc tests.
 
 ## 2023-05-01
+
 - fixed bug in aww run when failed command was reported as failed and then successful. O_O
 - wintoastlib -- removed debug output
 
 ## 2023-04-16
 
-`aww.cpp` now provides a static definition of the tool list and passes arguments directly to the tool's `main()` function using  `const std::vector<std::string> &cmdArgs`. This change eliminates the need to check for the existence of `aww-tool.exe` using the filesystem and replaces the previous flow of reading arguments, serializing them as a string, and passing them to the `system()` call. Now, arguments are passed directly to the tool's main function as shown in the example below:
+`aww.cpp` now provides a static definition of the tool list and passes arguments directly to the tool's `main()` function using `const std::vector<std::string> &cmdArgs`. This change eliminates the need to check for the existence of `aww-tool.exe` using the filesystem and replaces the previous flow of reading arguments, serializing them as a string, and passing them to the `system()` call. Now, arguments are passed directly to the tool's main function as shown in the example below:
 Before:
+
 ```
 aww tool-name => read args => serialize args back as string => find-if aww-tool exists => pass args as a string via system(...) call.
 ```
+
 After:
+
 ```
 aww date one two three => aww::internal::aww_date::aww_date_main(awwExecutableArgs)
-````
+```
+
 These changes result in a more efficient and streamlined workflow for using the aww tools.
 
 ## 2023-04-10
@@ -736,20 +693,22 @@ These changes result in a more efficient and streamlined workflow for using the 
 - add more `aww create` templates for powershell cmd and sh companions
 
 ## 2023-03-27
+
 - fixed bug in `aww create` : `CPP_HEADER_FILE_NAME` to generate valid identifiers.
 
-
 the commands:
+
 ```sh
 aww create .\include\internal\aww-xyz.hpp
 aww create .\src\internal\aww-xyz.cpp
 ```
-were very helpful during migration to lib.
 
+were very helpful during migration to lib.
 
 ## 2021-03-26
 
 Migrated to library:
+
 - `aww-create.cpp`
 - `aww-git-open.cpp`
 - `aww-guid.cpp`
@@ -761,10 +720,3 @@ Changelog created!
 `aww create` now creates folders when the file name does not have an extension. This makes it impossible to create extension-less files, but for the sake of simplicity -- it is what it is.
 
 `aww date` -- converted to use `main` implementation from lib.
-
-
-
-
-
-
-
