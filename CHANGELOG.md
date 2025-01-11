@@ -25,7 +25,9 @@
 
 ## 2025-01-10
 
-
+- [ ] 🚩Huh, I am gonna need to use  `std::filesystem::u8path(utf8_string);`
+  for file and folder creation 
+  Added new doc: `./dev-doc/cross_platform_filesystem_path_handling_in_cpp20.md`
 
 `get_command_line_arguments` aww tag #w9e1s4uq1xt from aww-os has solved this problem! in aww-stuff. 
 
