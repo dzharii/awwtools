@@ -17,7 +17,61 @@
 
 - [ ] 🚩 2025-01-01 aww tools internal events: I have been considering the current implementation of notifications in aww tools. Currently, it calls `aww::os::actions::show_notification("aww run", "The command finished successfully")`, which runs a bash command in Linux or an API in Windows. One major issue is that this call is synchronous. Additionally, it lacks flexibility, using only one sink: OS messages. This could be an opportunity to test the internal events architecture, introducing a publisher, a type-safe event (not just a string), and subscribers that respond according to the raised event type. Inspired by [LuaCircuitNetwork - Runtime Docs | Factorio](https://lua-api.factorio.com/latest/classes/LuaCircuitNetwork.html) { lua-api.factorio.com }
 
+- [ ] `aww run` maybe improvement from this article: 2025-01-10 [Execute a command and get both output and exit status in C++ (Windows & Linux) - Raymii.org](https://raymii.org/s/articles/Execute_a_command_and_get_both_output_and_exit_code.html) { raymii.org } it also originated from same stackoverflow I've read ;)
+
+
+
 # aww-tools changelog
+
+## 2025-01-10
+
+
+
+`get_command_line_arguments` aww tag #w9e1s4uq1xt from aww-os has solved this problem! in aww-stuff. 
+
+```
+"save-command-line-args-to-file"
+Bytes: 73 61 76 65 2d 63 6f 6d 6d 61 6e 64 2d 6c 69 6e 65 2d 61 72 67 73 2d 74 6f 2d 66 69 6c 65 
+"Привет"
+Bytes: d0 9f d1 80 d0 b8 d0 b2 d0 b5 d1 82 
+"Мир!"
+Bytes: d0 9c d0 b8 d1 80 21 
+"日本語テキスト"
+Bytes: e6 97 a5 e6 9c ac e8 aa 9e e3 83 86 e3 82 ad e3 82 b9 e3 83 88 
+```
+
+- [ ] 🚩 Needs some testing on Linux
+
+---
+
+
+
+Only one problem with encoding: the program receives already broken command line parameters 
+
+
+
+```
+aww-stuff save-command-line-args-to-file Привет Мир! 日本語テキスト
+```
+
+
+
+```
+"save-command-line-args-to-file"
+Bytes: 73 61 76 65 2d 63 6f 6d 6d 61 6e 64 2d 6c 69 6e 65 2d 61 72 67 73 2d 74 6f 2d 66 69 6c 65 
+"??????"
+Bytes: 3f 3f 3f 3f 3f 3f 
+"???!"
+Bytes: 3f 3f 3f 21 
+"???????"
+Bytes: 3f 3f 3f 3f 3f 3f 3f 
+```
+
+
+
+
+
+
 
 ## 2025-01-09 Thu
 

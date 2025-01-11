@@ -1,12 +1,12 @@
 #include "internal/aww-term.hpp"
+#include "aww-os/aww-os.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
 
 int main(int argc, char** argv) {
   try {
-    std::vector<std::string> cmdArgs(argv, argv + argc);
-    cmdArgs.erase(cmdArgs.begin()); // remove first element
+    std::vector<std::string> cmdArgs = aww::get_command_line_arguments(argc, argv);
     return aww::internal::aww_term::aww_term_main(cmdArgs);
   } catch (std::exception& ex) {
     std::cerr << ex.what() << "\n";
