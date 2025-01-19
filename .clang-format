@@ -1,4 +1,6 @@
-BasedOnStyle: LLVM
+BasedOnStyle: Microsoft
+IndentWidth: 2
 PointerAlignment: Left
 ReferenceAlignment: Left
-ColumnLimit: 100
+ColumnLimit: 120
+BreakBeforeBraces: Attach

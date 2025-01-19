@@ -23,6 +23,18 @@
 
 # aww-tools changelog
 
+
+
+## 2025-01-19 Sun
+
+Implemented `aww stuff cat` (cat_command) -- reads file and writes content to stdout:
+
+mostly to test new `aww::result<T>` from awwlib (aww tag #jyjhwmmy084)
+
+
+
+
+
 ## 2025-01-10
 
 - [ ] 🚩Huh, I am gonna need to use  `std::filesystem::u8path(utf8_string);`
