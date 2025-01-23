@@ -29,8 +29,7 @@ namespace aww::internal::aww_stuff {
 aww::result<bool> is_text_file(const std::string& file_path) {
   std::ifstream file(file_path, std::ios::binary);
   if (!file.is_open()) {
-    return aww::result<bool>::err(
-        aww::result_error(fmt::format("File does not exist or cannot be opened. File path is '{}'", file_path)));
+    return aww::result<bool>::err(fmt::format("File does not exist or cannot be opened. File path is '{}'", file_path));
   }
 
   char buffer[512];
@@ -39,7 +38,7 @@ aww::result<bool> is_text_file(const std::string& file_path) {
 
   for (std::streamsize i = 0; i < bytes_read; ++i) {
     if (buffer[i] == '\0') {
-      return aww::result<bool>::err(aww::result_error("File appears to be binary"));
+      return aww::result<bool>::err("File appears to be binary");
     }
   }
 
@@ -51,7 +50,7 @@ using on_data_callback = std::function<void(const char*, size_t)>;
 aww::result<bool> read_file_buffered(const std::string& file_path, on_data_callback& on_data) {
   std::ifstream file(file_path);
   if (!file.is_open()) {
-    return aww::result<bool>::err(aww::result_error(fmt::format("Failed to open file. File path is '{}'", file_path)));
+    return aww::result<bool>::err(fmt::format("Failed to open file. File path is '{}'", file_path));
   }
 
   constexpr size_t buffer_size = 1024;
@@ -63,7 +62,7 @@ aww::result<bool> read_file_buffered(const std::string& file_path, on_data_callb
   }
 
   if (!file.eof()) {
-    return aww::result<bool>::err(aww::result_error("Error occurred while reading the file"));
+    return aww::result<bool>::err("Error occurred while reading the file");
   }
 
   return aww::result<bool>::ok(true);
