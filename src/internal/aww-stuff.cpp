@@ -30,7 +30,7 @@ aww::result<bool> is_text_file(const std::string& file_path) {
   std::ifstream file(file_path, std::ios::binary);
   if (!file.is_open()) {
     return aww::result<bool>::err(
-        aww::result_error(1, fmt::format("File does not exist or cannot be opened. File path is '{}'", file_path)));
+        aww::result_error(fmt::format("File does not exist or cannot be opened. File path is '{}'", file_path)));
   }
 
   char buffer[512];
@@ -39,7 +39,7 @@ aww::result<bool> is_text_file(const std::string& file_path) {
 
   for (std::streamsize i = 0; i < bytes_read; ++i) {
     if (buffer[i] == '\0') {
-      return aww::result<bool>::err(aww::result_error(2, "File appears to be binary"));
+      return aww::result<bool>::err(aww::result_error("File appears to be binary"));
     }
   }
 
@@ -51,8 +51,7 @@ using on_data_callback = std::function<void(const char*, size_t)>;
 aww::result<bool> read_file_buffered(const std::string& file_path, on_data_callback& on_data) {
   std::ifstream file(file_path);
   if (!file.is_open()) {
-    return aww::result<bool>::err(
-        aww::result_error(3, fmt::format("Failed to open file. File path is '{}'", file_path)));
+    return aww::result<bool>::err(aww::result_error(fmt::format("Failed to open file. File path is '{}'", file_path)));
   }
 
   constexpr size_t buffer_size = 1024;
@@ -64,7 +63,7 @@ aww::result<bool> read_file_buffered(const std::string& file_path, on_data_callb
   }
 
   if (!file.eof()) {
-    return aww::result<bool>::err(aww::result_error(4, "Error occurred while reading the file"));
+    return aww::result<bool>::err(aww::result_error("Error occurred while reading the file"));
   }
 
   return aww::result<bool>::ok(true);
@@ -78,7 +77,7 @@ int cat_command(const std::string& file_path) {
   auto text_check = is_text_file(file_path);
   if (text_check.is_err()) {
     spdlog::error("Validation failed: {}", text_check.error().error_message());
-    return text_check.error().error_code();
+    return -1;
   }
 
   // Step 2: Read and display the file content
@@ -87,7 +86,7 @@ int cat_command(const std::string& file_path) {
   auto read_result = read_file_buffered(file_path, on_data_print_to_stdout);
   if (read_result.is_err()) {
     spdlog::error("File reading failed: {}", read_result.error().error_message());
-    return read_result.error().error_code();
+    return -1;
   }
 
   spdlog::info("Successfully displayed the content of the file");
