@@ -25,6 +25,14 @@
 
 
 
+## 2025-03-16 aww-tee
+
+`aww-tee` is a tool designed to display logs. It outputs logs to the console and also streams them to a browser window. The idea is to use the browser for better log searching and filtering. In some cases, when another application runs a command, the output is hidden, so you can't tell if something is happening or if there's an error. `aww-tee` helps by showing this information clearly.
+
+It's also difficult to select and copy logs from the console without disrupting the running process, especially since using Ctrl+C can interrupt things. `aww-tee` aims to make copying logs easier.
+
+
+
 ## 2025-01-19 Sun
 
 Implemented `aww stuff cat` (cat_command) -- reads file and writes content to stdout:

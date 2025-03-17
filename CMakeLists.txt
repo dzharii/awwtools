@@ -54,6 +54,7 @@ set(SOURCES          # All .cpp files in src/
     src/internal/aww-toast.cpp
     src/internal/aww-api.cpp
     src/internal/aww-stuff.cpp
+    src/internal/aww-tee.cpp
     #nf78vfbcr2j new aww tool? add sources here!
     src/internal/aww.cpp
 )
@@ -115,9 +116,18 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(awwlib)
 
+
+## webview
+FetchContent_Declare(
+    webview
+    GIT_REPOSITORY https://github.com/webview/webview
+    GIT_TAG 0.12.0)
+FetchContent_MakeAvailable(webview)
+
 # There's also (probably) doctests within the library, so we need to see this as well.
 target_link_libraries(
     ${LIBRARY_NAME} PUBLIC
+    webview::core
     awwlib
     doctest
     clip
@@ -140,16 +150,6 @@ set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2)
 target_link_libraries(${LIBRARY_NAME} PRIVATE nlohmann_json::nlohmann_json)
 ## end of nlohmann-json
-
-
-## cpr
-# FetchContent_Declare(cpr GIT_REPOSITORY https://github.com/libcpr/cpr.git
-#                          GIT_TAG 3b15fa82ea74739b574d705fea44959b58142eb8) # Replace with your desired git commit from: https://github.com/libcpr/cpr/releases
-# FetchContent_MakeAvailable(cpr)
-# target_link_libraries(${LIBRARY_NAME} PRIVATE cpr::cpr)
-## cpr
-
-
 
 # Set the compile options you want (change as needed).
 target_set_warnings(${LIBRARY_NAME} ENABLE ALL AS_ERROR ALL DISABLE Annoying)
@@ -228,6 +228,12 @@ target_link_libraries(aww-stuff PRIVATE ${LIBRARY_NAME})  # Link the executable 
 target_set_warnings(aww-stuff ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(aww-stuff optimized)  # enable link-time-optimization if available for non-debug configurations
 
+## aww-tee
+add_executable(aww-tee app/aww-tee.cpp)   # Name of exec. and location of file.
+target_link_libraries(aww-tee PRIVATE ${LIBRARY_NAME} webview::core)  # Link the executable to library (if it uses it).
+target_set_warnings(aww-tee ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_enable_lto(aww-tee optimized)  # enable link-time-optimization if available for non-debug configurations
+
 #fia2wwtog0r new aww tool? add entry here!
 
 # Set the properties you require, e.g. what C++ standard to use. Here applied to library and aww (change as needed).
@@ -245,6 +251,7 @@ set(PROJECTS
     aww-tag
     aww-api
     aww-stuff
+    aww-tee
     #9x1eam6faab new aww tool? add entry here!
 )
 
@@ -252,7 +259,7 @@ add_custom_target(copy-runtime-files ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/aww-create-aww
     ${CMAKE_BINARY_DIR}/bin/aww-create-aww
-    DEPENDS ${MY_TARGET})
+    DEPENDS aww-create)
 
 
 set_target_properties(
