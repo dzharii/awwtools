@@ -26,6 +26,7 @@ public:
 };
 
 int aww_tee_main(const std::vector<std::string>& cmdArgs, aww_tee_io_dependencies_interface& deps);
+
 } // namespace aww::internal::aww_tee
 
 #endif

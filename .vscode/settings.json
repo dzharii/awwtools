@@ -99,7 +99,8 @@
         "string_view": "cpp",
         "numbers": "cpp",
         "semaphore": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "resumable": "cpp"
     },
     "cmake.configureOnOpen": true
 }
