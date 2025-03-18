@@ -86,9 +86,10 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
     // Bind the notifyReady function to set webview_ready to true.
     w.bind(
         "notifyReady",
-        [&webview_ready](const std::string&, const std::string&, void* /*arg*/) {
+        [&w, &webview_ready](const std::string& id, const std::string&, void* /*arg*/) {
           spdlog::info("notifyReady callback invoked; setting webview_ready to true.");
           webview_ready.store(true, std::memory_order_release);
+          w.resolve(id, 0, "");
           return;
         },
         nullptr);

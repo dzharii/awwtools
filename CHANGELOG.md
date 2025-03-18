@@ -25,6 +25,35 @@
 
 
 
+## 2025-03-18 webview in aww-tee
+
+I have really stuck at this loop, don't know why eval seems not to be working, what is wrong? How do I pass data to webview? 
+
+I can call `window.notifyReady()` from debug console, but not from `eval` 🚩
+
+```cpp
+    std::thread ready_thread([&w, &webview_ready]() {
+      spdlog::info("#mtshvdvxg6k check webview_ready started");
+      while (!webview_ready.load(std::memory_order_acquire)) {
+        try {
+          // Call the bound notifyReady function.
+          spdlog::info("#6cb1fx9g2p5 attempt to call window.notifyReady();");
+          // w.eval("if (typeof window.notifyReady === 'function') { window.notifyReady(); }");
+          // AAAAAAAAAAAAAAAAAAAAAAAAAAAA
+          w.eval("window.notifyReady();");
+        } catch (const std::exception& e) {
+          spdlog::debug("notifyReady call error: {}", e.what());
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      }
+    });
+
+```
+
+
+
+
+
 ## 2025-03-16 aww-tee
 
 `aww-tee` is a tool designed to display logs. It outputs logs to the console and also streams them to a browser window. The idea is to use the browser for better log searching and filtering. In some cases, when another application runs a command, the output is hidden, so you can't tell if something is happening or if there's an error. `aww-tee` helps by showing this information clearly.
