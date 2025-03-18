@@ -1,5 +1,6 @@
 #include "internal/aww-tee.hpp"
 #include "aww-os/aww-os.hpp"
+#include "aww-spsc-queue/aww-spsc-queue.hpp"
 #include "fmt/core.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/spdlog.h"
