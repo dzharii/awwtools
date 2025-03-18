@@ -72,7 +72,8 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
     spdlog::info("Application starting.");
 
     // Create the webview with an initial HTML that holds an empty <ul>
-    webview::webview w(false, nullptr);
+    // debug shows console true
+    webview::webview w(true, nullptr);
     w.set_title("Basic Example");
     w.set_size(480, 320, WEBVIEW_HINT_NONE);
     std::string html = "<html><head><meta charset=\"utf-8\"></head>"
@@ -82,15 +83,42 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
     // Flag indicating that the webview is now initialized and ready.
     std::atomic_bool webview_ready{false};
 
+    // Bind the notifyReady function to set webview_ready to true.
+    w.bind(
+        "notifyReady",
+        [&webview_ready](const std::string&, const std::string&, void* /*arg*/) {
+          spdlog::info("notifyReady callback invoked; setting webview_ready to true.");
+          webview_ready.store(true, std::memory_order_release);
+          return;
+        },
+        nullptr);
+
+    // Thread to periodically call the notifyReady function from JavaScript.
+    std::thread ready_thread([&w, &webview_ready]() {
+      spdlog::info("#mtshvdvxg6k check webview_ready started");
+      while (!webview_ready.load(std::memory_order_acquire)) {
+        try {
+          // Call the bound notifyReady function.
+          spdlog::info("#6cb1fx9g2p5 attempt to call window.notifyReady();");
+          // w.eval("if (typeof window.notifyReady === 'function') { window.notifyReady(); }");
+          // AAAAAAAAAAAAAAAAAAAAAAAAAAAA
+          w.eval("window.notifyReady();");
+        } catch (const std::exception& e) {
+          spdlog::debug("notifyReady call error: {}", e.what());
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      }
+    });
+
+    // Check if standard input is redirected (i.e. not a terminal)
+    bool has_redirected_input = !isatty(fileno(stdin));
+    spdlog::info("#has_redirected_input = {}", has_redirected_input);
+
     // Create a SPSC queue to buffer input lines (capacity of 1024).
     aww::single_producer_single_consumer_queue<std::string, 1024> input_queue;
 
     // Flag to signal the polling thread to finish.
     std::atomic_bool polling_done{false};
-
-    // Check if standard input is redirected (i.e. not a terminal)
-    bool has_redirected_input = !isatty(fileno(stdin));
-    spdlog::info("#has_redirected_input = {}", has_redirected_input);
 
     // Thread that reads from redirected standard input and pushes lines into the SPSC queue.
     std::thread input_thread;
@@ -106,15 +134,15 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
 
     // Polling thread that pops messages from the queue and sends them to the webview.
     std::thread poll_thread([&w, &input_queue, &polling_done, &webview_ready]() {
-      // Wait until the webview is marked ready (already true in this example)
+      // Wait until the webview is marked ready.
       while (!webview_ready.load(std::memory_order_acquire)) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
       }
-      // Poll for input and send it to the webview.
+      // Now poll for input and send it to the webview.
       while (!polling_done.load(std::memory_order_acquire)) {
         if (auto opt = input_queue.pop()) {
           std::string js = fmt::format("window.document.body.textContent += {};", escape_js(*opt));
-          spdlog::info("#8gthumyfu76 Polled line js: {}", js);
+          spdlog::info("Polled input for JS: {}", js);
           try {
             w.eval(js);
           } catch (const std::exception& e) {
@@ -138,6 +166,12 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
     if (input_thread.joinable()) {
       input_thread.join();
     }
+
+    /* :2025-03-17 I think I don't need this
+    if (ready_thread.joinable()) {
+      ready_thread.join();
+    }
+      */
   } catch (const webview::exception& e) {
     spdlog::critical("Unhandled exception in main: {}", e.what());
     return 1;
