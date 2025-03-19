@@ -25,6 +25,30 @@
 
 
 
+## 2025-03-18 aww-tee fixed
+
+Good test command on Windows:
+
+```sh
+ping -t 127.0.0.1
+```
+
+
+
+```
+ping -t 127.0.0.1 | aww tee
+```
+
+works correct in cmd. Has some issue with powershell, but it finally works!
+
+![image-20250318215024085](CHANGELOG.assets/image-20250318215024085.png)
+
+I had to switch from pushing messages with `w.eval` to rather poll messages from javascript with `pollNewLogs` 
+
+`w.eval` does not work. The current implementation is better, because it let's browser control the log rendering in more usual way. 
+
+
+
 ## 2025-03-18 webview in aww-tee
 
 I have really stuck at this loop, don't know why eval seems not to be working, what is wrong? How do I pass data to webview? 

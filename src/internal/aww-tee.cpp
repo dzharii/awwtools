@@ -55,8 +55,6 @@ std::string escape_js(const std::string& input) {
 
 int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
                  [[maybe_unused]] aww_tee_io_dependencies_interface& deps) {
-  spdlog::info("aww tee");
-
   try {
     auto exe_path = aww::get_current_executable_path();
     auto exe_folder = exe_path.parent_path();
@@ -69,6 +67,7 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
     spdlog::set_default_logger(logger);
     spdlog::set_level(spdlog::level::info);
     spdlog::flush_every(std::chrono::seconds(1));
+    spdlog::info("aww tee");
     spdlog::info("Application starting.");
 
     // Create a SPSC queue to buffer input lines (capacity of 1024).
@@ -175,13 +174,15 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
     spdlog::info("#has_redirected_input = {}", has_redirected_input);
 
     // Thread that reads from redirected standard input and pushes lines into the SPSC queue.
+
     std::thread input_thread;
     if (has_redirected_input) {
       input_thread = std::thread([&input_queue]() {
+        spdlog::info("#bde8bz7nnc2 begin input_thread");
         std::string line;
         while (std::getline(std::cin, line)) {
-          spdlog::info("Received input: {}", line);
           input_queue.push(line);
+          std::cout << line << "\n";
         }
       });
     }
@@ -193,7 +194,6 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
     if (input_thread.joinable()) {
       input_thread.join();
     }
-
   } catch (const webview::exception& e) {
     spdlog::critical("Unhandled exception in main: {}", e.what());
     return 1;
