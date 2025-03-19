@@ -76,8 +76,33 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
     webview::webview w(true, nullptr);
     w.set_title("Basic Example");
     w.set_size(480, 320, WEBVIEW_HINT_NONE);
-    std::string html = "<html><head><meta charset=\"utf-8\"></head>"
-                       "<body>Hello<ul id=\"log\"></ul></body></html>";
+    std::string html = R"HTML(
+      <html>
+      <head>
+          <meta charset="utf-8">
+      </head>
+      <body>
+          Hello
+          <ul id="log"></ul>
+          <script>
+              // Create a global variable "log" that holds the element with id "log"
+              window.log = document.getElementById("log");
+              // Ensure notifyReady() is called unconditionally when the document is ready.
+              // If notifyReady is not yet defined as a function, retry every 1 second.
+              document.addEventListener("DOMContentLoaded", function() {
+                  (function tryNotify() {
+                      if (typeof notifyReady === "function") {
+                          notifyReady();
+                      } else {
+                          setTimeout(tryNotify, 1000);
+                      }
+                  })();
+              });
+          </script>
+      </body>
+      </html>
+      )HTML";
+
     w.set_html(html);
 
     // Flag indicating that the webview is now initialized and ready.
@@ -90,26 +115,8 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
           spdlog::info("notifyReady callback invoked; setting webview_ready to true.");
           webview_ready.store(true, std::memory_order_release);
           w.resolve(id, 0, "");
-          return;
         },
         nullptr);
-
-    // Thread to periodically call the notifyReady function from JavaScript.
-    std::thread ready_thread([&w, &webview_ready]() {
-      spdlog::info("#mtshvdvxg6k check webview_ready started");
-      while (!webview_ready.load(std::memory_order_acquire)) {
-        try {
-          // Call the bound notifyReady function.
-          spdlog::info("#6cb1fx9g2p5 attempt to call window.notifyReady();");
-          // w.eval("if (typeof window.notifyReady === 'function') { window.notifyReady(); }");
-          // AAAAAAAAAAAAAAAAAAAAAAAAAAAA
-          w.eval("window.notifyReady();");
-        } catch (const std::exception& e) {
-          spdlog::debug("notifyReady call error: {}", e.what());
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      }
-    });
 
     // Check if standard input is redirected (i.e. not a terminal)
     bool has_redirected_input = !isatty(fileno(stdin));
@@ -142,7 +149,7 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
       // Now poll for input and send it to the webview.
       while (!polling_done.load(std::memory_order_acquire)) {
         if (auto opt = input_queue.pop()) {
-          std::string js = fmt::format("window.document.body.textContent += {};", escape_js(*opt));
+          std::string js = fmt::format("window.log.textContent += {};", escape_js(*opt));
           spdlog::info("Polled input for JS: {}", js);
           try {
             w.eval(js);
@@ -168,11 +175,6 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
       input_thread.join();
     }
 
-    /* :2025-03-17 I think I don't need this
-    if (ready_thread.joinable()) {
-      ready_thread.join();
-    }
-      */
   } catch (const webview::exception& e) {
     spdlog::critical("Unhandled exception in main: {}", e.what());
     return 1;
