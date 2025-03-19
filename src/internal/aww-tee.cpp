@@ -71,38 +71,60 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
     spdlog::flush_every(std::chrono::seconds(1));
     spdlog::info("Application starting.");
 
+    // Create a SPSC queue to buffer input lines (capacity of 1024).
+    aww::single_producer_single_consumer_queue<std::string, 1024> input_queue;
+
     // Create the webview with an initial HTML that holds an empty <ul>
-    // debug shows console true
+    // (debug shows console true)
     webview::webview w(true, nullptr);
     w.set_title("Basic Example");
     w.set_size(480, 320, WEBVIEW_HINT_NONE);
     std::string html = R"HTML(
-      <html>
-      <head>
-          <meta charset="utf-8">
-      </head>
-      <body>
-          Hello
-          <ul id="log"></ul>
-          <script>
-              // Create a global variable "log" that holds the element with id "log"
-              window.log = document.getElementById("log");
-              // Ensure notifyReady() is called unconditionally when the document is ready.
-              // If notifyReady is not yet defined as a function, retry every 1 second.
-              document.addEventListener("DOMContentLoaded", function() {
-                  (function tryNotify() {
-                      if (typeof notifyReady === "function") {
-                          notifyReady();
-                      } else {
-                          setTimeout(tryNotify, 1000);
-                      }
-                  })();
-              });
-          </script>
-      </body>
-      </html>
-      )HTML";
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+    Hello
+    <ul id="log"></ul>
+    <script>
+        // Create a global variable "log" that holds the element with id "log"
+        window.log = document.getElementById("log");
 
+        // Function to poll for new logs from the backend.
+        function pollLogs() {
+            pollNewLogs().then(function(response) {
+                try {
+                    var data = response;
+                    if (data && data.logs && data.logs.length > 0) {
+                        data.logs.forEach(function(msg) {
+                            var li = document.createElement("li");
+                            li.textContent = msg;
+                            window.log.appendChild(li);
+                        });
+                    }
+                } catch(e) {
+                    console.error("Error parsing pollNewLogs response:", e);
+                }
+                setTimeout(pollLogs, 100);
+            });
+        }
+
+        // Ensure notifyReady() is called unconditionally when the document is ready.
+        // If notifyReady is not yet defined as a function, retry every 1 second.
+        document.addEventListener("DOMContentLoaded", function() {
+            (function tryNotify() {
+                if (typeof notifyReady === "function") {
+                    notifyReady().then(pollLogs);
+                } else {
+                    setTimeout(tryNotify, 1000);
+                }
+            })();
+        });
+    </script>
+</body>
+</html>
+)HTML";
     w.set_html(html);
 
     // Flag indicating that the webview is now initialized and ready.
@@ -118,15 +140,39 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
         },
         nullptr);
 
+    // Bind the asynchronous pollNewLogs function that polls up to 50 messages.
+    w.bind(
+        "pollNewLogs",
+        [&](const std::string& id, const std::string& /*unused*/, void* /*arg*/) {
+          std::thread([&, id]() {
+            std::vector<std::string> logs;
+            // Poll messages until the queue is empty or we've collected 50 messages.
+            while (logs.size() < 50) {
+              if (auto opt = input_queue.pop()) {
+                logs.push_back(*opt);
+              } else {
+                break;
+              }
+            }
+            // Manually construct a JSON string with the logs.
+            std::string json = "{\"logs\": [";
+            bool first = true;
+            for (const auto& msg : logs) {
+              if (!first) {
+                json += ",";
+              }
+              json += escape_js(msg);
+              first = false;
+            }
+            json += "]}";
+            w.resolve(id, 0, json.c_str());
+          }).detach();
+        },
+        nullptr);
+
     // Check if standard input is redirected (i.e. not a terminal)
     bool has_redirected_input = !isatty(fileno(stdin));
     spdlog::info("#has_redirected_input = {}", has_redirected_input);
-
-    // Create a SPSC queue to buffer input lines (capacity of 1024).
-    aww::single_producer_single_consumer_queue<std::string, 1024> input_queue;
-
-    // Flag to signal the polling thread to finish.
-    std::atomic_bool polling_done{false};
 
     // Thread that reads from redirected standard input and pushes lines into the SPSC queue.
     std::thread input_thread;
@@ -140,37 +186,10 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
       });
     }
 
-    // Polling thread that pops messages from the queue and sends them to the webview.
-    std::thread poll_thread([&w, &input_queue, &polling_done, &webview_ready]() {
-      // Wait until the webview is marked ready.
-      while (!webview_ready.load(std::memory_order_acquire)) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-      }
-      // Now poll for input and send it to the webview.
-      while (!polling_done.load(std::memory_order_acquire)) {
-        if (auto opt = input_queue.pop()) {
-          std::string js = fmt::format("window.log.textContent += {};", escape_js(*opt));
-          spdlog::info("Polled input for JS: {}", js);
-          try {
-            w.eval(js);
-          } catch (const std::exception& e) {
-            spdlog::error("Error evaluating JS: {}", e.what());
-          }
-        } else {
-          std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        }
-      }
-    });
-
     // Run the webview loop (this call blocks until the window is closed)
     w.run();
     spdlog::info("Application exiting normally.");
 
-    // Signal the polling thread to stop and wait for it to finish.
-    polling_done.store(true, std::memory_order_release);
-    if (poll_thread.joinable()) {
-      poll_thread.join();
-    }
     if (input_thread.joinable()) {
       input_thread.join();
     }
