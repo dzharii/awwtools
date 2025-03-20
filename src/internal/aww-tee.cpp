@@ -71,7 +71,7 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
     spdlog::info("Application starting.");
 
     // Create a SPSC queue to buffer input lines (capacity of 1024).
-    aww::single_producer_single_consumer_queue<std::string, 1024> input_queue;
+    aww::single_producer_single_consumer_queue<std::string, 10240> input_queue;
 
     // Create the webview with an initial HTML that holds an empty <ul>
     // (debug shows console true)
