@@ -87,38 +87,44 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
     Hello
     <ul id="log"></ul>
     <script>
-        // Create a global variable "log" that holds the element with id "log"
         window.log = document.getElementById("log");
+        window.metric_logsPolled = 0;
 
         // Function to poll for new logs from the backend.
-        function pollLogs() {
-            pollNewLogs().then(function(response) {
-                try {
-                    var data = response;
-                    if (data && data.logs && data.logs.length > 0) {
-                        data.logs.forEach(function(msg) {
-                            var li = document.createElement("li");
-                            li.textContent = msg;
-                            window.log.appendChild(li);
-                        });
-                    }
-                } catch(e) {
-                    console.error("Error parsing pollNewLogs response:", e);
+        async function pollLogs() {
+            window.metric_logsPolled += 1;
+            while (typeof pollNewLogs !== "function") {
+                await new Promise(resolve => setTimeout(resolve, 1));
+            }
+            try {
+                const data = await pollNewLogs();
+                if (data?.logs?.length) {
+                    console.log('data = ', data);
+                    data.logs.forEach(msg => {
+                        const li = document.createElement("li");
+                        li.textContent = msg;
+                        window.log.appendChild(li);
+                    });
                 }
-                setTimeout(pollLogs, 100);
-            });
+            } catch (e) {
+                console.error("Error polling logs:", e);
+            } finally {
+                setTimeout(pollLogs, 1);
+            }
         }
 
         // Ensure notifyReady() is called unconditionally when the document is ready.
-        // If notifyReady is not yet defined as a function, retry every 1 second.
-        document.addEventListener("DOMContentLoaded", function() {
-            (function tryNotify() {
-                if (typeof notifyReady === "function") {
-                    notifyReady().then(pollLogs);
-                } else {
-                    setTimeout(tryNotify, 1000);
-                }
-            })();
+        document.addEventListener("DOMContentLoaded", async function () {
+            while (typeof notifyReady !== "function") {
+                await new Promise(resolve => setTimeout(resolve, 1));
+            }
+            notifyReady();
+
+            while (typeof pollLogs !== "function") {
+                await new Promise(resolve => setTimeout(resolve, 1));
+            }
+            pollLogs();
+
         });
     </script>
 </body>
@@ -144,6 +150,7 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
         "pollNewLogs",
         [&](const std::string& id, const std::string& /*unused*/, void* /*arg*/) {
           std::thread([&, id]() {
+            spdlog::info("#e87pfy8bkms pollNewLogs");
             std::vector<std::string> logs;
             // Poll messages until the queue is empty or we've collected 50 messages.
             while (logs.size() < 50) {
@@ -182,6 +189,7 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
         std::string line;
         while (std::getline(std::cin, line)) {
           input_queue.push(line);
+          spdlog::info("#4t2hvm4vuqp front={}; back={}", input_queue.front(), input_queue.back());
           std::cout << line << "\n";
         }
       });
