@@ -7,7 +7,9 @@
 #include "webview/webview.h"
 #include <atomic>
 #include <chrono>
+#include <concepts>
 #include <filesystem>
+#include <functional>
 #include <iostream>
 #include <string>
 #include <thread>
@@ -114,18 +116,21 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
         }
 
         // Ensure notifyReady() is called unconditionally when the document is ready.
-        document.addEventListener("DOMContentLoaded", async function () {
+        setTimeout(async () => {
+            console.log('#hdnhj891gs0 waiting for notifyReady binding');
             while (typeof notifyReady !== "function") {
                 await new Promise(resolve => setTimeout(resolve, 1));
             }
+            console.log('#sfbtfx0o5iu calling notifyReady');
             notifyReady();
 
-            while (typeof pollLogs !== "function") {
+            console.log('#k2tgfs49h42 waiting for pollNewLogs binding');
+            while (typeof pollNewLogs !== "function") {
                 await new Promise(resolve => setTimeout(resolve, 1));
             }
-            pollLogs();
-
-        });
+            console.log('#wxwvpri34v8 calling pollLogs()');
+            setTimeout(() => pollLogs(), 1000);
+        }, 0);
     </script>
 </body>
 </html>
@@ -153,13 +158,14 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
             spdlog::info("#e87pfy8bkms pollNewLogs");
             std::vector<std::string> logs;
             // Poll messages until the queue is empty or we've collected 50 messages.
-            while (logs.size() < 50) {
-              if (auto opt = input_queue.pop()) {
-                logs.push_back(*opt);
-              } else {
+            while (auto opt = input_queue.pop()) {
+              logs.push_back(*opt);
+              if (logs.size() > 50) {
                 break;
               }
             }
+            spdlog::info("#9aujdyw5f38 pollNewLogs log size = {}", logs.size());
+
             // Manually construct a JSON string with the logs.
             std::string json = "{\"logs\": [";
             bool first = true;
@@ -184,7 +190,13 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
 
     std::thread input_thread;
     if (has_redirected_input) {
-      input_thread = std::thread([&input_queue]() {
+      input_thread = std::thread([&input_queue, &webview_ready]() {
+        spdlog::info("#4a7oi5ocha4 waiting for webview_ready");
+
+        while (!webview_ready.load(std::memory_order_acquire)) {
+          webview_ready.wait(false, std::memory_order_relaxed);
+        }
+
         spdlog::info("#bde8bz7nnc2 begin input_thread");
         std::string line;
         while (std::getline(std::cin, line)) {
