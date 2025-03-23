@@ -25,6 +25,20 @@
 
 
 
+## 2025-03-23 aww-tee is not fixed!
+
+I think I have some multithreading issue with aww tee. The command 
+
+```sh
+tree | aww tee
+```
+
+produces nothing in the Html output. pollLogs seems not to be working. 
+
+At point... ah... I have decided to merge `include` and `src` folder... won't help to solve the aww tee issue, but I wanted to do it for a long time. 
+
+
+
 ## 2025-03-18 aww-tee fixed
 
 Good test command on Windows:
