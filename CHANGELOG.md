@@ -19,32 +19,34 @@
 
 - [ ] `aww run` maybe improvement from this article: 2025-01-10 [Execute a command and get both output and exit status in C++ (Windows & Linux) - Raymii.org](https://raymii.org/s/articles/Execute_a_command_and_get_both_output_and_exit_code.html) { raymii.org } it also originated from same stackoverflow I've read ;)
 
-
-
 # aww-tools changelog
 
+## 2025-03-23 aww tag
 
+Added option for espanso integration
+
+```sh
+aww tag --aww-no-side-effects
+```
 
 ## 2025-03-23 aww-tee is not fixed!
 
-I think I have some multithreading issue with aww tee. The command 
+I think I have some multithreading issue with aww tee. The command
 
 ```sh
 tree | aww tee
 ```
 
-produces nothing in the Html output. pollLogs seems not to be working. 
+produces nothing in the Html output. pollLogs seems not to be working.
 
-At point... ah... I have decided to merge `include` and `src` folder... won't help to solve the aww tee issue, but I wanted to do it for a long time. 
+At point... ah... I have decided to merge `include` and `src` folder... won't help to solve the aww tee issue, but I wanted to do it for a long time.
 
-
-
-Removed many many files from `third-party` and replaced them with 
+Removed many many files from `third-party` and replaced them with
 
 ```cmake
 ## nlohmann_json
 FetchContent_Declare(
-    json 
+    json
     URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
 )
 FetchContent_MakeAvailable(json)
@@ -70,8 +72,6 @@ set(SPDLOG_FMT_EXTERNAL ON  CACHE BOOL "Use external fmt library instead of bund
 FetchContent_MakeAvailable(spdlog)
 ```
 
-
-
 ## 2025-03-18 aww-tee fixed
 
 Good test command on Windows:
@@ -79,8 +79,6 @@ Good test command on Windows:
 ```sh
 ping -t 127.0.0.1
 ```
-
-
 
 ```
 ping -t 127.0.0.1 | aww tee
@@ -90,15 +88,13 @@ works correct in cmd. Has some issue with powershell, but it finally works!
 
 ![image-20250318215024085](CHANGELOG.assets/image-20250318215024085.png)
 
-I had to switch from pushing messages with `w.eval` to rather poll messages from javascript with `pollNewLogs` 
+I had to switch from pushing messages with `w.eval` to rather poll messages from javascript with `pollNewLogs`
 
-`w.eval` does not work. The current implementation is better, because it let's browser control the log rendering in more usual way. 
-
-
+`w.eval` does not work. The current implementation is better, because it let's browser control the log rendering in more usual way.
 
 ## 2025-03-18 webview in aww-tee
 
-I have really stuck at this loop, don't know why eval seems not to be working, what is wrong? How do I pass data to webview? 
+I have really stuck at this loop, don't know why eval seems not to be working, what is wrong? How do I pass data to webview?
 
 I can call `window.notifyReady()` from debug console, but not from `eval` 🚩
 
@@ -121,17 +117,11 @@ I can call `window.notifyReady()` from debug console, but not from `eval` 🚩
 
 ```
 
-
-
-
-
 ## 2025-03-16 aww-tee
 
 `aww-tee` is a tool designed to display logs. It outputs logs to the console and also streams them to a browser window. The idea is to use the browser for better log searching and filtering. In some cases, when another application runs a command, the output is hidden, so you can't tell if something is happening or if there's an error. `aww-tee` helps by showing this information clearly.
 
 It's also difficult to select and copy logs from the console without disrupting the running process, especially since using Ctrl+C can interrupt things. `aww-tee` aims to make copying logs easier.
-
-
 
 ## 2025-01-19 Sun
 
@@ -139,61 +129,45 @@ Implemented `aww stuff cat` (cat_command) -- reads file and writes content to st
 
 mostly to test new `aww::result<T>` from awwlib (aww tag #jyjhwmmy084)
 
-
-
-
-
 ## 2025-01-10
 
-- [ ] 🚩Huh, I am gonna need to use  `std::filesystem::u8path(utf8_string);`
-  for file and folder creation 
-  Added new doc: `./dev-doc/cross_platform_filesystem_path_handling_in_cpp20.md`
+- [ ] 🚩Huh, I am gonna need to use `std::filesystem::u8path(utf8_string);`
+      for file and folder creation
+      Added new doc: `./dev-doc/cross_platform_filesystem_path_handling_in_cpp20.md`
 
-`get_command_line_arguments` aww tag #w9e1s4uq1xt from aww-os has solved this problem! in aww-stuff. 
+`get_command_line_arguments` aww tag #w9e1s4uq1xt from aww-os has solved this problem! in aww-stuff.
 
 ```
 "save-command-line-args-to-file"
-Bytes: 73 61 76 65 2d 63 6f 6d 6d 61 6e 64 2d 6c 69 6e 65 2d 61 72 67 73 2d 74 6f 2d 66 69 6c 65 
+Bytes: 73 61 76 65 2d 63 6f 6d 6d 61 6e 64 2d 6c 69 6e 65 2d 61 72 67 73 2d 74 6f 2d 66 69 6c 65
 "Привет"
-Bytes: d0 9f d1 80 d0 b8 d0 b2 d0 b5 d1 82 
+Bytes: d0 9f d1 80 d0 b8 d0 b2 d0 b5 d1 82
 "Мир!"
-Bytes: d0 9c d0 b8 d1 80 21 
+Bytes: d0 9c d0 b8 d1 80 21
 "日本語テキスト"
-Bytes: e6 97 a5 e6 9c ac e8 aa 9e e3 83 86 e3 82 ad e3 82 b9 e3 83 88 
+Bytes: e6 97 a5 e6 9c ac e8 aa 9e e3 83 86 e3 82 ad e3 82 b9 e3 83 88
 ```
 
 - [ ] 🚩 Needs some testing on Linux
 
 ---
 
-
-
-Only one problem with encoding: the program receives already broken command line parameters 
-
-
+Only one problem with encoding: the program receives already broken command line parameters
 
 ```
 aww-stuff save-command-line-args-to-file Привет Мир! 日本語テキスト
 ```
 
-
-
 ```
 "save-command-line-args-to-file"
-Bytes: 73 61 76 65 2d 63 6f 6d 6d 61 6e 64 2d 6c 69 6e 65 2d 61 72 67 73 2d 74 6f 2d 66 69 6c 65 
+Bytes: 73 61 76 65 2d 63 6f 6d 6d 61 6e 64 2d 6c 69 6e 65 2d 61 72 67 73 2d 74 6f 2d 66 69 6c 65
 "??????"
-Bytes: 3f 3f 3f 3f 3f 3f 
+Bytes: 3f 3f 3f 3f 3f 3f
 "???!"
-Bytes: 3f 3f 3f 21 
+Bytes: 3f 3f 3f 21
 "???????"
-Bytes: 3f 3f 3f 3f 3f 3f 3f 
+Bytes: 3f 3f 3f 3f 3f 3f 3f
 ```
-
-
-
-
-
-
 
 ## 2025-01-09 Thu
 
@@ -210,7 +184,7 @@ chcp 65001
 
 Once it is set, the console will display UTF-8 characters correctly. Even this ones:
 
-> Привет 🌍 こんにちは 
+> Привет 🌍 こんにちは
 
 ![image-20250109170426133](CHANGELOG.assets/image-20250109170426133.png)
 

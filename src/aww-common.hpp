@@ -33,26 +33,28 @@ namespace constants {
 // CPMMON COMMANDLINE FLAGS
 const std::string CMD_FLAG_NO_LOGGING = "--aww-no-logging";
 const std::string CMD_FLAG_NO_NOTIFICATIONS = "--aww-no-notifications";
+// The logic of one side effect is to only output the result and do nothing else.
+// this includes CMD_FLAG_NO_LOGGING, CMD_FLAG_NO_NOTIFICATIONS, automatic clipboard copy
+const std::string CMD_FLAG_NO_SIDE_EFFECTS = "--aww-no-side-effects";
 
 } // namespace constants
 
 // CallTag struct definition
 struct call_tag_t {
-  constexpr explicit call_tag_t(std::uint64_t value) : value(value) {}
+  constexpr explicit call_tag_t(std::uint64_t value) : value(value) {
+  }
 
   const std::uint64_t value;
 };
 
 // Compile-time hash function
-constexpr std::uint64_t _compiletime_hash(const char* str, std::uint64_t hash = 0,
-                                          size_t index = 0) {
+constexpr std::uint64_t _compiletime_hash(const char* str, std::uint64_t hash = 0, size_t index = 0) {
   return str[index] ? _compiletime_hash(str, (hash * 131) + str[index], index + 1) : hash;
 }
 
 // call_tag function with compile-time length check for string literals
 template <size_t N> constexpr call_tag_t call_tag(const char (&str)[N]) {
-  static_assert(
-      N > 11, "Tag string must be at least 11 characters long."); // N includes the null terminator
+  static_assert(N > 11, "Tag string must be at least 11 characters long."); // N includes the null terminator
   return call_tag_t(_compiletime_hash(str));
 }
 
@@ -70,23 +72,33 @@ bool erase_flag_from_args(std::vector<std::string>& args, const std::string& fla
 class Result {
 public:
   /* Create a successful result */
-  static Result ok() { return Result(true, std::string()); }
+  static Result ok() {
+    return Result(true, std::string());
+  }
 
   /* Create a failed result */
-  static Result fail(const std::string& error) { return Result(false, error); }
+  static Result fail(const std::string& error) {
+    return Result(false, error);
+  }
 
-  bool is_ok() const { return m_success; }
+  bool is_ok() const {
+    return m_success;
+  }
 
   /* Use hasValue to check if there is an error */
-  bool is_failed() const { return !m_success; }
-  std::string error() const { return m_errorMessage; }
+  bool is_failed() const {
+    return !m_success;
+  }
+  std::string error() const {
+    return m_errorMessage;
+  }
 
 private:
   bool m_success;
   std::string m_errorMessage;
 
-  Result(const bool isSuccess, const std::string& errorMessage)
-      : m_success(isSuccess), m_errorMessage(errorMessage) {}
+  Result(const bool isSuccess, const std::string& errorMessage) : m_success(isSuccess), m_errorMessage(errorMessage) {
+  }
 };
 
 } // namespace aww
@@ -174,13 +186,11 @@ aww::Result create_directories(const std::filesystem::path& path);
 
 aww::Result create_empty_file(const std::filesystem::path& path);
 
-aww::Result read_lines(const std::filesystem::path& filePath,
-                       std::vector<std::string>& outFileLines);
+aww::Result read_lines(const std::filesystem::path& filePath, std::vector<std::string>& outFileLines);
 
 std::string read_ascii_text_file(const std::filesystem::path&);
 
-aww::Result write_lines(const std::filesystem::path& filePath,
-                        const std::vector<std::string>& lines);
+aww::Result write_lines(const std::filesystem::path& filePath, const std::vector<std::string>& lines);
 
 std::string normalize_file_path(const std::string&);
 } // namespace aww::fs
@@ -215,13 +225,21 @@ public:
     this->alpha = alpha;
   }
 
-  int get_red() const { return red; }
+  int get_red() const {
+    return red;
+  }
 
-  int get_green() const { return green; }
+  int get_green() const {
+    return green;
+  }
 
-  int get_blue() const { return blue; }
+  int get_blue() const {
+    return blue;
+  }
 
-  int get_alpha() const { return alpha; }
+  int get_alpha() const {
+    return alpha;
+  }
 
 private:
   int red;

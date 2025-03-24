@@ -7,7 +7,7 @@
 
 namespace aww::internal::aww_tag {
 int aww_tag_main(const std::vector<std::string>& cmdArgs);
-std::string makeTag(const size_t length);
+std::string make_tag(const size_t length);
 } // namespace aww::internal::aww_tag
 
 #endif // AWW_TAG_HPP
