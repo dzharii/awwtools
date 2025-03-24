@@ -39,6 +39,39 @@ At point... ah... I have decided to merge `include` and `src` folder... won't he
 
 
 
+Removed many many files from `third-party` and replaced them with 
+
+```cmake
+## nlohmann_json
+FetchContent_Declare(
+    json 
+    URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+)
+FetchContent_MakeAvailable(json)
+
+## fmt
+FetchContent_Declare(
+  fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+  GIT_TAG        10.2.1
+  GIT_SHALLOW    TRUE
+)
+FetchContent_MakeAvailable(fmt)
+
+## spd::log
+FetchContent_Declare(
+  spdlog
+  GIT_REPOSITORY https://github.com/gabime/spdlog.git
+  GIT_TAG        v1.13.0
+  GIT_SHALLOW    TRUE
+)
+set(SPDLOG_BUILD_SHARED OFF CACHE BOOL "Build shared library" FORCE)
+set(SPDLOG_FMT_EXTERNAL ON  CACHE BOOL "Use external fmt library instead of bundled" FORCE)
+FetchContent_MakeAvailable(spdlog)
+```
+
+
+
 ## 2025-03-18 aww-tee fixed
 
 Good test command on Windows:

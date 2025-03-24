@@ -90,18 +90,10 @@ add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
 target_include_directories(${LIBRARY_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5
-    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2/single_include
-    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/spdlog-1.11.0/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt-9.1.0/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/cpr-1.10.5/include
 )
 
 # we add the sub-directories that we want CMake to scan
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5)
-
-## fmt
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt-9.1.0)
-## end of fmt
 
 ## AwwLib
 
@@ -122,13 +114,42 @@ FetchContent_Declare(
     GIT_TAG 0.12.0)
 FetchContent_MakeAvailable(webview)
 
-# There's also (probably) doctests within the library, so we need to see this as well.
+## nlohmann_json
+FetchContent_Declare(
+    json 
+    URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+)
+FetchContent_MakeAvailable(json)
+
+## fmt
+FetchContent_Declare(
+  fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+  GIT_TAG        10.2.1
+  GIT_SHALLOW    TRUE
+)
+FetchContent_MakeAvailable(fmt)
+
+## spd::log
+FetchContent_Declare(
+  spdlog
+  GIT_REPOSITORY https://github.com/gabime/spdlog.git
+  GIT_TAG        v1.13.0
+  GIT_SHALLOW    TRUE
+)
+set(SPDLOG_BUILD_SHARED OFF CACHE BOOL "Build shared library" FORCE)
+set(SPDLOG_FMT_EXTERNAL ON  CACHE BOOL "Use external fmt library instead of bundled" FORCE)
+FetchContent_MakeAvailable(spdlog)
+
 target_link_libraries(
     ${LIBRARY_NAME} PUBLIC
     webview::core
     awwlib
     doctest
     clip
+    nlohmann_json::nlohmann_json
+    fmt::fmt
+    spdlog::spdlog
 )
 
 if(WIN32)
@@ -143,11 +164,6 @@ if(WIN32)
     target_link_libraries(${LIBRARY_NAME} PUBLIC wintoastlib)
 endif()
 
-## nlohmann-json
-set(JSON_BuildTests OFF CACHE INTERNAL "")
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2)
-target_link_libraries(${LIBRARY_NAME} PRIVATE nlohmann_json::nlohmann_json)
-## end of nlohmann-json
 
 # Set the compile options you want (change as needed).
 target_set_warnings(${LIBRARY_NAME} ENABLE ALL AS_ERROR ALL DISABLE Annoying)

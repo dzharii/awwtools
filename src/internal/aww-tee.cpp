@@ -1,4 +1,5 @@
 #include "internal/aww-tee.hpp"
+#include "aww-html/aww-html.hpp"
 #include "aww-os/aww-os.hpp"
 #include "aww-spsc-queue/aww-spsc-queue.hpp"
 #include "fmt/core.h"
@@ -15,45 +16,8 @@
 #include <thread>
 #include <vector>
 
-#ifdef _WIN32
-#include <io.h>
-#define isatty _isatty
-#define fileno _fileno
-#else
-#include <unistd.h>
-#endif
-
 namespace aww::internal::aww_tee {
 namespace fs = std::filesystem;
-
-// Helper function to escape a string for insertion into a JavaScript string literal.
-std::string escape_js(const std::string& input) {
-  std::string output = "\"";
-  for (char c : input) {
-    switch (c) {
-    case '\\':
-      output += "\\\\";
-      break;
-    case '\"':
-      output += "\\\"";
-      break;
-    case '\'':
-      output += "\\\'";
-      break;
-    case '\n':
-      output += "\\n";
-      break;
-    case '\r':
-      output += "\\r";
-      break;
-    default:
-      output.push_back(c);
-      break;
-    }
-  }
-  output += "\"";
-  return output;
-}
 
 int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
                  [[maybe_unused]] aww_tee_io_dependencies_interface& deps) {
@@ -173,7 +137,7 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
               if (!first) {
                 json += ",";
               }
-              json += escape_js(msg);
+              json += aww::escape_string_as_json_string(msg);
               first = false;
             }
             json += "]}";
@@ -183,7 +147,7 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
         nullptr);
 
     // Check if standard input is redirected (i.e. not a terminal)
-    bool has_redirected_input = !isatty(fileno(stdin));
+    bool has_redirected_input = aww::has_redirected_standard_input();
     spdlog::info("#has_redirected_input = {}", has_redirected_input);
 
     // Thread that reads from redirected standard input and pushes lines into the SPSC queue.
