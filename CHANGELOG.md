@@ -19,6 +19,10 @@
 
 - [ ] `aww run` maybe improvement from this article: 2025-01-10 [Execute a command and get both output and exit status in C++ (Windows & Linux) - Raymii.org](https://raymii.org/s/articles/Execute_a_command_and_get_both_output_and_exit_code.html) { raymii.org } it also originated from same stackoverflow I've read ;)
 
+- [ ] 2025-03-25 `aww toy` with `webview`: how can I utilize webview to host local apps like this? https://toys.awwtools.com/ - how can I write scripts with cmd, powershell and lua which can create some default UI? should I call it `aww app` ? or `aww ui`?
+
+  
+
 # aww-tools changelog
 
 ## 2025-03-23 aww tag
