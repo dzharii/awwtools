@@ -71,12 +71,13 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
                         li.textContent = msg;
                         window.log.appendChild(li);
                     });
+                } else {
+                  console.log(`#ukc2ni2z44a empty data = `, data);
                 }
             } catch (e) {
                 console.error("Error polling logs:", e);
-            } finally {
-                setTimeout(pollLogs, 1);
             }
+            setTimeout(pollLogs, 10);
         }
 
         // Ensure notifyReady() is called unconditionally when the document is ready.
@@ -93,7 +94,7 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
                 await new Promise(resolve => setTimeout(resolve, 1));
             }
             console.log('#wxwvpri34v8 calling pollLogs()');
-            setTimeout(() => pollLogs(), 1000);
+            // setTimeout(() => pollLogs(), 1000);
         }, 0);
     </script>
 </body>
@@ -114,34 +115,56 @@ int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
         },
         nullptr);
 
-    // Bind the asynchronous pollNewLogs function that polls up to 50 messages.
+    // Bind the asynchronous pollNewLogs function that polls up to { poll_max_messages } messages.
+    constexpr size_t poll_max_messages = 50;
+    std::atomic<bool> poll_thread_running{false};
     w.bind(
         "pollNewLogs",
         [&](const std::string& id, const std::string& /*unused*/, void* /*arg*/) {
-          std::thread([&, id]() {
-            spdlog::info("#e87pfy8bkms pollNewLogs");
-            std::vector<std::string> logs;
-            // Poll messages until the queue is empty or we've collected 50 messages.
-            while (auto opt = input_queue.pop()) {
-              logs.push_back(*opt);
-              if (logs.size() > 50) {
-                break;
-              }
-            }
-            spdlog::info("#9aujdyw5f38 pollNewLogs log size = {}", logs.size());
+          // Only spawn a new thread if none is running.
+          bool expected = false;
+          if (!poll_thread_running.compare_exchange_strong(expected, true)) {
+            spdlog::info("#x5cd38goy08 pollNewLogs already running, skipping spawning a new thread.");
+            w.resolve(id, 0, "{\"logs\": []}");
+            return;
+          }
 
-            // Manually construct a JSON string with the logs.
-            std::string json = "{\"logs\": [";
-            bool first = true;
-            for (const auto& msg : logs) {
-              if (!first) {
-                json += ",";
+          // Spawn a new thread.
+          std::thread([&, id]() {
+            try {
+              spdlog::info("#rcvqzrkyni7 pollNewLogs thread started.");
+              std::vector<std::string> logs;
+              // Poll messages until the queue is empty or we've collected more than 50 messages.
+              while (auto opt = input_queue.pop()) {
+                logs.push_back(*opt);
+                if (logs.size() > poll_max_messages) {
+                  break;
+                }
               }
-              json += aww::escape_string_as_json_string(msg);
-              first = false;
+              spdlog::info("#pni42fmt3ey pollNewLogs log size = {}", logs.size());
+
+              // Construct a JSON string for the logs.
+              std::string json = "{\"logs\": [";
+              bool first = true;
+              for (const auto& msg : logs) {
+                if (!first) {
+                  json += ",";
+                }
+                json += aww::escape_string_as_json_string(msg);
+                first = false;
+              }
+              json += "]}";
+              spdlog::info("#rpz21stz36n resolved pollNewLogs with json size: '{}' bytes", json.size());
+              w.resolve(id, 0, json.c_str());
+            } catch (const std::exception& ex) {
+              spdlog::error("#iu1gyxyb1px Exception in pollNewLogs thread: {}", ex.what());
+              w.resolve(id, 1, "{\"logs\": []}");
+            } catch (...) {
+              spdlog::error("#jz4drmxj0wf Unknown exception in pollNewLogs thread.");
+              w.resolve(id, 1, "{\"logs\": []}");
             }
-            json += "]}";
-            w.resolve(id, 0, json.c_str());
+            // Ensure the flag is cleared no matter what.
+            poll_thread_running.store(false, std::memory_order_release);
           }).detach();
         },
         nullptr);

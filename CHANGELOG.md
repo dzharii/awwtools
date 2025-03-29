@@ -25,6 +25,43 @@
 
 # aww-tools changelog
 
+
+
+## 2025-03-28 ⚠️ aww-tee won't work that way!
+
+WebView's eval does not work consistently. Using eval is not only unreliable but also insecure. I need to run an HTTP server and use proper web technologies while avoiding bind.
+
+
+
+Let's go! 
+
+```
+#define CPPHTTPLIB_OPENSSL_SUPPORT
+#include "path/to/httplib.h"
+
+// HTTP
+httplib::Server svr;
+
+// HTTPS
+httplib::SSLServer svr;
+
+svr.Get("/hi", [](const httplib::Request &, httplib::Response &res) {
+  res.set_content("Hello World!", "text/plain");
+});
+
+svr.listen("0.0.0.0", 8080);
+```
+
+
+
+🚩 2025-03-29 [yhirose/cpp-httplib: A C++ header-only HTTP/HTTPS server and client library](https://github.com/yhirose/cpp-httplib) { github.com }
+
+> A C++11 single-file header-only cross platform HTTP/HTTPS library.
+>
+> It's extremely easy to setup. Just include the **httplib.h** file in your code!
+
+
+
 ## 2025-03-23 aww tag
 
 Added option for espanso integration

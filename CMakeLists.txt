@@ -90,6 +90,7 @@ add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
 target_include_directories(${LIBRARY_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5
+    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/yhirose_cpp-httplib_dbc4af8/include
 )
 
 # we add the sub-directories that we want CMake to scan
