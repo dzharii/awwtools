@@ -60,6 +60,8 @@ svr.listen("0.0.0.0", 8080);
 >
 > It's extremely easy to setup. Just include the **httplib.h** file in your code!
 
+🚩 SSL support is available with `CPPHTTPLIB_OPENSSL_SUPPORT`. `libssl` and `libcrypto` should be linked.
+
 
 
 ## 2025-03-23 aww tag
