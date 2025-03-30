@@ -2,7 +2,6 @@
 #ifndef AWW_HPP
 #define AWW_HPP
 
-#include <map>
 #include <string>
 #include <vector>
 

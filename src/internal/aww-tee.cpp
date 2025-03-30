@@ -1,11 +1,3 @@
-#include "internal/aww-tee.hpp"
-#include "aww-html/aww-html.hpp"
-#include "aww-os/aww-os.hpp"
-#include "aww-spsc-queue/aww-spsc-queue.hpp"
-#include "fmt/core.h"
-#include "spdlog/sinks/basic_file_sink.h"
-#include "spdlog/spdlog.h"
-#include "webview/webview.h"
 #include <atomic>
 #include <chrono>
 #include <concepts>
@@ -16,23 +8,23 @@
 #include <thread>
 #include <vector>
 
+#include "aww-html/aww-html.hpp"
+#include "aww-os/aww-os.hpp"
+#include "aww-spdlog-configuration.hpp"
+#include "aww-spsc-queue/aww-spsc-queue.hpp"
+#include "fmt/core.h"
+#include "internal/aww-tee.hpp"
+#include "spdlog/spdlog.h"
+#include "webview/webview.h"
+
 namespace aww::internal::aww_tee {
 namespace fs = std::filesystem;
 
 int aww_tee_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
                  [[maybe_unused]] aww_tee_io_dependencies_interface& deps) {
   try {
-    auto exe_path = aww::get_current_executable_path();
-    auto exe_folder = exe_path.parent_path();
-    fs::path logs_folder = exe_folder / "logs";
-    if (!fs::exists(logs_folder)) {
-      fs::create_directory(logs_folder);
-    }
-    fs::path log_file = logs_folder / "app.log";
-    auto logger = spdlog::basic_logger_mt("app_logger", log_file.string());
-    spdlog::set_default_logger(logger);
-    spdlog::set_level(spdlog::level::info);
-    spdlog::flush_every(std::chrono::seconds(1));
+    init_default_spdlog_configuration("aww-tee");
+
     spdlog::info("aww tee");
     spdlog::info("Application starting.");
 

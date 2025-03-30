@@ -4,12 +4,14 @@
 #include <string>
 
 #include "aww-common.hpp"
+#include "aww-spdlog-configuration.hpp"
 #include "clip.h"
 #include "internal/aww-tag.hpp"
 #include "spdlog/spdlog.h"
 
 namespace aww::internal::aww_tag {
 int aww_tag_main(const std::vector<std::string>& cmdArgs) {
+  init_default_spdlog_configuration("aww-tag");
   auto mutable_cmd_args = cmdArgs;
 
   //  2025-03-23 no_side_effects will still log errors

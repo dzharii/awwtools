@@ -100,7 +100,9 @@
         "numbers": "cpp",
         "semaphore": "cpp",
         "cinttypes": "cpp",
-        "resumable": "cpp"
+        "resumable": "cpp",
+        "queue": "cpp",
+        "source_location": "cpp"
     },
     "cmake.configureOnOpen": true,
     "C_Cpp.default.cppStandard": "c++20"

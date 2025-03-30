@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "aww-result/aww-result.hpp"
+#include "aww-spdlog-configuration.hpp"
 #include "fmt/core.h"
 #include "spdlog/spdlog.h"
 
@@ -197,6 +198,8 @@ int save_command_line_args_to_file(const std::vector<std::string>& cmd_args) {
 
 int aww_stuff_main([[maybe_unused]] const std::vector<std::string>& cmd_args,
                    [[maybe_unused]] aww_stuff_io_dependencies_interface& deps) {
+
+  init_default_spdlog_configuration("aww-stuff");
   spdlog::info("aww stuff is a test tool to to do all kinds of stuff");
 
   constexpr auto save_clipboard_to_file_cmd = "save-clipboard-to-file";

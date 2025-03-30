@@ -2,20 +2,19 @@
 #include <regex>
 #include <string>
 
+#include "aww-spdlog-configuration.hpp"
 #include "fmt/core.h"
 #include "internal/aww-date.hpp"
 #include "spdlog/spdlog.h"
 
 namespace aww::internal::aww_date {
 
-int aww_date_main(const std::vector<std::string>& cmdArgs,
-                  aww_date_io_dependencies_interface& deps) {
-
+int aww_date_main(const std::vector<std::string>& cmdArgs, aww_date_io_dependencies_interface& deps) {
+  init_default_spdlog_configuration("aww-date");
   auto mutableCmdArgs = cmdArgs;
 
   bool noLogging = aww::erase_flag_from_args(mutableCmdArgs, aww::constants::CMD_FLAG_NO_LOGGING);
-  bool noNotifications =
-      aww::erase_flag_from_args(mutableCmdArgs, aww::constants::CMD_FLAG_NO_NOTIFICATIONS);
+  bool noNotifications = aww::erase_flag_from_args(mutableCmdArgs, aww::constants::CMD_FLAG_NO_NOTIFICATIONS);
 
   // Configure spdlog based on the flag
   if (noLogging) {
@@ -39,14 +38,12 @@ int aww_date_main(const std::vector<std::string>& cmdArgs,
     spdlog::info("Copied to clipboard: {}", result);
 
     if (!noNotifications) {
-      deps.show_notification("aww date", "The date has been copied to the clipboard",
-                             aww::call_tag("tssis4p5ta2"));
+      deps.show_notification("aww date", "The date has been copied to the clipboard", aww::call_tag("tssis4p5ta2"));
     }
   } else {
     spdlog::error("Failed to copy to clipboard: {}", result);
     if (!noNotifications) {
-      deps.show_notification("aww date", "Failed to copy the date to the clipboard",
-                             aww::call_tag("730v5jc2d3o"));
+      deps.show_notification("aww date", "Failed to copy the date to the clipboard", aww::call_tag("730v5jc2d3o"));
     }
     return 1;
   }

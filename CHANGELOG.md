@@ -21,19 +21,21 @@
 
 - [ ] 2025-03-25 `aww toy` with `webview`: how can I utilize webview to host local apps like this? https://toys.awwtools.com/ - how can I write scripts with cmd, powershell and lua which can create some default UI? should I call it `aww app` ? or `aww ui`?
 
-  
-
 # aww-tools changelog
 
+## 2025-03-29 logging refactor
 
+added `src\aww-spdlog-configuration.hpp` and `init_default_spdlog_configuration` (aww tag #woar96msh50):
+
+```cpp
+    init_default_spdlog_configuration("aww-tee");
+```
 
 ## 2025-03-28 ⚠️ aww-tee won't work that way!
 
 WebView's eval does not work consistently. Using eval is not only unreliable but also insecure. I need to run an HTTP server and use proper web technologies while avoiding bind.
 
-
-
-Let's go! 
+Let's go!
 
 ```
 #define CPPHTTPLIB_OPENSSL_SUPPORT
@@ -52,8 +54,6 @@ svr.Get("/hi", [](const httplib::Request &, httplib::Response &res) {
 svr.listen("0.0.0.0", 8080);
 ```
 
-
-
 🚩 2025-03-29 [yhirose/cpp-httplib: A C++ header-only HTTP/HTTPS server and client library](https://github.com/yhirose/cpp-httplib) { github.com }
 
 > A C++11 single-file header-only cross platform HTTP/HTTPS library.
@@ -61,8 +61,6 @@ svr.listen("0.0.0.0", 8080);
 > It's extremely easy to setup. Just include the **httplib.h** file in your code!
 
 🚩 SSL support is available with `CPPHTTPLIB_OPENSSL_SUPPORT`. `libssl` and `libcrypto` should be linked.
-
-
 
 ## 2025-03-23 aww tag
 

@@ -5,12 +5,14 @@
 #include "spdlog/spdlog.h"
 /* #include <cpr/cpr.h> */
 
+#include "aww-spdlog-configuration.hpp"
 #include "internal/aww-api.hpp"
 
 namespace aww::internal::aww_api {
 
-int aww_api_main([[maybe_unused]] const std::vector<std::string>& cmdArgs,
-                 aww_api_io_dependencies_interface& deps) {
+int aww_api_main([[maybe_unused]] const std::vector<std::string>& cmdArgs, aww_api_io_dependencies_interface& deps) {
+
+  init_default_spdlog_configuration("aww-api");
   spdlog::info("Hello spdlog");
   fmt::print("Hello, world from fmt PLEASE REMOVE THIS \b!\n");
 

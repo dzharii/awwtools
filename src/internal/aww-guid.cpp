@@ -3,11 +3,12 @@
 #include <string>
 
 #include "aww-common.hpp"
+#include "aww-spdlog-configuration.hpp"
 #include "internal/aww-guid.hpp"
 
 namespace aww::internal::aww_guid {
-int aww_guid_main([[maybe_unused]] const std::vector<std::string>& cmdArgs,
-                  aww_guid_io_dependencies_interface& deps) {
+int aww_guid_main([[maybe_unused]] const std::vector<std::string>& cmdArgs, aww_guid_io_dependencies_interface& deps) {
+  init_default_spdlog_configuration("aww-guid");
   std::string guid;
 
   if (aww::Result res = deps.os_get_guid(guid); res.is_failed()) {

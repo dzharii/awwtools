@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "aww-common.hpp"
-
+#include "aww.hpp"
 #include "internal/aww-api.hpp"
 #include "internal/aww-create.hpp"
 #include "internal/aww-date.hpp"

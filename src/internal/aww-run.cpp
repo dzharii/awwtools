@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "aww-common.hpp"
+#include "aww-spdlog-configuration.hpp"
 #include "internal/aww-run.hpp"
 
 #include <lua.hpp> // Include Lua header
@@ -16,11 +17,12 @@ namespace fs = std::filesystem;
 namespace aww::internal::aww_run {
 
 int aww_run_main(const std::vector<std::string>& cmdArgs) {
+  init_default_spdlog_configuration("aww-run");
+
   auto mutableCmdArgs = cmdArgs;
 
   bool noLogging = aww::erase_flag_from_args(mutableCmdArgs, aww::constants::CMD_FLAG_NO_LOGGING);
-  bool noNotifications =
-      aww::erase_flag_from_args(mutableCmdArgs, aww::constants::CMD_FLAG_NO_NOTIFICATIONS);
+  bool noNotifications = aww::erase_flag_from_args(mutableCmdArgs, aww::constants::CMD_FLAG_NO_NOTIFICATIONS);
 
   // Configure spdlog based on the flag
   if (noLogging) {
@@ -99,8 +101,7 @@ int aww_run_main(const std::vector<std::string>& cmdArgs) {
     switch (platform) {
     case aww::os::Platform::Windows:
       if (isPowerShell) {
-        awwCommand =
-            "powershell.exe -executionpolicy unrestricted -File \"" + scriptPath.string() + "\"";
+        awwCommand = "powershell.exe -executionpolicy unrestricted -File \"" + scriptPath.string() + "\"";
       } else {
         awwCommand = "\"" + scriptPath.string() + "\"";
       }
@@ -214,12 +215,10 @@ aww::Result find_script_windows(const std::string& scriptName, fs::path& outScri
   const fs::path awwDotScriptsDir = aww::os::env::get_aww_dot_dir() / "aww-scripts";
   const fs::path awwDir = currentDir / "aww";
 
-  const script_search_locations searchLocations{currentDir, awwScriptsDir, awwDotScriptsDir,
-                                                awwDir};
+  const script_search_locations searchLocations{currentDir, awwScriptsDir, awwDotScriptsDir, awwDir};
   const script_extensions extensions{".bat", ".cmd", ".ps1", ".lua", ""};
 
-  std::vector<fs::path> candidates =
-      get_script_search_locations(scriptName, searchLocations, extensions);
+  std::vector<fs::path> candidates = get_script_search_locations(scriptName, searchLocations, extensions);
   if (!candidates.empty()) {
     outScriptPath = candidates[0];
     return aww::Result::ok();
@@ -239,12 +238,10 @@ aww::Result find_script_linux(const std::string& scriptName, fs::path& outScript
   const fs::path awwDotScriptsDir = aww::os::env::get_aww_dot_dir() / "aww-scripts";
   const fs::path awwDir = currentDir / "aww";
 
-  const script_search_locations searchLocations{currentDir, awwScriptsDir, awwDotScriptsDir,
-                                                awwDir};
+  const script_search_locations searchLocations{currentDir, awwScriptsDir, awwDotScriptsDir, awwDir};
   const script_extensions extensions{".sh", ".ps1", ".lua", ""};
 
-  std::vector<fs::path> candidates =
-      get_script_search_locations(scriptName, searchLocations, extensions);
+  std::vector<fs::path> candidates = get_script_search_locations(scriptName, searchLocations, extensions);
   if (!candidates.empty()) {
     outScriptPath = candidates[0];
     return aww::Result::ok();

@@ -6,13 +6,14 @@
 #include <vector>
 
 #include "aww-common.hpp"
+#include "aww-spdlog-configuration.hpp"
 #include "internal/aww-open.hpp"
 
 namespace aww::internal::aww_open {
 namespace fs = std::filesystem;
 
-int aww_open_main(const std::vector<std::string>& cmdArgs,
-                  aww_open_io_dependencies_interface& deps) {
+int aww_open_main(const std::vector<std::string>& cmdArgs, aww_open_io_dependencies_interface& deps) {
+  init_default_spdlog_configuration("aww-open");
   bool useDefaultInput = cmdArgs.size() == 0;
 
   if (cmdArgs.size() > 1) {
