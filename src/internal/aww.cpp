@@ -1,6 +1,7 @@
 #include <filesystem>
 #include <iostream>
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -19,126 +20,126 @@
 #include "internal/aww-term.hpp"
 #include "internal/aww-toast.hpp"
 
-enum class AwwTool {
-  None,
-  Create,
-  Date,
-  GitOpen,
-  Guid,
-  Open,
-  Run,
-  Tag,
-  Term,
-  Toast,
-  Api,
-  Stuff,
-  Tee,
+enum class aww_tool {
+  none,
+  create,
+  date,
+  git_open,
+  guid,
+  open,
+  run,
+  tag,
+  term,
+  toast,
+  api,
+  stuff,
+  tee,
 };
 
-AwwTool getAwwTool(const std::string& awwTool) {
-  const std::string awwToolLower = aww::string::to_lower(awwTool);
+aww_tool get_aww_tool_by_name(const std::string& aww_tool_name) {
+  const std::string aww_tool_name_lower = aww::string::to_lower(aww_tool_name);
 
-  if (awwToolLower == "aww-create") {
-    return AwwTool::Create;
-  } else if (awwToolLower == "aww-date") {
-    return AwwTool::Date;
-  } else if (awwToolLower == "aww-git-open") {
-    return AwwTool::GitOpen;
-  } else if (awwToolLower == "aww-guid") {
-    return AwwTool::Guid;
-  } else if (awwToolLower == "aww-open") {
-    return AwwTool::Open;
-  } else if (awwToolLower == "aww-run") {
-    return AwwTool::Run;
-  } else if (awwToolLower == "aww-tag") {
-    return AwwTool::Tag;
-  } else if (awwToolLower == "aww-term") {
-    return AwwTool::Term;
-  } else if (awwToolLower == "aww-toast") {
-    return AwwTool::Toast;
-  } else if (awwToolLower == "aww-api") {
-    return AwwTool::Api;
-  } else if (awwToolLower == "aww-stuff") {
-    return AwwTool::Stuff;
-  } else if (awwToolLower == "aww-tee") {
-    return AwwTool::Tee;
+  if (aww_tool_name_lower == "aww-create") {
+    return aww_tool::create;
+  } else if (aww_tool_name_lower == "aww-date") {
+    return aww_tool::date;
+  } else if (aww_tool_name_lower == "aww-git-open") {
+    return aww_tool::git_open;
+  } else if (aww_tool_name_lower == "aww-guid") {
+    return aww_tool::guid;
+  } else if (aww_tool_name_lower == "aww-open") {
+    return aww_tool::open;
+  } else if (aww_tool_name_lower == "aww-run") {
+    return aww_tool::run;
+  } else if (aww_tool_name_lower == "aww-tag") {
+    return aww_tool::tag;
+  } else if (aww_tool_name_lower == "aww-term") {
+    return aww_tool::term;
+  } else if (aww_tool_name_lower == "aww-toast") {
+    return aww_tool::toast;
+  } else if (aww_tool_name_lower == "aww-api") {
+    return aww_tool::api;
+  } else if (aww_tool_name_lower == "aww-stuff") {
+    return aww_tool::stuff;
+  } else if (aww_tool_name_lower == "aww-tee") {
+    return aww_tool::tee;
   }
-  return AwwTool::None;
+  return aww_tool::none;
 }
 
-int aww_main(const std::vector<std::string>& cmdArgs) {
-  if (cmdArgs.size() == 0) {
+int aww_main(const std::vector<std::string>& cmd_args) {
+  if (cmd_args.size() == 0) {
     std::cout << "No arguments provided\n";
     return 1;
   }
 
-  std::string awwToolName = "aww";
-  AwwTool awwTool = AwwTool::None;
+  std::string aww_tool_name = "aww";
+  aww_tool aww_tool = aww_tool::none;
 
-  auto itCmdArg = cmdArgs.begin();
-  for (; itCmdArg != cmdArgs.end(); ++itCmdArg) {
-    awwToolName += "-" + aww::string::to_lower(*itCmdArg);
-    awwTool = getAwwTool(awwToolName);
+  auto cmd_arg = cmd_args.begin();
+  for (; cmd_arg != cmd_args.end(); ++cmd_arg) {
+    aww_tool_name += "-" + aww::string::to_lower(*cmd_arg);
+    aww_tool = get_aww_tool_by_name(aww_tool_name);
 
-    if (awwTool != AwwTool::None) {
+    if (aww_tool != aww_tool::none) {
       break;
     }
   }
 
-  if (awwTool == AwwTool::None) {
+  if (aww_tool == aww_tool::none) {
     std::cout << "No aww executable found\n";
     return 1;
   }
 
   // slice itCmdArg to end
-  ++itCmdArg;
-  std::vector<std::string> awwExecutableArgs(itCmdArg, cmdArgs.end());
+  ++cmd_arg;
+  std::vector<std::string> commandline_args(cmd_arg, cmd_args.end());
 
   try {
-    switch (awwTool) {
-    case AwwTool::Create: {
+    switch (aww_tool) {
+    case aww_tool::create: {
       aww::internal::aww_create::aww_create_io_dependencies deps;
-      return aww::internal::aww_create::aww_create_main(awwExecutableArgs, deps);
+      return aww::internal::aww_create::aww_create_main(commandline_args, deps);
     }
-    case AwwTool::Date: {
+    case aww_tool::date: {
       aww::internal::aww_date::aww_date_io_dependencies deps;
-      return aww::internal::aww_date::aww_date_main(awwExecutableArgs, deps);
+      return aww::internal::aww_date::aww_date_main(commandline_args, deps);
     }
-    case AwwTool::GitOpen: {
+    case aww_tool::git_open: {
       aww::internal::aww_git_open::aww_git_open_io_dependencies deps;
-      return aww::internal::aww_git_open::aww_git_open_main(awwExecutableArgs, deps);
+      return aww::internal::aww_git_open::aww_git_open_main(commandline_args, deps);
     }
-    case AwwTool::Guid: {
+    case aww_tool::guid: {
       aww::internal::aww_guid::aww_guid_io_dependencies deps;
-      return aww::internal::aww_guid::aww_guid_main(awwExecutableArgs, deps);
+      return aww::internal::aww_guid::aww_guid_main(commandline_args, deps);
     }
-    case AwwTool::Open: {
+    case aww_tool::open: {
       aww::internal::aww_open::aww_open_io_dependencies deps;
-      return aww::internal::aww_open::aww_open_main(awwExecutableArgs, deps);
+      return aww::internal::aww_open::aww_open_main(commandline_args, deps);
     }
-    case AwwTool::Run: {
-      return aww::internal::aww_run::aww_run_main(awwExecutableArgs);
+    case aww_tool::run: {
+      return aww::internal::aww_run::aww_run_main(commandline_args);
     }
-    case AwwTool::Tag: {
-      return aww::internal::aww_tag::aww_tag_main(awwExecutableArgs);
+    case aww_tool::tag: {
+      return aww::internal::aww_tag::aww_tag_main(commandline_args);
     }
-    case AwwTool::Term: {
-      return aww::internal::aww_term::aww_term_main(awwExecutableArgs);
+    case aww_tool::term: {
+      return aww::internal::aww_term::aww_term_main(commandline_args);
     }
-    case AwwTool::Toast: {
-      return aww::internal::aww_toast::aww_toast_main(awwExecutableArgs);
+    case aww_tool::toast: {
+      return aww::internal::aww_toast::aww_toast_main(commandline_args);
     }
-    case AwwTool::Api: {
+    case aww_tool::api: {
       aww::internal::aww_api::aww_api_io_dependencies deps;
-      return aww::internal::aww_api::aww_api_main(awwExecutableArgs, deps);
+      return aww::internal::aww_api::aww_api_main(commandline_args, deps);
     }
-    case AwwTool::Stuff: {
+    case aww_tool::stuff: {
       aww::internal::aww_stuff::aww_stuff_io_dependencies deps;
-      return aww::internal::aww_stuff::aww_stuff_main(awwExecutableArgs, deps);
+      return aww::internal::aww_stuff::aww_stuff_main(commandline_args, deps);
     }
-    case AwwTool::Tee: {
+    case aww_tool::tee: {
       aww::internal::aww_tee::aww_tee_io_dependencies deps;
-      return aww::internal::aww_tee::aww_tee_main(awwExecutableArgs, deps);
+      return aww::internal::aww_tee::aww_tee_main(commandline_args, deps);
     }
     default: {
       std::cerr << "No aww executable found\n";
