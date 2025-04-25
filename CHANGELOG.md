@@ -23,6 +23,34 @@
 
 # aww-tools changelog
 
+
+
+## 2025-04-24 💡 graphical launcher for aww suite
+
+When you run the **“aww”** command with no parameters and mistype a subcommand, instead of a brief flash and immediate close, the program opens an accessible launcher window and reads aloud or displays the following in sequence:
+
+- A clear spoken or textual announcement of the error, for example “Error: subcommand ‘runn’ not found.”
+- Focus moves to a search field labeled “Search aww tools.” As you type, each keystroke is echoed back, and the list of available commands filters in real time.
+- A list of all installed aww-tools is presented below the search field. Each entry is announced with its full name and a short description, for example “aww-date: copy current date to clipboard,” “aww-guid: generate a UUID,” “aww-tag: apply tags to files,” and so on.
+- Recently used tools are automatically moved to the top and announced as “Recently used.”
+- You navigate the list with the up and down arrow keys; each selection is read aloud. Pressing Enter runs the highlighted tool with the parameters you specify in the same window.
+- Tool metadata (names, descriptions, parameters) is sourced from a JSON or Lua configuration file, ensuring new or updated tools are announced immediately without code changes.
+- When a tool finishes or reports an error, its output is appended below in a scrollable pane that can be read back or copied, rather than closing the window.
+
+**Considerations:** 
+
+- I really like Emacs implemented TUI and GUI in same package, this is so cool
+  - 2025-04-25 [ArthurSonzogni/FTXUI: :computer: C++ Functional Terminal User Interface. :heart:](https://github.com/ArthurSonzogni/FTXUI) { github.com }
+- I probably need to use WxWidgets here, browser integration can be problematic
+
+
+
+![img](CHANGELOG.assets/raw.png)
+
+
+
+
+
 ## 2025-03-29 logging refactor
 
 added `src\aww-spdlog-configuration.hpp` and `init_default_spdlog_configuration` (aww tag #woar96msh50):
