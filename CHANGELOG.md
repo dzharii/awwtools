@@ -23,7 +23,9 @@
 
 # aww-tools changelog
 
+## 2025-05-10
 
+- **Updated (windows) `launch_file` function**: Replaced `ShellExecuteA` with `CreateProcessA` to detach the launched application from the parent console. This prevents the child process from logging errors or warnings into the parent console.
 
 ## 2025-04-24 💡 graphical launcher for aww suite
 
@@ -37,19 +39,13 @@ When you run the **“aww”** command with no parameters and mistype a subcomma
 - Tool metadata (names, descriptions, parameters) is sourced from a JSON or Lua configuration file, ensuring new or updated tools are announced immediately without code changes.
 - When a tool finishes or reports an error, its output is appended below in a scrollable pane that can be read back or copied, rather than closing the window.
 
-**Considerations:** 
+**Considerations:**
 
 - I really like Emacs implemented TUI and GUI in same package, this is so cool
   - 2025-04-25 [ArthurSonzogni/FTXUI: :computer: C++ Functional Terminal User Interface. :heart:](https://github.com/ArthurSonzogni/FTXUI) { github.com }
 - I probably need to use WxWidgets here, browser integration can be problematic
 
-
-
 ![img](CHANGELOG.assets/raw.png)
-
-
-
-
 
 ## 2025-03-29 logging refactor
 

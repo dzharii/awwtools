@@ -18,9 +18,8 @@ bool can_execute(const std::filesystem::path& path) {
 
   const bool isExecutable =
       std::filesystem::exists(path) &&
-      (fileExtension == ".exe" || fileExtension == ".EXE" || fileExtension == ".bat" ||
-       fileExtension == ".BAT" || fileExtension == ".cmd" || fileExtension == ".CMD" ||
-       fileExtension == ".ps1" || fileExtension == ".PS1");
+      (fileExtension == ".exe" || fileExtension == ".EXE" || fileExtension == ".bat" || fileExtension == ".BAT" ||
+       fileExtension == ".cmd" || fileExtension == ".CMD" || fileExtension == ".ps1" || fileExtension == ".PS1");
   return isExecutable;
 }
 
@@ -39,8 +38,8 @@ std::vector<std::string> get_command_line_args(void) {
 
     // Convert the Unicode string to the specified character encoding
     // The function returns 0 if it does not succeed.
-    length = static_cast<std::size_t>(
-        WideCharToMultiByte(CP_UTF8, 0, argv[i], -1, buffer, bufferSize, nullptr, nullptr));
+    length =
+        static_cast<std::size_t>(WideCharToMultiByte(CP_UTF8, 0, argv[i], -1, buffer, bufferSize, nullptr, nullptr));
 
     // Store the converted string in the vector
     // note: "length - 1" to remove the null terminator
@@ -57,56 +56,48 @@ std::vector<std::string> get_command_line_args(void) {
 
 namespace aww::os::actions {
 aww::Result launch_file(const std::string& path) {
-  // check path is null
+  // Check if the path is empty
   if (path.empty()) {
     return aww::Result::fail("Argument path is empty");
   }
-  HINSTANCE execResult =
-      ShellExecuteA(nullptr, "open", path.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
-  const HINSTANCE Success = reinterpret_cast<HINSTANCE>(33);
 
-  if (execResult >= Success) {
+  // Prepare the command to execute
+  std::string command = "cmd /c start \"\" \"" + path + "\"";
+
+  // Set up the STARTUPINFO and PROCESS_INFORMATION structures
+  STARTUPINFOA si = {0};
+  si.cb = sizeof(STARTUPINFOA);
+  PROCESS_INFORMATION pi = {0};
+
+  // Create the process with the DETACHED_PROCESS flag
+  BOOL success = CreateProcessA(nullptr,                             // Application name
+                                command.data(),                      // Command line
+                                nullptr,                             // Process security attributes
+                                nullptr,                             // Thread security attributes
+                                FALSE,                               // Inherit handles
+                                CREATE_NO_WINDOW | DETACHED_PROCESS, // Creation flags
+                                nullptr,                             // Environment
+                                nullptr,                             // Current directory
+                                &si,                                 // Startup info
+                                &pi                                  // Process info
+  );
+
+  if (success) {
+    // Close process and thread handles to avoid resource leaks
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
     return aww::Result::ok();
   }
 
+  // Handle errors
   unsigned long errorCode = GetLastError();
-
-  if (errorCode == 0) {
-    return aww::Result::fail(
-        "ShellExecuteA failed: The operating system is out of memory or resources.");
-  } else if (errorCode == ERROR_FILE_NOT_FOUND) {
-    return aww::Result::fail("ShellExecuteA failed: The specified file was not found.");
+  if (errorCode == ERROR_FILE_NOT_FOUND) {
+    return aww::Result::fail("CreateProcessA failed: The specified file was not found.");
   } else if (errorCode == ERROR_PATH_NOT_FOUND) {
-    return aww::Result::fail("ShellExecuteA failed: The specified path was not found.");
-  } else if (errorCode == ERROR_BAD_FORMAT) {
-    return aww::Result::fail(
-        "ShellExecuteA failed: The .exe file is invalid (non-Win32 .exe or error in .exe image).");
-  } else if (errorCode == SE_ERR_ACCESSDENIED) {
-    return aww::Result::fail(
-        "ShellExecuteA failed: The operating system denied access to the specified file.");
-  } else if (errorCode == SE_ERR_ASSOCINCOMPLETE) {
-    return aww::Result::fail(
-        "ShellExecuteA failed: The file name association is incomplete or invalid.");
-  } else if (errorCode == SE_ERR_DDEBUSY) {
-    return aww::Result::fail("ShellExecuteA failed: The DDE transaction could not be completed "
-                             "because other DDE transactions were being processed.");
-  } else if (errorCode == SE_ERR_DDEFAIL) {
-    return aww::Result::fail("ShellExecuteA failed: The DDE transaction failed.");
-  } else if (errorCode == SE_ERR_DDETIMEOUT) {
-    return aww::Result::fail("ShellExecuteA failed: The DDE transaction could not be completed "
-                             "because the request timed out.");
-  } else if (errorCode == SE_ERR_DLLNOTFOUND) {
-    return aww::Result::fail("ShellExecuteA failed: The specified DLL was not found.");
-  } else if (errorCode == SE_ERR_NOASSOC) {
-    return aww::Result::fail("ShellExecuteA failed: There is no application associated with the "
-                             "given file name extension.");
-  } else if (errorCode == SE_ERR_OOM) {
-    return aww::Result::fail(
-        "ShellExecuteA failed: There was not enough memory to complete the operation.");
-  } else if (errorCode == SE_ERR_SHARE) {
-    return aww::Result::fail("ShellExecuteA failed: A sharing violation occurred.");
+    return aww::Result::fail("CreateProcessA failed: The specified path was not found.");
+  } else {
+    return aww::Result::fail("CreateProcessA failed: Unknown error.");
   }
-  return aww::Result::fail("ShellExecuteA failed: Unknown error.");
 }
 
 /* WinToast */
@@ -114,13 +105,17 @@ class WinToastHandlerExample : public WinToastLib::IWinToastHandler {
 public:
   WinToastHandlerExample() = default;
   // Public interfaces
-  void toastActivated() const override {}
+  void toastActivated() const override {
+  }
 
-  void toastActivated(int) const override {}
+  void toastActivated(int) const override {
+  }
 
-  void toastDismissed(WinToastDismissalReason) const override {}
+  void toastDismissed(WinToastDismissalReason) const override {
+  }
 
-  void toastFailed() const override {}
+  void toastFailed() const override {
+  }
 };
 
 aww::Result show_notification(const std::string& title, const std::string& message) {
@@ -143,8 +138,7 @@ aww::Result show_notification(const std::string& title, const std::string& messa
     return aww::Result::fail("Error, your system in not compatible!");
   }
 
-  WinToastLib::WinToastTemplate templ =
-      WinToastLib::WinToastTemplate(WinToastLib::WinToastTemplate::Text02);
+  WinToastLib::WinToastTemplate templ = WinToastLib::WinToastTemplate(WinToastLib::WinToastTemplate::Text02);
 
   std::wstring wtitle(title.begin(), title.end());
   templ.setTextField(wtitle, WinToastLib::WinToastTemplate::FirstLine);
@@ -191,8 +185,8 @@ aww::Result get_guid(std::string& out) {
     return aww::Result::fail("Windows: StringFromGUID2 failed. Unable to generate GUID.");
   }
 
-  size_t length = static_cast<std::size_t>(
-      WideCharToMultiByte(CP_UTF8, 0, guidStr, -1, buffer, bufferSize, nullptr, nullptr));
+  size_t length =
+      static_cast<std::size_t>(WideCharToMultiByte(CP_UTF8, 0, guidStr, -1, buffer, bufferSize, nullptr, nullptr));
   if (length == 0) {
     return aww::Result::fail("Windows: WideCharToMultiByte failed. Unable to generate GUID.");
   }
