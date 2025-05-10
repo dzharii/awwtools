@@ -25,7 +25,13 @@
 
 ## 2025-05-10
 
-- **Updated (windows) `launch_file` function**: Replaced `ShellExecuteA` with `CreateProcessA` to detach the launched application from the parent console. This prevents the child process from logging errors or warnings into the parent console.
+**Updated (windows) `launch_file` function**: Replaced `ShellExecuteA` with `CreateProcessA` to detach the launched application from the parent console. This prevents the child process from logging errors or warnings into the parent console.
+
+This how it looked before when I opened md file from TUI Far Manager:
+
+![image-20250510133645349](CHANGELOG.assets/image-20250510133645349.png)
+
+
 
 ## 2025-04-24 💡 graphical launcher for aww suite
 
@@ -46,6 +52,16 @@ When you run the **“aww”** command with no parameters and mistype a subcomma
 - I probably need to use WxWidgets here, browser integration can be problematic
 
 ![img](CHANGELOG.assets/raw.png)
+
+🚩 **2025-05-10 Update**: This is kinda funny, how would I implement this without adding confusion?
+
+So I don't want to put all this GUI functionality in `aww.exe` and want to keep it dead simple console app. 
+
+This means, `aww.exe` in case it did not find a valid aww tool, should launch the GUI launcher and terminate, passing the control to the child process. 
+
+How do I name this GUI launcher? `laww`?  (like Love) `waaw` (windows aww) or `awww`? `aww-launch` ? I believe aww launch would be the most confusing, since I already have `aww run` and `aww open` I am considering merging 🚩 `aww run` and `aww open` together in future. 
+
+
 
 ## 2025-03-29 logging refactor
 
