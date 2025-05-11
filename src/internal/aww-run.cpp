@@ -204,6 +204,11 @@ std::vector<fs::path> get_script_search_locations(std::string scriptName,
   return results;
 }
 
+/**
+ * @brief Returns the default script search locations. (aww tag #g5k2z8q1w2e)
+ *
+ * This function always returns the same constant set of search locations.
+ */
 const script_search_locations get_default_script_search_locations() {
   const fs::path currentDir = fs::absolute(fs::current_path());
   const fs::path awwScriptsDir = fs::absolute(currentDir / aww::constants::AWW_SCRIPTS_FOLDER_NAME);
