@@ -39,25 +39,6 @@ const std::string CMD_FLAG_NO_SIDE_EFFECTS = "--aww-no-side-effects";
 
 } // namespace constants
 
-// CallTag struct definition
-struct call_tag_t {
-  constexpr explicit call_tag_t(std::uint64_t value) : value(value) {
-  }
-
-  const std::uint64_t value;
-};
-
-// Compile-time hash function
-constexpr std::uint64_t _compiletime_hash(const char* str, std::uint64_t hash = 0, size_t index = 0) {
-  return str[index] ? _compiletime_hash(str, (hash * 131) + str[index], index + 1) : hash;
-}
-
-// call_tag function with compile-time length check for string literals
-template <size_t N> constexpr call_tag_t call_tag(const char (&str)[N]) {
-  static_assert(N > 11, "Tag string must be at least 11 characters long."); // N includes the null terminator
-  return call_tag_t(_compiletime_hash(str));
-}
-
 // COLLECTIONS
 
 /**

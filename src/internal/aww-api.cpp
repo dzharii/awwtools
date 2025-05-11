@@ -28,7 +28,7 @@ int aww_api_main([[maybe_unused]] const std::vector<std::string>& cmdArgs, aww_a
   fmt::print("Content type: {}\n", r.header["content-type"]);
   fmt::print("Text: {}\n", r.text);
   */
-  deps.show_notification("aww api", "It works", aww::call_tag("9mnoizxrhdw"));
+  deps.show_notification("aww api", "It works");
   return 0;
 }
 
