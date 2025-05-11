@@ -29,6 +29,6 @@ TEST_CASE("aww::internal::aww_api::aww_api_main: acceptance test") {
 
   CHECK_MESSAGE(mainResult == 0, "Expected aww_api_main to return 0, but it returned ", mainResult);
   CHECK_MESSAGE(show_notification_stub_called == 1,
-                "Expected #show_notification to be called 1 times, but it was called ",
-                show_notification_stub_called, " times");
+                "Expected #show_notification to be called 1 times, but it was called ", show_notification_stub_called,
+                " times");
 }
