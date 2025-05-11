@@ -2,6 +2,7 @@
 #ifndef AWW_GUID_HPP
 #define AWW_GUID_HPP
 
+#include "aww-result/aww-result.hpp"
 #include <string>
 #include <vector>
 
@@ -28,26 +29,35 @@ public:
   virtual void show_notification(const std::string& title, const std::string& message) = 0;
 
   /**
-   * Get a GUID (Globally Unique Identifier) as a string.
-   * @param out A reference to a string where the GUID will be stored.
-   * @return Aww::Result indicating the success or failure of the operation.
+   * @brief Get a GUID (Globally Unique Identifier) as a string. (aww tag #r1g7g8d2k1)
+   * @return aww::result<std::string> containing the GUID or an error.
    */
-  virtual aww::Result os_get_guid(std::string& out) = 0;
+  virtual aww::result<std::string> os_get_guid() = 0;
 };
 
 class aww_guid_io_dependencies : public aww_guid_io_dependencies_interface {
 public:
-  bool clipboard_set_text(const std::string& text) override { return clip::set_text(text); }
+  bool clipboard_set_text(const std::string& text) override {
+    return clip::set_text(text);
+  }
 
   void show_notification(const std::string& title, const std::string& message) override {
     aww::os::actions::show_notification(title, message);
   }
 
-  aww::Result os_get_guid(std::string& out) override { return aww::util::get_guid(out); }
+  aww::result<std::string> os_get_guid() override {
+    // Use awwlib or fallback to old util if needed
+    // Example fallback:
+    std::string guid;
+    if (auto legacy = aww::util::get_guid(guid); legacy.is_failed()) {
+      return aww::result<std::string>::err("Failed to generate GUID");
+    } else {
+      return aww::result<std::string>::ok(std::move(guid));
+    }
+  }
 };
 
-int aww_guid_main(const std::vector<std::string>& cmdArgs,
-                  aww_guid_io_dependencies_interface& deps);
+int aww_guid_main(const std::vector<std::string>& cmdArgs, aww_guid_io_dependencies_interface& deps);
 } // namespace aww::internal::aww_guid
 
 #endif // AWW_GUID_HPP
