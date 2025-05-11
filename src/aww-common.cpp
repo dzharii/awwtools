@@ -1,4 +1,5 @@
 #include "aww-common.hpp"
+#include "aww-os/aww-os.hpp"
 #include <algorithm>
 #include <cctype>
 #include <fstream>
@@ -81,12 +82,10 @@ std::string to_valid_identifier(const std::string& input) {
 
 std::string trim(std::string str) {
   // Trim leading whitespace
-  str.erase(str.begin(),
-            std::find_if(str.begin(), str.end(), [](int ch) { return !std::isspace(ch); }));
+  str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](int ch) { return !std::isspace(ch); }));
 
   // Trim trailing whitespace
-  str.erase(std::find_if(str.rbegin(), str.rend(), [](int ch) { return !std::isspace(ch); }).base(),
-            str.end());
+  str.erase(std::find_if(str.rbegin(), str.rend(), [](int ch) { return !std::isspace(ch); }).base(), str.end());
 
   return str;
 }
@@ -129,39 +128,35 @@ int Proccess::run(const std::string& cmd) {
   return exitCode;
 }
 
-void Proccess::defaultStdOutCallback(std::string) {}
+void Proccess::defaultStdOutCallback(std::string) {
+}
 
-void Proccess::defaultStdErrCallback(std::string) {}
+void Proccess::defaultStdErrCallback(std::string) {
+}
 
-void Proccess::defaultExitCallback(int) {}
+void Proccess::defaultExitCallback(int) {
+}
 } // namespace aww::os
 
 namespace aww::os::env {
-aww::Result get_user_home_dir(std::filesystem::path& outHomeDir) {
-  char* homeDir = nullptr;
+std::optional<std::filesystem::path> get_aww_dot_folder(void) {
+  std::optional<std::filesystem::path> user_home_folder = aww::get_user_home_folder();
 
-  homeDir = std::getenv("HOME");
-  if (homeDir != nullptr) {
-    outHomeDir = std::filesystem::absolute(homeDir);
-    return aww::Result::ok();
+  if (!user_home_folder.has_value()) {
+    return std::nullopt;
   }
-
-  homeDir = std::getenv("USERPROFILE");
-  if (homeDir != nullptr) {
-    outHomeDir = std::filesystem::absolute(homeDir);
-    return aww::Result::ok();
-  }
-  return aww::Result::fail("Could not find user home directory");
+  return std::filesystem::absolute(user_home_folder.value() / aww::constants::AWW_TOOLS_DOT_FOLDER_NAME);
 }
 
-std::filesystem::path get_aww_dot_dir(void) {
-  std::filesystem::path homeDir;
-  aww::Result result = get_user_home_dir(homeDir);
-  if (result.is_failed()) {
-    return std::filesystem::path(); // empty path
+std::optional<std::filesystem::path> get_aww_dot_folder_aww_scripts_folder(void) {
+  std::optional<std::filesystem::path> user_home_aww_tools_folder = get_aww_dot_folder();
+
+  if (!user_home_aww_tools_folder.has_value()) {
+    return std::nullopt;
   }
-  return homeDir / ".awwtools";
+  return std::filesystem::absolute(user_home_aww_tools_folder.value() / aww::constants::AWW_SCRIPTS_FOLDER_NAME);
 }
+
 } // namespace aww::os::env
 
 namespace aww::fs {
@@ -198,18 +193,15 @@ aww::Result create_empty_file(const std::filesystem::path& path) {
     file.close();
     return aww::Result::ok();
   } catch (const std::exception& e) {
-    std::string errorMessage =
-        "Error creating file '" + path.filename().string() + "': " + e.what();
+    std::string errorMessage = "Error creating file '" + path.filename().string() + "': " + e.what();
     return aww::Result::fail(errorMessage);
   } catch (...) {
-    std::string errorMessage =
-        "Unknown error occurred while creating file '" + path.filename().string() + "'.";
+    std::string errorMessage = "Unknown error occurred while creating file '" + path.filename().string() + "'.";
     return aww::Result::fail(errorMessage);
   }
 }
 
-aww::Result read_lines(const std::filesystem::path& filePath,
-                       std::vector<std::string>& outFileLines) {
+aww::Result read_lines(const std::filesystem::path& filePath, std::vector<std::string>& outFileLines) {
   try {
     std::ifstream file(filePath);
     if (!file.is_open()) {
@@ -232,8 +224,7 @@ aww::Result read_lines(const std::filesystem::path& filePath,
   }
 }
 
-aww::Result write_lines(const std::filesystem::path& filePath,
-                        const std::vector<std::string>& lines) {
+aww::Result write_lines(const std::filesystem::path& filePath, const std::vector<std::string>& lines) {
   try {
     std::ofstream file(filePath);
     if (!file.is_open()) {

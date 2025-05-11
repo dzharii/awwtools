@@ -204,18 +204,20 @@ std::vector<fs::path> get_script_search_locations(std::string scriptName,
   return results;
 }
 
+script_search_locations get_default_script_search_locations() {
+  const fs::path currentDir = fs::absolute(fs::current_path());
+  const fs::path awwScriptsDir = fs::absolute(currentDir / aww::constants::AWW_SCRIPTS_FOLDER_NAME);
+  const fs::path awwDotScriptsDir = aww::os::env::get_aww_dot_folder_aww_scripts_folder().value_or(fs::path());
+  return script_search_locations{currentDir, awwScriptsDir, awwDotScriptsDir};
+}
+
 aww::Result find_script_windows(const std::string& scriptName, fs::path& outScriptPath) {
   // check if scriptName is not empty
   if (scriptName.empty()) {
     return aww::Result::fail("Script name is empty");
   }
 
-  const fs::path currentDir = fs::absolute(fs::current_path());
-  const fs::path awwScriptsDir = currentDir / "aww-scripts";
-  const fs::path awwDotScriptsDir = aww::os::env::get_aww_dot_dir() / "aww-scripts";
-  const fs::path awwDir = currentDir / "aww";
-
-  const script_search_locations searchLocations{currentDir, awwScriptsDir, awwDotScriptsDir, awwDir};
+  const script_search_locations searchLocations = get_default_script_search_locations();
   const script_extensions extensions{".bat", ".cmd", ".ps1", ".lua", ""};
 
   std::vector<fs::path> candidates = get_script_search_locations(scriptName, searchLocations, extensions);
@@ -233,12 +235,7 @@ aww::Result find_script_linux(const std::string& scriptName, fs::path& outScript
     return aww::Result::fail("Script name is empty");
   }
 
-  const fs::path currentDir = fs::absolute(fs::current_path());
-  const fs::path awwScriptsDir = currentDir / "aww-scripts";
-  const fs::path awwDotScriptsDir = aww::os::env::get_aww_dot_dir() / "aww-scripts";
-  const fs::path awwDir = currentDir / "aww";
-
-  const script_search_locations searchLocations{currentDir, awwScriptsDir, awwDotScriptsDir, awwDir};
+  const script_search_locations searchLocations = get_default_script_search_locations();
   const script_extensions extensions{".sh", ".ps1", ".lua", ""};
 
   std::vector<fs::path> candidates = get_script_search_locations(scriptName, searchLocations, extensions);

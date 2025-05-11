@@ -30,12 +30,16 @@ namespace aww {
 // CONSTANTS
 namespace constants {
 
-// CPMMON COMMANDLINE FLAGS
+// COMMON COMMANDLINE FLAGS
 const std::string CMD_FLAG_NO_LOGGING = "--aww-no-logging";
 const std::string CMD_FLAG_NO_NOTIFICATIONS = "--aww-no-notifications";
 // The logic of one side effect is to only output the result and do nothing else.
 // this includes CMD_FLAG_NO_LOGGING, CMD_FLAG_NO_NOTIFICATIONS, automatic clipboard copy
 const std::string CMD_FLAG_NO_SIDE_EFFECTS = "--aww-no-side-effects";
+
+// WELL KNOWN NAMES
+const std::string AWW_SCRIPTS_FOLDER_NAME = "aww-scripts";
+const std::string AWW_TOOLS_DOT_FOLDER_NAME = ".awwtools";
 
 } // namespace constants
 
@@ -142,8 +146,8 @@ aww::Result show_notification(const std::string&, const std::string&);
 } // namespace aww::os::actions
 
 namespace aww::os::env {
-aww::Result get_user_home_dir(std::filesystem::path&);
-std::filesystem::path get_aww_dot_dir(void);
+std::optional<std::filesystem::path> get_aww_dot_folder(void);
+std::optional<std::filesystem::path> get_aww_dot_folder_aww_scripts_folder(void);
 } // namespace aww::os::env
 
 namespace aww::string {
