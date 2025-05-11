@@ -23,7 +23,7 @@ int aww_date_main(const std::vector<std::string>& cmdArgs, aww_date_io_dependenc
     spdlog::set_level(spdlog::level::info); // Set desired log level
   }
 
-  std::string currentDate = deps.get_date_yyyymmdd(aww::call_tag("1rfpeonkhns"));
+  std::string currentDate = deps.get_date_yyyymmdd();
 
   std::string fileName = aww::string::join(mutableCmdArgs, "-");
   std::regex replaceFilenameUnsafeChars("[^\\._a-zA-Z0-9-]");
@@ -34,16 +34,16 @@ int aww_date_main(const std::vector<std::string>& cmdArgs, aww_date_io_dependenc
   if (!safeFileName.empty()) {
     result = result + "-" + safeFileName;
   }
-  if (deps.clipboard_set_text(result, aww::call_tag("t7svmrrhai0"))) {
+  if (deps.clipboard_set_text(result)) {
     spdlog::info("Copied to clipboard: {}", result);
 
     if (!noNotifications) {
-      deps.show_notification("aww date", "The date has been copied to the clipboard", aww::call_tag("tssis4p5ta2"));
+      deps.show_notification("aww date", "The date has been copied to the clipboard");
     }
   } else {
     spdlog::error("Failed to copy to clipboard: {}", result);
     if (!noNotifications) {
-      deps.show_notification("aww date", "Failed to copy the date to the clipboard", aww::call_tag("730v5jc2d3o"));
+      deps.show_notification("aww date", "Failed to copy the date to the clipboard");
     }
     return 1;
   }
