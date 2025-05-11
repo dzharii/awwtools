@@ -204,11 +204,12 @@ std::vector<fs::path> get_script_search_locations(std::string scriptName,
   return results;
 }
 
-script_search_locations get_default_script_search_locations() {
+const script_search_locations get_default_script_search_locations() {
   const fs::path currentDir = fs::absolute(fs::current_path());
   const fs::path awwScriptsDir = fs::absolute(currentDir / aww::constants::AWW_SCRIPTS_FOLDER_NAME);
   const fs::path awwDotScriptsDir = aww::os::env::get_aww_dot_folder_aww_scripts_folder().value_or(fs::path());
-  return script_search_locations{currentDir, awwScriptsDir, awwDotScriptsDir};
+  const script_search_locations locations{currentDir, awwScriptsDir, awwDotScriptsDir};
+  return locations;
 }
 
 aww::Result find_script_windows(const std::string& scriptName, fs::path& outScriptPath) {
