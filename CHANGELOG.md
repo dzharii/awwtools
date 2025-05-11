@@ -27,6 +27,7 @@
 
 - replaced old `get_user_home_dir` with new `get_user_home_folder` (aww tag #armgs22u42a)
 - refactor get_aww_dot_folder; introduce `get_aww_dot_folder_aww_scripts_folder`
+- added doxygen style documentation for common library
 
 
 

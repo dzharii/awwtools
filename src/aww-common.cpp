@@ -6,7 +6,7 @@
 
 namespace aww {
 /**
- * @brief Remove a flag from the arguments
+ * @brief Removes a flag from args. (aww tag #20250511a1)
  */
 bool erase_flag_from_args(std::vector<std::string>& args, const std::string& flag) {
   return aww::erase_all_matched_elements(args, flag);
@@ -14,8 +14,9 @@ bool erase_flag_from_args(std::vector<std::string>& args, const std::string& fla
 } // namespace aww
 
 namespace aww::date {
-// TODO: - 2022-10-18 [Exploring C++11, part 2 localtime and time again Kjellkod's
-// Blog](https://kjellkod.wordpress.com/2013/01/22/exploring-c11-part-2-localtime-and-time-again/)
+/**
+ * @brief Gets date as YYYY-MM-DD. (aww tag #20250511a3)
+ */
 std::string get_date_YYYYMMDD(void) {
   std::string date;
   char buff[32]{};
@@ -29,7 +30,9 @@ std::string get_date_YYYYMMDD(void) {
 } // namespace aww::date
 
 namespace aww::string {
-// 2024-10-21 renamed to join_vector (aww tag #oibw1sg0jpv)
+/**
+ * @brief Joins vector with delimiter. (aww tag #20250511ab)
+ */
 std::string join(const std::vector<std::string>& v, const std::string& delimiter) {
   // Glen Knowles - https://stackoverflow.com/a/40497964
   std::string out;
@@ -41,6 +44,9 @@ std::string join(const std::vector<std::string>& v, const std::string& delimiter
   return out;
 }
 
+/**
+ * @brief Pads string left. (aww tag #20250511ac)
+ */
 std::string left_padding(const std::string& inp, const char& padChar, const size_t& padLength) {
   const size_t inpLength = inp.length();
   if (inpLength >= padLength) {
@@ -51,6 +57,9 @@ std::string left_padding(const std::string& inp, const char& padChar, const size
   return padding + inp;
 }
 
+/**
+ * @brief Converts to uppercase. (aww tag #20250511ad)
+ */
 std::string to_upper(const std::string& inp) {
   std::string out(inp);
   for (char& c : out) {
@@ -59,6 +68,9 @@ std::string to_upper(const std::string& inp) {
   return out;
 }
 
+/**
+ * @brief Converts to lowercase. (aww tag #20250511ae)
+ */
 std::string to_lower(const std::string& inp) {
   std::string out(inp);
   for (char& c : out) {
@@ -67,6 +79,9 @@ std::string to_lower(const std::string& inp) {
   return out;
 }
 
+/**
+ * @brief Checks if string ends with suffix. (aww tag #20250511af)
+ */
 bool ends_with(const std::string& str, const std::string& suffix) {
   if (suffix.size() > str.size()) {
     return false;
@@ -74,12 +89,18 @@ bool ends_with(const std::string& str, const std::string& suffix) {
   return std::equal(suffix.rbegin(), suffix.rend(), str.rbegin());
 }
 
+/**
+ * @brief Makes valid identifier. (aww tag #20250511b0)
+ */
 std::string to_valid_identifier(const std::string& input) {
   std::string output = input;
   std::replace_if(output.begin(), output.end(), [](char c) { return !std::isalnum(c); }, '_');
   return output;
 }
 
+/**
+ * @brief Trims whitespace. (aww tag #20250511b1)
+ */
 std::string trim(std::string str) {
   // Trim leading whitespace
   str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](int ch) { return !std::isspace(ch); }));
@@ -92,27 +113,42 @@ std::string trim(std::string str) {
 } // namespace aww::string
 
 namespace aww::os {
+/**
+ * @brief Proccess constructor. (aww tag #20250511a5)
+ */
 Proccess::Proccess() {
   this->onStdOutCallback = defaultStdOutCallback;
   this->onStdErrCallback = defaultStdErrCallback;
   this->onExitCallback = defaultExitCallback;
 }
 
+/**
+ * @brief Set stdout callback. (aww tag #20250511a5a)
+ */
 Proccess& Proccess::onStdOut(std::function<void(const std::string)> callback) {
   onStdOutCallback = callback;
   return *this;
 }
 
+/**
+ * @brief Set stderr callback. (aww tag #20250511a5b)
+ */
 Proccess& Proccess::onStdErr(std::function<void(const std::string)> callback) {
   onStdErrCallback = callback;
   return *this;
 }
 
+/**
+ * @brief Set exit callback. (aww tag #20250511a5c)
+ */
 Proccess& Proccess::onExit(std::function<void(int)> callback) {
   onExitCallback = callback;
   return *this;
 }
 
+/**
+ * @brief Runs command. (aww tag #20250511a5d)
+ */
 int Proccess::run(const std::string& cmd) {
   FILE* fp = popen(cmd.c_str(), "r");
   if (fp == nullptr) {
@@ -128,17 +164,29 @@ int Proccess::run(const std::string& cmd) {
   return exitCode;
 }
 
+/**
+ * @brief Default stdout callback. (aww tag #20250511a5e)
+ */
 void Proccess::defaultStdOutCallback(std::string) {
 }
 
+/**
+ * @brief Default stderr callback. (aww tag #20250511a5f)
+ */
 void Proccess::defaultStdErrCallback(std::string) {
 }
 
+/**
+ * @brief Default exit callback. (aww tag #20250511a5g)
+ */
 void Proccess::defaultExitCallback(int) {
 }
 } // namespace aww::os
 
 namespace aww::os::env {
+/**
+ * @brief Gets .awwtools folder. (aww tag #20250511a9)
+ */
 std::optional<std::filesystem::path> get_aww_dot_folder(void) {
   std::optional<std::filesystem::path> user_home_folder = aww::get_user_home_folder();
 
@@ -148,6 +196,9 @@ std::optional<std::filesystem::path> get_aww_dot_folder(void) {
   return std::filesystem::absolute(user_home_folder.value() / aww::constants::AWW_TOOLS_DOT_FOLDER_NAME);
 }
 
+/**
+ * @brief Gets aww-scripts folder. (aww tag #20250511aa)
+ */
 std::optional<std::filesystem::path> get_aww_dot_folder_aww_scripts_folder(void) {
   std::optional<std::filesystem::path> user_home_aww_tools_folder = get_aww_dot_folder();
 
@@ -160,6 +211,9 @@ std::optional<std::filesystem::path> get_aww_dot_folder_aww_scripts_folder(void)
 } // namespace aww::os::env
 
 namespace aww::fs {
+/**
+ * @brief Gets current dir absolute path. (aww tag #20250511b3)
+ */
 aww::Result get_current_directory_absolute_path(std::filesystem::path& result) {
   try {
     result = std::filesystem::current_path();
@@ -174,6 +228,9 @@ aww::Result get_current_directory_absolute_path(std::filesystem::path& result) {
   }
 }
 
+/**
+ * @brief Checks if path is directory. (aww tag #20250511b4)
+ */
 aww::Result is_directory(const std::filesystem::path& path, bool& outIsDirectory) {
   try {
     outIsDirectory = std::filesystem::is_directory(path);
@@ -187,6 +244,9 @@ aww::Result is_directory(const std::filesystem::path& path, bool& outIsDirectory
   }
 }
 
+/**
+ * @brief Creates empty file. (aww tag #20250511b6)
+ */
 aww::Result create_empty_file(const std::filesystem::path& path) {
   try {
     std::ofstream file(path);
@@ -201,6 +261,9 @@ aww::Result create_empty_file(const std::filesystem::path& path) {
   }
 }
 
+/**
+ * @brief Reads lines from file. (aww tag #20250511b7)
+ */
 aww::Result read_lines(const std::filesystem::path& filePath, std::vector<std::string>& outFileLines) {
   try {
     std::ifstream file(filePath);
@@ -224,6 +287,9 @@ aww::Result read_lines(const std::filesystem::path& filePath, std::vector<std::s
   }
 }
 
+/**
+ * @brief Writes lines to file. (aww tag #20250511b9)
+ */
 aww::Result write_lines(const std::filesystem::path& filePath, const std::vector<std::string>& lines) {
   try {
     std::ofstream file(filePath);
@@ -246,12 +312,18 @@ aww::Result write_lines(const std::filesystem::path& filePath, const std::vector
   }
 }
 
+/**
+ * @brief Reads ASCII text file. (aww tag #20250511b8)
+ */
 std::string read_ascii_text_file(const std::filesystem::path& path) {
   std::ifstream file(path);
   std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
   return content;
 }
 
+/**
+ * @brief Normalizes file path. (aww tag #20250511ba)
+ */
 std::string normalize_file_path(const std::string& inputPath) {
   std::filesystem::path path(inputPath);
   std::filesystem::path canonicalPath = std::filesystem::weakly_canonical(path);

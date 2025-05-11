@@ -46,34 +46,51 @@ const std::string AWW_TOOLS_DOT_FOLDER_NAME = ".awwtools";
 // COLLECTIONS
 
 /**
- * @brief Remove a flag from the arguments
- * @param args The arguments to remove the flag from
- * @param flag The flag name to remove
- * @returns true if the flag was found and removed, false otherwise
+ * @brief Removes a flag from the argument list. (aww tag #20250511a1)
+ * @param args Argument list to modify.
+ * @param flag Flag to remove.
+ * @return True if flag was found and removed, false otherwise.
  */
 bool erase_flag_from_args(std::vector<std::string>& args, const std::string& flag);
 
 // RESULT
+/**
+ * @brief Represents the result of an operation. (aww tag #20250511a2)
+ */
 class Result {
 public:
-  /* Create a successful result */
+  /**
+   * @brief Creates a successful result.
+   */
   static Result ok() {
     return Result(true, std::string());
   }
 
-  /* Create a failed result */
+  /**
+   * @brief Creates a failed result with an error message.
+   * @param error Error message.
+   */
   static Result fail(const std::string& error) {
     return Result(false, error);
   }
 
+  /**
+   * @brief Checks if the result is successful.
+   */
   bool is_ok() const {
     return m_success;
   }
 
-  /* Use hasValue to check if there is an error */
+  /**
+   * @brief Checks if the result is a failure.
+   */
   bool is_failed() const {
     return !m_success;
   }
+
+  /**
+   * @brief Returns the error message.
+   */
   std::string error() const {
     return m_errorMessage;
   }
@@ -90,8 +107,9 @@ private:
 
 namespace aww::date {
 
-/** Get the current date in YYYY-MM-DD format
- * @return Date string
+/**
+ * @brief Gets the current date in YYYY-MM-DD format. (aww tag #20250511a3)
+ * @return Date string.
  */
 std::string get_date_YYYYMMDD(void);
 } // namespace aww::date
@@ -113,18 +131,45 @@ const Platform OSPlatform = Platform::Linux;
 const Platform OSPlatform = Platform::Unknown;
 #endif
 
-/** Check if file is executable
- * Returns false if file does not exist
- * @returns true if file is executable
+/**
+ * @brief Checks if a file is executable. (aww tag #20250511a4)
+ * @param path File path.
+ * @return True if executable, false otherwise.
  */
 bool can_execute(const std::filesystem::path& path);
 
+/**
+ * @brief Represents a process for command execution. (aww tag #20250511a5)
+ */
 class Proccess {
 public:
+  /**
+   * @brief Constructs a Proccess object.
+   */
   Proccess();
+  /**
+   * @brief Sets the callback for stdout.
+   * @param Callback function.
+   * @return Reference to this object.
+   */
   Proccess& onStdOut(std::function<void(const std::string)>);
+  /**
+   * @brief Sets the callback for stderr.
+   * @param Callback function.
+   * @return Reference to this object.
+   */
   Proccess& onStdErr(std::function<void(const std::string)>);
+  /**
+   * @brief Sets the callback for process exit.
+   * @param Callback function.
+   * @return Reference to this object.
+   */
   Proccess& onExit(std::function<void(int)>);
+  /**
+   * @brief Runs the given command.
+   * @param Command string.
+   * @return Exit code.
+   */
   int run(const std::string&);
 
 private:
@@ -137,52 +182,166 @@ private:
   static void defaultExitCallback(int);
 };
 
+/**
+ * @brief Gets the command line arguments. (aww tag #20250511a6)
+ * @return List of arguments.
+ */
 std::vector<std::string> get_command_line_args(void);
 } // namespace aww::os
 
 namespace aww::os::actions {
+/**
+ * @brief Launches a file using the OS default handler. (aww tag #20250511a7)
+ * @param path File path.
+ * @return Result of the operation.
+ */
 aww::Result launch_file(const std::string&);
+/**
+ * @brief Shows a system notification. (aww tag #20250511a8)
+ * @param title Notification title.
+ * @param message Notification message.
+ * @return Result of the operation.
+ */
 aww::Result show_notification(const std::string&, const std::string&);
 } // namespace aww::os::actions
 
 namespace aww::os::env {
+/**
+ * @brief Gets the .awwtools folder path. (aww tag #20250511a9)
+ * @return Path if found.
+ */
 std::optional<std::filesystem::path> get_aww_dot_folder(void);
+/**
+ * @brief Gets the aww-scripts folder path inside .awwtools. (aww tag #20250511aa)
+ * @return Path if found.
+ */
 std::optional<std::filesystem::path> get_aww_dot_folder_aww_scripts_folder(void);
 } // namespace aww::os::env
 
 namespace aww::string {
+/**
+ * @brief Joins a vector of strings with a delimiter. (aww tag #20250511ab)
+ * @param v Vector of strings.
+ * @param delimiter Delimiter string.
+ * @return Joined string.
+ */
 std::string join(const std::vector<std::string>&, const std::string&);
+/**
+ * @brief Pads a string on the left. (aww tag #20250511ac)
+ * @param inp Input string.
+ * @param padChar Padding character.
+ * @param padLength Total length after padding.
+ * @return Padded string.
+ */
 std::string left_padding(const std::string&, const char&, const size_t&);
+/**
+ * @brief Converts a string to uppercase. (aww tag #20250511ad)
+ * @param inp Input string.
+ * @return Uppercase string.
+ */
 std::string to_upper(const std::string&);
+/**
+ * @brief Converts a string to lowercase. (aww tag #20250511ae)
+ * @param inp Input string.
+ * @return Lowercase string.
+ */
 std::string to_lower(const std::string&);
+/**
+ * @brief Checks if a string ends with a suffix. (aww tag #20250511af)
+ * @param str Input string.
+ * @param suffix Suffix string.
+ * @return True if ends with suffix.
+ */
 bool ends_with(const std::string& str, const std::string& suffix);
+/**
+ * @brief Converts a string to a valid identifier. (aww tag #20250511b0)
+ * @param input Input string.
+ * @return Valid identifier string.
+ */
 std::string to_valid_identifier(const std::string& input);
+/**
+ * @brief Trims whitespace from both ends of a string. (aww tag #20250511b1)
+ * @param str Input string.
+ * @return Trimmed string.
+ */
 std::string trim(std::string str);
 } // namespace aww::string
 
 namespace aww::fs {
+/**
+ * @brief Gets the current executable path. (aww tag #20250511b2)
+ * @return Executable path.
+ */
 std::filesystem::path get_current_executable_path(void);
 
+/**
+ * @brief Gets the absolute path of the current directory. (aww tag #20250511b3)
+ * @param path Output path.
+ * @return Result of the operation.
+ */
 aww::Result get_current_directory_absolute_path(std::filesystem::path& path);
 
+/**
+ * @brief Checks if a path is a directory. (aww tag #20250511b4)
+ * @param path Path to check.
+ * @param outIsDirectory Output boolean.
+ * @return Result of the operation.
+ */
 aww::Result is_directory(const std::filesystem::path& path, bool& outIsDirectory);
 
+/**
+ * @brief Creates directories recursively. (aww tag #20250511b5)
+ * @param path Directory path.
+ * @return Result of the operation.
+ */
 aww::Result create_directories(const std::filesystem::path& path);
 
+/**
+ * @brief Creates an empty file. (aww tag #20250511b6)
+ * @param path File path.
+ * @return Result of the operation.
+ */
 aww::Result create_empty_file(const std::filesystem::path& path);
 
+/**
+ * @brief Reads all lines from a file. (aww tag #20250511b7)
+ * @param filePath File path.
+ * @param outFileLines Output lines.
+ * @return Result of the operation.
+ */
 aww::Result read_lines(const std::filesystem::path& filePath, std::vector<std::string>& outFileLines);
 
+/**
+ * @brief Reads an ASCII text file. (aww tag #20250511b8)
+ * @param path File path.
+ * @return File contents as string.
+ */
 std::string read_ascii_text_file(const std::filesystem::path&);
 
+/**
+ * @brief Writes lines to a file. (aww tag #20250511b9)
+ * @param filePath File path.
+ * @param lines Lines to write.
+ * @return Result of the operation.
+ */
 aww::Result write_lines(const std::filesystem::path& filePath, const std::vector<std::string>& lines);
 
+/**
+ * @brief Normalizes a file path. (aww tag #20250511ba)
+ * @param inputPath Input path string.
+ * @return Normalized path string.
+ */
 std::string normalize_file_path(const std::string&);
 } // namespace aww::fs
 
 namespace aww::util {
+/**
+ * @brief Generates a GUID string. (aww tag #20250511bb)
+ * @param out Output GUID string.
+ * @return Result of the operation.
+ */
 aww::Result get_guid(std::string&);
-}
+} // namespace aww::util
 
 namespace aww::draw {
 class RgbaColor {

@@ -11,7 +11,9 @@
 #include "wintoastlib.h"
 
 namespace aww::os {
-
+/**
+ * @brief Checks if file is executable. (aww tag #20250511d1)
+ */
 bool can_execute(const std::filesystem::path& path) {
   const std::string fileExtension = path.extension().string();
   // fileExtension to lower case
@@ -23,6 +25,9 @@ bool can_execute(const std::filesystem::path& path) {
   return isExecutable;
 }
 
+/**
+ * @brief Gets command line args. (aww tag #20250511d2)
+ */
 std::vector<std::string> get_command_line_args(void) {
   int argc;
   LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
@@ -55,6 +60,9 @@ std::vector<std::string> get_command_line_args(void) {
 } // namespace aww::os
 
 namespace aww::os::actions {
+/**
+ * @brief Launches file with OS handler. (aww tag #20250511d3)
+ */
 aww::Result launch_file(const std::string& path) {
   // Check if the path is empty
   if (path.empty()) {
@@ -118,6 +126,9 @@ public:
   }
 };
 
+/**
+ * @brief Shows system notification. (aww tag #20250511d4)
+ */
 aww::Result show_notification(const std::string& title, const std::string& message) {
   // check title is null
   if (title.empty()) {
@@ -158,6 +169,9 @@ aww::Result show_notification(const std::string& title, const std::string& messa
 } // namespace aww::os::actions
 
 namespace aww::fs {
+/**
+ * @brief Gets current executable path. (aww tag #20250511d5)
+ */
 std::filesystem::path get_current_executable_path(void) {
   char buffer[MAX_PATH];
   DWORD nchar;
@@ -170,6 +184,9 @@ std::filesystem::path get_current_executable_path(void) {
 } // namespace aww::fs
 
 namespace aww::util {
+/**
+ * @brief Generates GUID string. (aww tag #20250511d6)
+ */
 aww::Result get_guid(std::string& out) {
   GUID guid;
   HRESULT hres = CoCreateGuid(&guid);
