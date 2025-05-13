@@ -23,19 +23,18 @@
 
 # aww-tools changelog
 
+## 2025-05-13
+
+- [ ] added `recommendations-01.md` with agentic review from Gemini 2.5 Pro for CMakeLists.txt with improvement suggestions
+- [ ] added `recommendations-02.md` with agentic review from GPT-o4-mini for CMakeLists.txt with improvement suggestions
+
 ## 2025-05-11
 
 - replaced old `get_user_home_dir` with new `get_user_home_folder` (aww tag #armgs22u42a)
 - refactor get_aww_dot_folder; introduce `get_aww_dot_folder_aww_scripts_folder`
 - added doxygen style documentation for common library
 
-
-
-
-
 Good bye, CallTag
-
-
 
 ```cpp
 // CallTag struct definition
@@ -59,9 +58,7 @@ template <size_t N> constexpr call_tag_t call_tag(const char (&str)[N]) {
 
 ```
 
-Removed. Reason -- not useful, I will replace it with simpler logging statement. 
-
-
+Removed. Reason -- not useful, I will replace it with simpler logging statement.
 
 ## 2025-05-10
 
@@ -70,8 +67,6 @@ Removed. Reason -- not useful, I will replace it with simpler logging statement.
 This how it looked before when I opened md file from TUI Far Manager:
 
 ![image-20250510133645349](CHANGELOG.assets/image-20250510133645349.png)
-
-
 
 ## 2025-04-24 💡 graphical launcher for aww suite
 
@@ -95,13 +90,11 @@ When you run the **“aww”** command with no parameters and mistype a subcomma
 
 🚩 **2025-05-10 Update**: This is kinda funny, how would I implement this without adding confusion?
 
-So I don't want to put all this GUI functionality in `aww.exe` and want to keep it dead simple console app. 
+So I don't want to put all this GUI functionality in `aww.exe` and want to keep it dead simple console app.
 
-This means, `aww.exe` in case it did not find a valid aww tool, should launch the GUI launcher and terminate, passing the control to the child process. 
+This means, `aww.exe` in case it did not find a valid aww tool, should launch the GUI launcher and terminate, passing the control to the child process.
 
-How do I name this GUI launcher? `laww`?  (like Love) `waaw` (windows aww) or `awww`? `aww-launch` ? I believe aww launch would be the most confusing, since I already have `aww run` and `aww open` I am considering merging 🚩 `aww run` and `aww open` together in future. 
-
-
+How do I name this GUI launcher? `laww`? (like Love) `waaw` (windows aww) or `awww`? `aww-launch` ? I believe aww launch would be the most confusing, since I already have `aww run` and `aww open` I am considering merging 🚩 `aww run` and `aww open` together in future.
 
 ## 2025-03-29 logging refactor
 
