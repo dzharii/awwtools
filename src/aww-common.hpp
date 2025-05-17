@@ -11,6 +11,7 @@
 #include <ctime>
 #include <filesystem>
 #include <functional>
+#include <optional>
 #include <stdexcept>
 #include <stdlib.h>
 #include <string_view>

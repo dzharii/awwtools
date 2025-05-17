@@ -29,6 +29,11 @@ cmake-b.cmd
 ## cmake alternative:
 # sudo snap install cmake --classic
 # Install all dependencies
+# Ubuntu 24: sudo apt-get install libwebkit2gtk-4.0
+# Enable the universe repository and update package lists
+# sudo add-apt-repository universe
+# sudo apt update
+# sudo apt install libwebkit2gtk-4.1-dev
 sudo apt update && sudo apt install -y build-essential git cmake libgtk-3-dev libwebkit2gtk-4.0-dev
 
 # Clone and build the project
