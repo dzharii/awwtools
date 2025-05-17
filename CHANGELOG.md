@@ -23,6 +23,10 @@
 
 # aww-tools changelog
 
+## 2025-05-16
+
+added dev_setup/dev_setup.md
+
 ## 2025-05-13
 
 - [ ] added `recommendations-01.md` with agentic review from Gemini 2.5 Pro for CMakeLists.txt with improvement suggestions

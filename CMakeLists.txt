@@ -103,6 +103,7 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/dzharii/awwlib-cpp.git
     GIT_TAG        dmytro_zharii/2024-10-13-dev
     GIT_SHALLOW TRUE
+    CMAKE_ARGS -DAWWLIB_BUILD_TESTS=OFF -DAWWLIB_BUILD_EXAMPLES=OFF
 )
 
 FetchContent_MakeAvailable(awwlib)
