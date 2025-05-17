@@ -26,6 +26,8 @@ cmake-b.cmd
 ### Linux (Ubuntu)
 
 ```bash
+## cmake alternative:
+# sudo snap install cmake --classic
 # Install all dependencies
 sudo apt update && sudo apt install -y build-essential git cmake libgtk-3-dev libwebkit2gtk-4.0-dev
 
