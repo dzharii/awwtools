@@ -23,6 +23,12 @@
 
 # aww-tools changelog
 
+## 2025-05-25 add "notes.lua"
+
+`awwtools/documentation/lua-samples/notes.lua`
+Updated notes.lua to skip the first command-line argument, validate that user input exists (erroring if not), 
+generate an ISO-formatted timestamp, create or prepend entries in notes.md
+
 ## 2025-05-16
 
 added dev_setup/dev_setup.md
