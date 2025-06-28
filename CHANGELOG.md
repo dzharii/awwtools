@@ -23,6 +23,22 @@
 
 # aww-tools changelog
 
+## 2025-06-28 Doc -- add task scoped command wrappers doc -- awwscript
+
+`documentation` :: `task_scoped_command_wrappers_manual`
+
+```
+    examples.ps1
+    examples.py
+    examples.sh
+    task_scoped_bash_command_wrappers_manual.md
+    task_scoped_command_wrappers_manual_index.md
+    task_scoped_powershell_command_wrappers_manual.md
+    task_scoped_python_command_wrappers_manual.md
+
+```
+
+
 ## 2025-05-25 add "notes.lua"
 
 `awwtools/documentation/lua-samples/notes.lua`
