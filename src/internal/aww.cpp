@@ -16,7 +16,7 @@
 #include "internal/aww-run.hpp"
 #include "internal/aww-stuff.hpp"
 #include "internal/aww-tag.hpp"
-#include "internal/aww-tee.hpp"
+
 #include "internal/aww-term.hpp"
 #include "internal/aww-toast.hpp"
 
@@ -33,7 +33,7 @@ enum class aww_tool {
   toast,
   api,
   stuff,
-  tee,
+  
 };
 
 aww_tool get_aww_tool_by_name(const std::string& aww_tool_name) {
@@ -61,8 +61,7 @@ aww_tool get_aww_tool_by_name(const std::string& aww_tool_name) {
     return aww_tool::api;
   } else if (aww_tool_name_lower == "aww-stuff") {
     return aww_tool::stuff;
-  } else if (aww_tool_name_lower == "aww-tee") {
-    return aww_tool::tee;
+  
   }
   return aww_tool::none;
 }
@@ -137,10 +136,7 @@ int aww_main(const std::vector<std::string>& cmd_args) {
       aww::internal::aww_stuff::aww_stuff_io_dependencies deps;
       return aww::internal::aww_stuff::aww_stuff_main(commandline_args, deps);
     }
-    case aww_tool::tee: {
-      aww::internal::aww_tee::aww_tee_io_dependencies deps;
-      return aww::internal::aww_tee::aww_tee_main(commandline_args, deps);
-    }
+    
     default: {
       std::cerr << "No aww executable found\n";
       return 1;

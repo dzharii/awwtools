@@ -23,6 +23,45 @@
 
 # aww-tools changelog
 
+
+
+## 2025-07-04
+
+OMG, I have remove `aww-tee`
+
+
+
+## 2025-07-04 Remove WebView and A-W-A-T Command
+
+`removed` :: `webview`, `aww-tee`
+
+After several integration attempts, I’ve decided to remove the `webview` dependency and the command `aww-tee` , which was heavily reliant on it.
+
+**Why**?
+
+The primary reason is security and control. I realized that communicating between C++ and the WebView using `webview.eval()` and `.bind()`is fundamentally unreliable. The design became increasingly fragile as I attempted to pass messages into the WebView and back out into the C++ application.
+
+I considered setting up an HTTP server for bidirectional communication between C++ and WebView, but that turned out to be too complex — and more importantly — potentially dangerous. This setup would allow JavaScript running inside WebView to invoke C++ functions, which, given that WebView can load arbitrary external websites, could be exploited maliciously. I didn’t want to risk any untrusted input (e.g. URLs, injected JS, etc.) eventually bridging into my native code.
+
+Fortunately, technical issues made the communication brittle enough that this pathway didn’t mature into a stable interface — otherwise I might’ve ended up with a subtle security hole.
+
+**Thoughts**
+
+This was not a failure, but a lesson. I’ve tried integrating `webview/webview`into this project a few times now, and while I still think it’s an incredible project — and fun to work with when it’s the right fit — it just doesn’t belong here *right now*. I’m going to keep it on my radar for the future, but I’m hitting pause on this track.
+
+Next steps might involve experimenting with `wxWidgets`, building my own minimal Windows UI layer, or even sticking with a terminal-based UI for now.
+
+**Summary**
+
+- Deleted `webview` from `CMakeLists.txt` and GitHub Actions
+- Removed `aww-tee` executable and source files
+- Removed routing and tool logic related to `aww-tee`
+- Archived the relevant code under `dead_code/` for future reference
+
+This was an interesting and educational experiment — I’m glad I tried it.
+
+
+
 ## 2025-06-28 Doc -- add task scoped command wrappers doc -- awwscript
 
 `documentation` :: `task_scoped_command_wrappers_manual`

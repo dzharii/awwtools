@@ -52,7 +52,7 @@ set(SOURCES          # All .cpp files in src/
     src/internal/aww-toast.cpp
     src/internal/aww-api.cpp
     src/internal/aww-stuff.cpp
-    src/internal/aww-tee.cpp
+    
     #nf78vfbcr2j new aww tool? add sources here!
     src/internal/aww.cpp
 )
@@ -109,12 +109,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(awwlib)
 
 
-## webview
-FetchContent_Declare(
-    webview
-    GIT_REPOSITORY https://github.com/webview/webview
-    GIT_TAG 0.12.0)
-FetchContent_MakeAvailable(webview)
+
 
 ## nlohmann_json
 FetchContent_Declare(
@@ -145,7 +140,7 @@ FetchContent_MakeAvailable(spdlog)
 
 target_link_libraries(
     ${LIBRARY_NAME} PUBLIC
-    webview::core
+    
     awwlib
     doctest
     clip
@@ -244,11 +239,7 @@ target_link_libraries(aww-stuff PRIVATE ${LIBRARY_NAME})  # Link the executable 
 target_set_warnings(aww-stuff ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(aww-stuff optimized)  # enable link-time-optimization if available for non-debug configurations
 
-## aww-tee
-add_executable(aww-tee app/aww-tee.cpp)   # Name of exec. and location of file.
-target_link_libraries(aww-tee PRIVATE ${LIBRARY_NAME} webview::core)  # Link the executable to library (if it uses it).
-target_set_warnings(aww-tee ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
-target_enable_lto(aww-tee optimized)  # enable link-time-optimization if available for non-debug configurations
+
 
 #fia2wwtog0r new aww tool? add entry here!
 
@@ -267,7 +258,7 @@ set(PROJECTS
     aww-tag
     aww-api
     aww-stuff
-    aww-tee
+    
     #9x1eam6faab new aww tool? add entry here!
 )
 
