@@ -36,4 +36,4 @@
 *.x
 
 # Build directory
-build/
+build*/
