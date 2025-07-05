@@ -118,17 +118,19 @@ jobs:
         # Copy Windows binaries only
         if [ -d "build-artifacts-windows-msvc" ]; then
           echo "Found Windows artifacts"
-          mkdir -p release-files/windows
-          cp -r build-artifacts-windows-msvc/* release-files/windows/
+          # Copy entire directory structure
+          cp -r build-artifacts-windows-msvc/* release-files/
+          # Delete logs folder if it exists
+          rm -rf release-files/bin/logs
         else
           echo "Warning: No Windows artifacts found"
         fi
 
         # Create Windows binary archive only if directory exists and contains files
-        if [ -d "release-files/windows" ] && [ "$(ls -A release-files/windows)" ]; then
+        if [ -d "release-files/bin" ] && [ "$(ls -A release-files/bin)" ]; then
           echo "Creating Windows binary archive"
           cd release-files
-          zip -r ../awwtools-${{ steps.get_version.outputs.version }}-windows-x64-binaries.zip windows/
+          zip -r ../awwtools-${{ steps.get_version.outputs.version }}-windows-x64-binaries.zip bin/
           cd ..
         else
           echo "Skipping Windows binary archive - no files found"
@@ -149,7 +151,7 @@ jobs:
         body: |
           ## AwwTools Release ${{ steps.get_version.outputs.version }}
 
-          **Release Date:** $(date -u +"%Y-%m-%d %H:%M UTC")
+          **Release Date:** ${{ github.event.head_commit.timestamp }}
 
           ### Contents:
           - 📦 **Source Code**: Complete source code archive

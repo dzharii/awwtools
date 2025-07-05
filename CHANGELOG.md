@@ -25,6 +25,14 @@
 
 
 
+## 2025-07-04
+
+Added binary releases for Windows, because compiling on windows is very challenging. 
+
+![image-20250704233912617](CHANGELOG.assets/image-20250704233912617.png)
+
+
+
 ## 2025-07-04 Remove WebView and att-tee
 
 `removed` :: `webview`, `aww-tee`
