@@ -106,18 +106,9 @@ jobs:
     - name: Create release archive
       if: steps.check_tag.outputs.exists == 'false'
       run: |
-        # Create source code archive first (before creating release-files)
+        # Create source code archive using git archive (avoids file change issues)
         echo "Creating source code archive"
-        tar -czf awwtools-${{ steps.get_version.outputs.version }}-source.tar.gz \
-          --exclude='build-artifacts-*' \
-          --exclude='release-files' \
-          --exclude='.git' \
-          --exclude='.github' \
-          --exclude='*.pdb' \
-          --exclude='*.ilk' \
-          --exclude='*.obj' \
-          --exclude='*.exe' \
-          .
+        git archive --format=tar.gz --prefix=awwtools/ HEAD > awwtools-${{ steps.get_version.outputs.version }}-source.tar.gz
 
         mkdir -p release-files
 
