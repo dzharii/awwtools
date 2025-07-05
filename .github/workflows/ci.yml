@@ -87,16 +87,12 @@ jobs:
     - name: Download all artifacts
       uses: actions/download-artifact@v4
 
-    - name: Extract version from CMakeLists.txt
+    - name: Generate release tag from current date
       id: get_version
       run: |
-        VERSION=$(grep -Po 'project\(AwwTools VERSION \K[0-9]+\.[0-9]+\.[0-9]+' CMakeLists.txt)
-        if [ -z "$VERSION" ]; then
-          echo "Error: Could not extract version from CMakeLists.txt"
-          exit 1
-        fi
-        echo "version=v$VERSION" >> $GITHUB_OUTPUT
-        echo "Extracted version: v$VERSION"
+        TAG=$(date -u +"%Y.%m.%d.%H.%M")
+        echo "version=$TAG" >> $GITHUB_OUTPUT
+        echo "Generated tag: $TAG"
 
     - name: Check if tag exists
       id: check_tag
@@ -110,6 +106,19 @@ jobs:
     - name: Create release archive
       if: steps.check_tag.outputs.exists == 'false'
       run: |
+        # Create source code archive first (before creating release-files)
+        echo "Creating source code archive"
+        tar -czf awwtools-${{ steps.get_version.outputs.version }}-source.tar.gz \
+          --exclude='build-artifacts-*' \
+          --exclude='release-files' \
+          --exclude='.git' \
+          --exclude='.github' \
+          --exclude='*.pdb' \
+          --exclude='*.ilk' \
+          --exclude='*.obj' \
+          --exclude='*.exe' \
+          .
+
         mkdir -p release-files
 
         # List downloaded artifacts for debugging
@@ -124,60 +133,18 @@ jobs:
           echo "Warning: No Windows artifacts found"
         fi
 
-        # Create source code archive (exclude build directories and git)
-        echo "Creating source code archive"
-        tar -czf awwtools-${{ steps.get_version.outputs.version }}-source.tar.gz \
-          --exclude='build-*' \
-          --exclude='.git' \
-          --exclude='.github' \
-          --exclude='*.pdb' \
-          --exclude='*.ilk' \
-          --exclude='*.obj' \
-          --exclude='*.exe' \
-          .
-
         # Create Windows binary archive only if directory exists and contains files
-        cd release-files
-        if [ -d "windows" ] && [ "$(ls -A windows)" ]; then
+        if [ -d "release-files/windows" ] && [ "$(ls -A release-files/windows)" ]; then
           echo "Creating Windows binary archive"
+          cd release-files
           zip -r ../awwtools-${{ steps.get_version.outputs.version }}-windows-x64-binaries.zip windows/
+          cd ..
         else
           echo "Skipping Windows binary archive - no files found"
         fi
 
         # List created files
-        cd ..
         ls -la awwtools-* || echo "No archives created"
-
-    - name: Extract changelog for current version
-      if: steps.check_tag.outputs.exists == 'false'
-      id: changelog
-      run: |
-        # Create a simple changelog from recent commits
-        echo "## Changes in ${{ steps.get_version.outputs.version }}" > current_changelog.md
-        echo "" >> current_changelog.md
-
-        # Get commits since last tag, or since 1 month ago if no tags exist
-        LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-        if [ -n "$LAST_TAG" ]; then
-          echo "Changes since $LAST_TAG:" >> current_changelog.md
-          git log --oneline "$LAST_TAG"..HEAD --pretty=format:"- %s" >> current_changelog.md
-        else
-          echo "Recent changes:" >> current_changelog.md
-          git log --oneline --since="1 month ago" --pretty=format:"- %s" >> current_changelog.md
-        fi
-
-        # Ensure we have at least some content
-        if [ ! -s current_changelog.md ]; then
-          echo "- Initial release" >> current_changelog.md
-        fi
-
-        # Read the changelog content
-        {
-          echo 'CHANGELOG<<EOF'
-          cat current_changelog.md
-          echo EOF
-        } >> $GITHUB_OUTPUT
 
     - name: Create Release
       if: steps.check_tag.outputs.exists == 'false'
@@ -188,7 +155,16 @@ jobs:
       with:
         tag_name: ${{ steps.get_version.outputs.version }}
         name: AwwTools ${{ steps.get_version.outputs.version }}
-        body: ${{ steps.changelog.outputs.CHANGELOG }}
+        body: |
+          ## AwwTools Release ${{ steps.get_version.outputs.version }}
+
+          **Release Date:** $(date -u +"%Y-%m-%d %H:%M UTC")
+
+          ### Contents:
+          - 📦 **Source Code**: Complete source code archive
+          - 🖥️ **Windows x64 Binaries**: Ready-to-run executables for Windows
+
+          Build from commit: ${{ github.sha }}
         draft: false
         prerelease: false
         files: |
