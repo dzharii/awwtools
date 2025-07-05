@@ -8,13 +8,14 @@
 #include <string>
 
 #include "aww-common.hpp"
+#include "aww-spdlog-configuration.hpp"
 #include "internal/aww-git-open.hpp"
 
 namespace aww::internal::aww_git_open {
 namespace fs = std::filesystem;
 
-int aww_git_open_main(const std::vector<std::string>& cmdArgs,
-                      aww_git_open_io_dependencies_interface& deps) {
+int aww_git_open_main(const std::vector<std::string>& cmdArgs, aww_git_open_io_dependencies_interface& deps) {
+  init_default_spdlog_configuration("aww-git-open");
   if (cmdArgs.size() > 1) {
     std::cout << "Too many arguments provided"
               << "\n";
@@ -102,8 +103,7 @@ int aww_git_open_main(const std::vector<std::string>& cmdArgs,
   if (!optionalPathAbsolute.empty()) {
     std::string webPath;
 
-    if (aww::Result res = get_relative_url_path(gitRepoAbsolute, optionalPathAbsolute, webPath);
-        res.is_failed()) {
+    if (aww::Result res = get_relative_url_path(gitRepoAbsolute, optionalPathAbsolute, webPath); res.is_failed()) {
       std::cout << "Failed to convert path to web url" << res.error() << "\n";
       return 1;
     }
@@ -123,8 +123,7 @@ int aww_git_open_main(const std::vector<std::string>& cmdArgs,
   return 0;
 }
 
-aww::Result get_relative_url_path(const fs::path& parentAbsPath, const fs::path& childAbsPath,
-                                  std::string& result) {
+aww::Result get_relative_url_path(const fs::path& parentAbsPath, const fs::path& childAbsPath, std::string& result) {
   std::string parentPathStr = parentAbsPath.string();
   std::string childPathStr = childAbsPath.string();
   if (childPathStr.find(parentPathStr) != 0) {
@@ -158,10 +157,8 @@ aww::Result try_find_repository_url_in_git_config(const std::vector<std::string>
   }
 
   // Find url = entry
-  auto urlIter =
-      std::find_if(gitConfigLines.begin(), gitConfigLines.end(), [](const std::string& line) {
-        return line.find("url = ") != std::string::npos;
-      });
+  auto urlIter = std::find_if(gitConfigLines.begin(), gitConfigLines.end(),
+                              [](const std::string& line) { return line.find("url = ") != std::string::npos; });
 
   if (urlIter == gitConfigLines.end()) {
     return aww::Result::fail("Configuration entry for remote origin url was not found");
@@ -209,16 +206,14 @@ bool try_convert_to_git_url(const std::string& inputUrl, std::string& httpUrl) {
     const std::string project = match[2];
     const std::string repo = match[3];
 
-    httpUrl =
-        "https://" + user + ".visualstudio.com/DefaultCollection/" + project + "/_git/" + repo;
+    httpUrl = "https://" + user + ".visualstudio.com/DefaultCollection/" + project + "/_git/" + repo;
 
     return true;
   }
   return false;
 }
 
-bool find_git_repo(const fs::path& dirPath, fs::path& gitRepoPath,
-                   aww_git_open_io_dependencies_interface& deps) {
+bool find_git_repo(const fs::path& dirPath, fs::path& gitRepoPath, aww_git_open_io_dependencies_interface& deps) {
   std::cout << "Searching for git repo in: " << dirPath << "\n";
   fs::path currentDir(dirPath);
   fs::path gitPath = currentDir / ".git";

@@ -1,9 +1,18 @@
 # The Plan
 
+
+
+2024-12-10 webview popup
+
+![image-20241210154240311](TODO.assets/image-20241210154240311.png)
+
+
+
 2023-07-04 aww app: final thoughts:
 
 aww app should a user interface, that can be configured to run bash or powershell scripts. 
 aww app can perform basic operations, like:
+
  - capturing and dispalaying the propgram output and errors
  - passing arguments to the script
  - execure scrript in a batch
@@ -14,17 +23,15 @@ the actions must be initiated by the user.
 before executing script, aww app sets the ENVIRONMENT VARIABLE aww-app=1
 Think about aww-app as an advanced browser based console. 
 
-
 2023-02-25 aww calendar
 The best calendar in the world!
 
-
 2023-02-17 TODO: aww TAG DONE
-
 
 2023-02-17 DONE
 I am not going to replace aww::result_t everywhere, but instead
 create aww::Result and partially try it in aww::create.
+
 ```cpp
   template<typename T>
   class Result {
@@ -270,6 +277,8 @@ and execute template:
 
 ## aww run!
 
+- [X] Implement Lua arg support 2024-12-26 [interactive lua: command line arguments - Stack Overflow](https://stackoverflow.com/questions/2945819/interactive-lua-command-line-arguments) {stackoverflow.com}. See **./lua-samples/argy.lua**
+  
 - [ ] Can I show UI banner with progress? The script outputs some data, and that updates UI banner with progress. Configuration profiles per 
   process. Profiles in lua? 
 

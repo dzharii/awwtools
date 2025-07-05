@@ -6,6 +6,3 @@
 > patreon: mohabouje
 > custom: https://paypal.me/mohabouje
 
-- MIT 2022-11-06 [webview/webview: Tiny cross-platform webview library for C/C++/Golang. Uses WebKit Gtk/Cocoa and Edge Windows](https://github.com/webview/webview)
-> Copyright (c) 2017 Serge Zaitsev
-> Copyright (c) 2022 Steffen André Langnes

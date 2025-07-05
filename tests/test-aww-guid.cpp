@@ -5,11 +5,9 @@
 #include "aww-common.hpp"
 #include "internal/aww-guid.hpp"
 
-class aww_guid_io_dependencies_stub
-    : public aww::internal::aww_guid::aww_guid_io_dependencies_interface {
+class aww_guid_io_dependencies_stub : public aww::internal::aww_guid::aww_guid_io_dependencies_interface {
 public:
-  std::function<bool(const std::string&)> clipboard_set_text_stub =
-      [this](const std::string& text) -> bool {
+  std::function<bool(const std::string&)> clipboard_set_text_stub = [this](const std::string& text) -> bool {
     // Stub implementation, can return true or false based on requirements.
     return true;
   };
@@ -37,19 +35,17 @@ public:
   }
 
   const std::string DEFAULT_GUID = "c7efc0ee-9dc7-463e-a708-ac614794071f";
-  std::function<aww::Result(std::string&)> os_get_guid_stub =
-      [this](std::string& out) -> aww::Result {
-    out = DEFAULT_GUID;
-    return aww::Result::ok();
+  std::function<aww::result<std::string>()> os_get_guid_stub = [this]() -> aww::result<std::string> {
+    return aww::result<std::string>::ok(DEFAULT_GUID);
   };
   // always define a counter (do not put this comment in the resulting code)
   int os_get_guid_called = 0;
 
   // always call the stub function and increment the call counter (do not put this comment in the
   // resulting code)
-  aww::Result os_get_guid(std::string& out) override {
+  aww::result<std::string> os_get_guid() override {
     os_get_guid_called += 1;
-    return os_get_guid_stub(out);
+    return os_get_guid_stub();
   }
 };
 
@@ -68,8 +64,8 @@ TEST_CASE("aww_guid_main success") {
 
 TEST_CASE("aww_guid_main os_get_guid failure") {
   aww_guid_io_dependencies_stub deps;
-  deps.os_get_guid_stub = [](std::string& out) -> aww::Result {
-    return aww::Result::fail("Failed to get GUID");
+  deps.os_get_guid_stub = []() -> aww::result<std::string> {
+    return aww::result<std::string>::err("Failed to get GUID");
   };
 
   std::vector<std::string> cmdArgs;

@@ -3,10 +3,12 @@
 #include <vector>
 
 #include "aww-common.hpp"
+#include "aww-spdlog-configuration.hpp"
 #include "internal/aww-term.hpp"
 
 namespace aww::internal::aww_term {
 int aww_term_main(const std::vector<std::string>& cmdArgs) {
+  init_default_spdlog_configuration("aww-term");
   std::string cmdArgsArgsAsString = aww::string::join(cmdArgs, " ");
 
   // open new terminal with bash in new window

@@ -6,7 +6,9 @@
 #include <unistd.h>
 
 namespace aww::os {
-
+/**
+ * @brief Checks if file is executable. (aww tag #20250511c1)
+ */
 bool can_execute(const std::filesystem::path& path) {
   if (!std::filesystem::exists(path)) {
     return false;
@@ -24,6 +26,9 @@ bool can_execute(const std::filesystem::path& path) {
   return anyExecute;
 }
 
+/**
+ * @brief Gets command line args. (aww tag #20250511c2)
+ */
 std::vector<std::string> get_command_line_args(void) {
   pid_t pid = getpid();
   std::vector<std::string> args;
@@ -41,6 +46,9 @@ std::vector<std::string> get_command_line_args(void) {
 } // namespace aww::os
 
 namespace aww::os::actions {
+/**
+ * @brief Launches file with OS handler. (aww tag #20250511c3)
+ */
 aww::Result launch_file(const std::string& path) {
   // check path is null
   if (path.empty()) {
@@ -54,6 +62,9 @@ aww::Result launch_file(const std::string& path) {
   return aww::Result::fail("xdg-open failed");
 }
 
+/**
+ * @brief Shows system notification. (aww tag #20250511c4)
+ */
 aww::Result show_notification(const std::string& title, const std::string& message) {
   // check title is null
   if (title.empty()) {
@@ -73,6 +84,9 @@ aww::Result show_notification(const std::string& title, const std::string& messa
 } // namespace aww::os::actions
 
 namespace aww::fs {
+/**
+ * @brief Gets current executable path. (aww tag #20250511c5)
+ */
 std::filesystem::path get_current_executable_path(void) {
   char result[PATH_MAX];
   ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
@@ -81,7 +95,9 @@ std::filesystem::path get_current_executable_path(void) {
 } // namespace aww::fs
 
 namespace aww::util {
-// Implements GUID generations for linux using /proc/sys/kernel/random/uuid
+/**
+ * @brief Generates GUID string. (aww tag #20250511c6)
+ */
 aww::Result get_guid(std::string& out) {
   const static std::string uuidFile = "/proc/sys/kernel/random/uuid";
   std::ifstream file(uuidFile);

@@ -8,8 +8,6 @@
 cmake_minimum_required(VERSION 3.14)
 
 # Set project name, version and laguages here. (change as needed)
-# Version numbers are available by including "exampleConfig.h" in
-# the source. See exampleConfig.h.in for some more details.
 project(AwwTools VERSION 0.0.1 LANGUAGES CXX)
 
 #2024-01-27 DISABLE warning C4996: warning STL4043: ed_array_iterator, and related factory functions are non-Standard extensions and will be removed in the future...
@@ -53,6 +51,8 @@ set(SOURCES          # All .cpp files in src/
     src/internal/aww-term.cpp
     src/internal/aww-toast.cpp
     src/internal/aww-api.cpp
+    src/internal/aww-stuff.cpp
+    
     #nf78vfbcr2j new aww tool? add sources here!
     src/internal/aww.cpp
 )
@@ -88,20 +88,13 @@ add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
 
 # Lib needs its header files, and users of the library must also see these (PUBLIC). (No change needed)
 target_include_directories(${LIBRARY_NAME} PUBLIC
-    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5
-    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2/single_include
-    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/spdlog-1.11.0/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt-9.1.0/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/cpr-1.10.5/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/third-party/yhirose_cpp-httplib_dbc4af8/include
 )
 
 # we add the sub-directories that we want CMake to scan
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/clip-1.5)
-
-## fmt
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/fmt-9.1.0)
-## end of fmt
 
 ## AwwLib
 
@@ -110,16 +103,50 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/dzharii/awwlib-cpp.git
     GIT_TAG        dmytro_zharii/2024-10-13-dev
     GIT_SHALLOW TRUE
+    CMAKE_ARGS -DAWWLIB_BUILD_TESTS=OFF -DAWWLIB_BUILD_EXAMPLES=OFF
 )
 
 FetchContent_MakeAvailable(awwlib)
 
-# There's also (probably) doctests within the library, so we need to see this as well.
+
+
+
+## nlohmann_json
+FetchContent_Declare(
+    json 
+    URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+)
+FetchContent_MakeAvailable(json)
+
+## fmt
+FetchContent_Declare(
+  fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+  GIT_TAG        10.2.1
+  GIT_SHALLOW    TRUE
+)
+FetchContent_MakeAvailable(fmt)
+
+## spd::log
+FetchContent_Declare(
+  spdlog
+  GIT_REPOSITORY https://github.com/gabime/spdlog.git
+  GIT_TAG        v1.13.0
+  GIT_SHALLOW    TRUE
+)
+set(SPDLOG_BUILD_SHARED OFF CACHE BOOL "Build shared library" FORCE)
+set(SPDLOG_FMT_EXTERNAL ON  CACHE BOOL "Use external fmt library instead of bundled" FORCE)
+FetchContent_MakeAvailable(spdlog)
+
 target_link_libraries(
     ${LIBRARY_NAME} PUBLIC
+    
     awwlib
     doctest
     clip
+    nlohmann_json::nlohmann_json
+    fmt::fmt
+    spdlog::spdlog
 )
 
 if(WIN32)
@@ -133,21 +160,6 @@ if(WIN32)
 
     target_link_libraries(${LIBRARY_NAME} PUBLIC wintoastlib)
 endif()
-
-## nlohmann-json
-set(JSON_BuildTests OFF CACHE INTERNAL "")
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third-party/nlohmann-json-3.11.2)
-target_link_libraries(${LIBRARY_NAME} PRIVATE nlohmann_json::nlohmann_json)
-## end of nlohmann-json
-
-
-## cpr
-# FetchContent_Declare(cpr GIT_REPOSITORY https://github.com/libcpr/cpr.git
-#                          GIT_TAG 3b15fa82ea74739b574d705fea44959b58142eb8) # Replace with your desired git commit from: https://github.com/libcpr/cpr/releases
-# FetchContent_MakeAvailable(cpr)
-# target_link_libraries(${LIBRARY_NAME} PRIVATE cpr::cpr)
-## cpr
-
 
 
 # Set the compile options you want (change as needed).
@@ -221,6 +233,13 @@ target_link_libraries(aww-api PRIVATE ${LIBRARY_NAME})  # Link the executable to
 target_set_warnings(aww-api ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(aww-api optimized)  # enable link-time-optimization if available for non-debug configurations
 
+## aww-stuff
+add_executable(aww-stuff app/aww-stuff.cpp)   # Name of exec. and location of file.
+target_link_libraries(aww-stuff PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
+target_set_warnings(aww-stuff ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
+target_enable_lto(aww-stuff optimized)  # enable link-time-optimization if available for non-debug configurations
+
+
 
 #fia2wwtog0r new aww tool? add entry here!
 
@@ -238,6 +257,8 @@ set(PROJECTS
     aww-guid
     aww-tag
     aww-api
+    aww-stuff
+    
     #9x1eam6faab new aww tool? add entry here!
 )
 
@@ -245,7 +266,7 @@ add_custom_target(copy-runtime-files ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/aww-create-aww
     ${CMAKE_BINARY_DIR}/bin/aww-create-aww
-    DEPENDS ${MY_TARGET})
+    DEPENDS aww-create)
 
 
 set_target_properties(

@@ -1,4 +1,5 @@
 .gradle
+.ccls-cache
 
 # Prerequisites
 *.d

@@ -1,22 +1,22 @@
-#include <fstream>
-#include <iostream>
-
 #include <algorithm>
 #include <cctype>
 #include <filesystem>
+#include <fstream>
+#include <iostream>
 #include <string>
 #include <vector>
 
 #include "aww-common.hpp"
 #include "aww-inspiration.hpp"
-
+#include "aww-spdlog-configuration.hpp"
 #include "internal/aww-create.hpp"
 
 namespace aww::internal::aww_create {
 namespace fs = std::filesystem;
 
-int aww_create_main(const std::vector<std::string>& cmdArgs,
-                    aww_create_io_dependencies_interface& deps) {
+int aww_create_main(const std::vector<std::string>& cmdArgs, aww_create_io_dependencies_interface& deps) {
+  init_default_spdlog_configuration("aww-create");
+
   if (cmdArgs.size() == 0) {
     std::cout << "Usage: aww create <filepath>"
               << "\n";
@@ -94,18 +94,15 @@ int aww_create_main(const std::vector<std::string>& cmdArgs,
 }
 
 aww::Result assume_template_path(const std::filesystem::path& awwCreateTemplatesDir,
-                                 const std::filesystem::path& targetFilePath,
-                                 const std::string& templateModifier,
-                                 std::filesystem::path& outTemplatePath,
-                                 aww_create_io_dependencies_interface& deps) {
+                                 const std::filesystem::path& targetFilePath, const std::string& templateModifier,
+                                 std::filesystem::path& outTemplatePath, aww_create_io_dependencies_interface& deps) {
   std::filesystem::path assumedTemplatePath;
 
   // get file extension from filePath
   std::string fileExtensionWithDot = targetFilePath.extension().string();
 
   if (!templateModifier.empty()) {
-    assumedTemplatePath =
-        awwCreateTemplatesDir / ("template-" + templateModifier + fileExtensionWithDot);
+    assumedTemplatePath = awwCreateTemplatesDir / ("template-" + templateModifier + fileExtensionWithDot);
 
     bool outIsTemplateFileExists = deps.fs_exists(assumedTemplatePath);
     if (!outIsTemplateFileExists) {
@@ -126,14 +123,12 @@ aww::Result create_new_directory_scenario(const std::filesystem::path& filePath,
 
   if (outIsDirectoryExists) {
     std::cout << "Directory already exists: " << filePath << "\n";
-    std::string errorMessage =
-        "Directory already exists: " + filePath.string() + "; tag=y5k2qwmd7kv\n";
+    std::string errorMessage = "Directory already exists: " + filePath.string() + "; tag=y5k2qwmd7kv\n";
     return aww::Result::ok();
   }
 
   if (!deps.fs_create_directories(filePath)) {
-    std::string errorMessage =
-        "Failed to create directory: '" + filePath.string() + "'; tag=evmmi0npk45\n";
+    std::string errorMessage = "Failed to create directory: '" + filePath.string() + "'; tag=evmmi0npk45\n";
 
     return aww::Result::fail(errorMessage);
   }
@@ -142,19 +137,17 @@ aww::Result create_new_directory_scenario(const std::filesystem::path& filePath,
   return aww::Result::ok();
 }
 
-aww::Result
-append_template_content_to_new_file_scenario(const std::filesystem::path& templatePath,
-                                             const std::filesystem::path& filePath,
-                                             aww_create_io_dependencies_interface& deps) {
+aww::Result append_template_content_to_new_file_scenario(const std::filesystem::path& templatePath,
+                                                         const std::filesystem::path& filePath,
+                                                         aww_create_io_dependencies_interface& deps) {
   std::cout << "Creating file from template: " << filePath << "\n";
 
   std::vector<std::string> templateLines;
   std::vector<std::string> newFileLines;
 
   if (aww::Result res = deps.fs_read_lines(templatePath, templateLines); res.is_failed()) {
-    std::string readFailedMessage = "Failed to read template file: " + res.error() +
-                                    "File path: '" + templatePath.string() + "'" +
-                                    "; tag=0bo9nvppdbh\n";
+    std::string readFailedMessage = "Failed to read template file: " + res.error() + "File path: '" +
+                                    templatePath.string() + "'" + "; tag=0bo9nvppdbh\n";
 
     return aww::Result::fail(readFailedMessage);
   }
@@ -174,8 +167,7 @@ append_template_content_to_new_file_scenario(const std::filesystem::path& templa
   const std::string TargetFileName = filePath.stem().string();
 
   // Capitalized TargetFileName
-  const std::string CapitalizedTargetFileName =
-      aww::string::to_upper(aww::string::to_valid_identifier(TargetFileName));
+  const std::string CapitalizedTargetFileName = aww::string::to_upper(aww::string::to_valid_identifier(TargetFileName));
 
   for (std::string& line : templateLines) {
     if (line.length() >= MinLineLenWithVariableHeuristic) {
@@ -234,8 +226,7 @@ append_template_content_to_new_file_scenario(const std::filesystem::path& templa
   return aww::Result::ok();
 }
 
-aww::Result try_create_file_by_path(const fs::path& filePath,
-                                    aww_create_io_dependencies_interface& deps) {
+aww::Result try_create_file_by_path(const fs::path& filePath, aww_create_io_dependencies_interface& deps) {
   // if file exists, return error
 
   bool outFileExists = deps.fs_exists(filePath);
@@ -264,8 +255,7 @@ aww::Result try_create_file_by_path(const fs::path& filePath,
       bool isDirectoryExists = deps.fs_exists(parentPath);
       if (!isDirectoryExists) {
         if (!deps.fs_create_directories(parentPath)) {
-          return aww::Result::fail("Failed to create directory: '" + parentPath.string() +
-                                   "' tag=07zimuhjpgg");
+          return aww::Result::fail("Failed to create directory: '" + parentPath.string() + "' tag=07zimuhjpgg");
         }
       }
     }

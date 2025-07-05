@@ -20,7 +20,7 @@ jobs:
 
         include:
           - toolchain: linux-gcc
-            os: ubuntu-latest
+            os: ubuntu-22.04
             compiler: gcc
 
           - toolchain: windows-msvc
@@ -29,14 +29,16 @@ jobs:
 
     steps:
     - name: Install dependencies UBUNTU
-      if: matrix.os == 'ubuntu-latest'
-      run: sudo apt-get update && sudo apt-get install -y build-essential #webview: libgtk-3-dev libwebkit2gtk-4.0-dev xvfb
+      if: matrix.os == 'ubuntu-22.04'
+      run: sudo apt-get update && sudo apt-get install -y build-essential
+
+    
     
     - name: Checkout Code
       uses: actions/checkout@v2
 
-    - name: Configure ubuntu-latest
-      if: matrix.os == 'ubuntu-latest'
+    - name: Configure ubuntu-22.04
+      if: matrix.os == 'ubuntu-22.04'
       run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
 
     - name: Configure windows-latest
