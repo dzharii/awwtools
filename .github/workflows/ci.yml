@@ -63,7 +63,6 @@ jobs:
         name: build-artifacts-${{ matrix.toolchain }}
         path: |
           build-*-release/bin/
-          !build-*-release/Release/
           !build-*-release/**/*.pdb
           !build-*-release/**/*.ilk
         retention-days: 7
@@ -86,6 +85,17 @@ jobs:
 
     - name: Download all artifacts
       uses: actions/download-artifact@v4
+
+    - name: Debug downloaded artifacts
+      run: |
+        echo "=== All downloaded files ==="
+        find . -name "build-artifacts-*" -type d
+        echo "=== Windows artifact contents ==="
+        if [ -d "build-artifacts-windows-msvc" ]; then
+          find build-artifacts-windows-msvc -type f | head -20
+        else
+          echo "No Windows artifacts directory found"
+        fi
 
     - name: Generate release tag from current date
       id: get_version
@@ -118,10 +128,20 @@ jobs:
         # Copy Windows binaries only
         if [ -d "build-artifacts-windows-msvc" ]; then
           echo "Found Windows artifacts"
+          echo "Contents of build-artifacts-windows-msvc:"
+          find build-artifacts-windows-msvc -type f | head -20
+
           # Copy entire directory structure
           cp -r build-artifacts-windows-msvc/* release-files/
+
+          echo "Contents of release-files after copy:"
+          find release-files -type f | head -20
+
           # Delete logs folder if it exists
           rm -rf release-files/bin/logs
+
+          echo "Contents of release-files/bin:"
+          ls -la release-files/bin/ || echo "No bin directory found"
         else
           echo "Warning: No Windows artifacts found"
         fi
@@ -133,7 +153,20 @@ jobs:
           zip -r ../awwtools-${{ steps.get_version.outputs.version }}-windows-x64-binaries.zip bin/
           cd ..
         else
-          echo "Skipping Windows binary archive - no files found"
+          echo "ERROR: No Windows binary files found for release!"
+          echo "This indicates the Windows build failed or artifacts were not uploaded properly."
+          exit 1
+        fi
+
+        # Verify both archives were created
+        if [ ! -f "awwtools-${{ steps.get_version.outputs.version }}-source.tar.gz" ]; then
+          echo "ERROR: Source archive was not created!"
+          exit 1
+        fi
+
+        if [ ! -f "awwtools-${{ steps.get_version.outputs.version }}-windows-x64-binaries.zip" ]; then
+          echo "ERROR: Windows binary archive was not created!"
+          exit 1
         fi
 
         # List created files
