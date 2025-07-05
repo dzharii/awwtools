@@ -131,8 +131,14 @@ jobs:
           echo "Contents of build-artifacts-windows-msvc:"
           find build-artifacts-windows-msvc -type f | head -20
 
-          # Copy entire directory structure
-          cp -r build-artifacts-windows-msvc/* release-files/
+          # Copy the bin directory directly, flattening the structure
+          if [ -d "build-artifacts-windows-msvc/build-windows-release/bin" ]; then
+            cp -r build-artifacts-windows-msvc/build-windows-release/bin release-files/
+            echo "Copied bin directory to release-files/"
+          else
+            echo "No build-windows-release/bin directory found"
+            cp -r build-artifacts-windows-msvc/* release-files/
+          fi
 
           echo "Contents of release-files after copy:"
           find release-files -type f | head -20
