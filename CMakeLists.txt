@@ -57,6 +57,14 @@ set(SOURCES          # All .cpp files in src/
     src/internal/aww.cpp
 )
 if(WIN32)
+    set(OS_NAME "windows")
+elseif(UNIX)
+    set(OS_NAME "linux")
+else()
+    set(OS_NAME "unknown")
+endif()
+
+if(WIN32)
     list(APPEND SOURCES
         src/aww-common-windows.cpp
         src/aww-banner-windows.cpp
@@ -161,6 +169,27 @@ if(WIN32)
     target_link_libraries(${LIBRARY_NAME} PUBLIC wintoastlib)
 endif()
 
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/.env")
+    file(STRINGS "${CMAKE_SOURCE_DIR}/.env" ENV_FILE_CONTENTS)
+    foreach(LINE ${ENV_FILE_CONTENTS})
+        if(LINE MATCHES "^BUILD_DIR_BASE=(.*)$")
+            set(BUILD_DIR_BASE "${CMAKE_MATCH_1}")
+        endif()
+    endforeach()
+endif()
+
+if(NOT BUILD_DIR_BASE)
+    set(BUILD_DIR_BASE "build")
+endif()
+
+string(TOLOWER "${CMAKE_BUILD_TYPE}" BUILD_TYPE_LOWER)
+set(AWW_TOOLS_BUILD_DIR "${BUILD_DIR_BASE}-${OS_NAME}-${BUILD_TYPE_LOWER}")
+
+set(AWW_TOOLS_BIN_DIR "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${AWW_TOOLS_BIN_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${AWW_TOOLS_BIN_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${AWW_TOOLS_BIN_DIR})
 
 # Set the compile options you want (change as needed).
 target_set_warnings(${LIBRARY_NAME} ENABLE ALL AS_ERROR ALL DISABLE Annoying)
@@ -275,9 +304,6 @@ set_target_properties(
         CXX_STANDARD 20
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS NO
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
-        RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin
-        RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin
 )
 
 # Set up tests (see tests/CMakeLists.txt).

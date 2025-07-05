@@ -3,10 +3,11 @@ name: CI
 on:
   push:
   pull_request:
+    branches: [ "main" ]
 
 jobs:
   build-and-test:
-    name: ${{ matrix.toolchain }}
+    name: Build and Test (${{ matrix.toolchain }})
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -15,41 +16,181 @@ jobs:
           - linux-gcc
           - windows-msvc
 
-        configuration:
-          - Debug
-
         include:
           - toolchain: linux-gcc
             os: ubuntu-22.04
-            compiler: gcc
+            build-script: "./cmake-b-release.sh"
 
           - toolchain: windows-msvc
             os: windows-latest
-            compiler: msvc
+            build-script: "cmake-b-release.cmd"
 
     steps:
-    - name: Install dependencies UBUNTU
+    - name: Install dependencies (Ubuntu)
       if: matrix.os == 'ubuntu-22.04'
-      run: sudo apt-get update && sudo apt-get install -y build-essential
+      run: sudo apt-get update && sudo apt-get install -y build-essential cmake
 
-    
-    
     - name: Checkout Code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
-    - name: Configure ubuntu-22.04
+    - name: Create .env file
+      run: |
+        echo "BUILD_DIR_BASE=build" > .env
+        cat .env
+
+    - name: Make build script executable (Linux)
       if: matrix.os == 'ubuntu-22.04'
-      run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
+      run: chmod +x cmake-b-release.sh read-env-file.sh
 
-    - name: Configure windows-latest
+    - name: Build and Test using build script (Linux)
+      if: matrix.os == 'ubuntu-22.04'
+      run: ${{ matrix.build-script }}
+
+    - name: Build and Test using build script (Windows)
       if: matrix.os == 'windows-latest'
-      run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
+      shell: cmd
+      run: ${{ matrix.build-script }}
 
-    - name: Build with ${{ matrix.compiler }}
-      run: cmake --build build
+    - name: Verify build output
+      run: |
+        echo "Checking build output..."
+        find . -name "build-*-release" -type d || echo "No release build directories found"
+        find . -name "*.exe" -o -name "unit_tests" | head -10 || echo "No executables found"
 
-    - name: Test
-      working-directory: build
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts-${{ matrix.toolchain }}
+        path: |
+          build-*-release/bin/
+          !build-*-release/Release/
+          !build-*-release/**/*.pdb
+          !build-*-release/**/*.ilk
+        retention-days: 7
+        if-no-files-found: warn
+
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+
+    - name: Extract version from CMakeLists.txt
+      id: get_version
+      run: |
+        VERSION=$(grep -Po 'project\(AwwTools VERSION \K[0-9]+\.[0-9]+\.[0-9]+' CMakeLists.txt)
+        if [ -z "$VERSION" ]; then
+          echo "Error: Could not extract version from CMakeLists.txt"
+          exit 1
+        fi
+        echo "version=v$VERSION" >> $GITHUB_OUTPUT
+        echo "Extracted version: v$VERSION"
+
+    - name: Check if tag exists
+      id: check_tag
+      run: |
+        if git rev-parse "${{ steps.get_version.outputs.version }}" >/dev/null 2>&1; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Create release archive
+      if: steps.check_tag.outputs.exists == 'false'
+      run: |
+        mkdir -p release-files
+
+        # List downloaded artifacts for debugging
+        ls -la
+
+        # Copy Windows binaries only
+        if [ -d "build-artifacts-windows-msvc" ]; then
+          echo "Found Windows artifacts"
+          mkdir -p release-files/windows
+          cp -r build-artifacts-windows-msvc/* release-files/windows/
+        else
+          echo "Warning: No Windows artifacts found"
+        fi
+
+        # Create source code archive (exclude build directories and git)
+        echo "Creating source code archive"
+        tar -czf awwtools-${{ steps.get_version.outputs.version }}-source.tar.gz \
+          --exclude='build-*' \
+          --exclude='.git' \
+          --exclude='.github' \
+          --exclude='*.pdb' \
+          --exclude='*.ilk' \
+          --exclude='*.obj' \
+          --exclude='*.exe' \
+          .
+
+        # Create Windows binary archive only if directory exists and contains files
+        cd release-files
+        if [ -d "windows" ] && [ "$(ls -A windows)" ]; then
+          echo "Creating Windows binary archive"
+          zip -r ../awwtools-${{ steps.get_version.outputs.version }}-windows-x64-binaries.zip windows/
+        else
+          echo "Skipping Windows binary archive - no files found"
+        fi
+
+        # List created files
+        cd ..
+        ls -la awwtools-* || echo "No archives created"
+
+    - name: Extract changelog for current version
+      if: steps.check_tag.outputs.exists == 'false'
+      id: changelog
+      run: |
+        # Create a simple changelog from recent commits
+        echo "## Changes in ${{ steps.get_version.outputs.version }}" > current_changelog.md
+        echo "" >> current_changelog.md
+
+        # Get commits since last tag, or since 1 month ago if no tags exist
+        LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+        if [ -n "$LAST_TAG" ]; then
+          echo "Changes since $LAST_TAG:" >> current_changelog.md
+          git log --oneline "$LAST_TAG"..HEAD --pretty=format:"- %s" >> current_changelog.md
+        else
+          echo "Recent changes:" >> current_changelog.md
+          git log --oneline --since="1 month ago" --pretty=format:"- %s" >> current_changelog.md
+        fi
+
+        # Ensure we have at least some content
+        if [ ! -s current_changelog.md ]; then
+          echo "- Initial release" >> current_changelog.md
+        fi
+
+        # Read the changelog content
+        {
+          echo 'CHANGELOG<<EOF'
+          cat current_changelog.md
+          echo EOF
+        } >> $GITHUB_OUTPUT
+
+    - name: Create Release
+      if: steps.check_tag.outputs.exists == 'false'
+      id: create_release
+      uses: softprops/action-gh-release@v1
       env:
-        CTEST_OUTPUT_ON_FAILURE: 1
-      run: ctest -C ${{ matrix.configuration }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.get_version.outputs.version }}
+        name: AwwTools ${{ steps.get_version.outputs.version }}
+        body: ${{ steps.changelog.outputs.CHANGELOG }}
+        draft: false
+        prerelease: false
+        files: |
+          awwtools-${{ steps.get_version.outputs.version }}-source.tar.gz
+          awwtools-${{ steps.get_version.outputs.version }}-windows-x64-binaries.zip

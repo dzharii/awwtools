@@ -25,13 +25,7 @@
 
 
 
-## 2025-07-04
-
-OMG, I have remove `aww-tee`
-
-
-
-## 2025-07-04 Remove WebView and A-W-A-T Command
+## 2025-07-04 Remove WebView and att-tee
 
 `removed` :: `webview`, `aww-tee`
 
