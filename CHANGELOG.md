@@ -25,6 +25,35 @@
 
 
 
+## 2025-07-15 unit tests and mocks :(
+
+`tests\test-aww-create.cpp`: I dislike these test cases and the mocked interfaces.
+
+```cpp
+SUBCASE("Create file in existing directory") {
+    // ARRANGE
+    ioDependencies.fs_exists_stub =
+        [&](int callCount, const std::filesystem::path& target) -> bool { return false; };
+
+    ioDependencies.fs_create_empty_file_stub =
+        [&](int callCount, const std::filesystem::path& path) -> aww::Result {
+        return aww::Result::ok();
+    };
+
+    // ACT
+    aww::Result result = try_create_file_by_path(filePath, ioDependencies);
+
+    // ASSERT
+    CHECK_MESSAGE(result.is_ok(), "Result should be successful");
+}
+```
+
+The test does not reveal what behavior it verifies. I stub `fs_exists` and then call `try_create_file_by_path`, but the link between them is never made explicit. It feels like a film that begins in the middle: a fact appears, the action unfolds, and the credits roll, leaving me asking why `fs_exists_stub` mattered to `try_create_file_by_path` at all.
+
+should I really mock `fs` calls? 
+
+
+
 ## 2025-07-04
 
 Added binary releases for Windows, because compiling on windows is very challenging. 
