@@ -25,7 +25,20 @@
 
 
 
-## 2025-07-15 unit tests and mocks :(
+## 2025-07-16 Small fixes in aww date
+
+aww date now uses `"aww-special-string/aww-special-string.hpp"`
+
+`aww::safe_filename_from_string`
+
+which brings several fixes:
+
+- multiple incorrect characters are now folder into one, so `file///::name` now file-name
+- remove trailing spaces
+
+
+
+## 🚩 2025-07-15 unit tests and mocks :(
 
 `tests\test-aww-create.cpp`: I dislike these test cases and the mocked interfaces.
 
