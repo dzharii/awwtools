@@ -26,7 +26,7 @@ int aww_date_main(const std::vector<std::string>& cmdArgs, aww_date_io_dependenc
   std::string current_date = deps.get_date_yyyymmdd();
 
   std::string filename = aww::string::join(mutable_cmd_args, "-");
-  std::string safe_filename = aww::safe_filename_from_string(filename);
+  std::string safe_filename = aww::safe_filename_from_string(filename, '-');
 
   std::string result = current_date;
 
