@@ -25,6 +25,85 @@
 
 
 
+## 2025-08-05 🚩 TODO aww text
+
+```
+aww text ! to_lower !  to_snake_case ! Any text here
+Output:
+any_text_here
+
+use ! instead of pipe "|"
+
+aww text ! to_lower !  to_snake_case ! to_clipboard ! Any text here
+Output:
+any_text_here
+also copy to clipboard
+
+aww text ! from_clipboard! to_lower !  to_snake_case ! to_clipboard !
+transforms text from clipboard and copies it back
+
+```
+
+Should use UTF8 library.
+
+Ideas:
+
+- c_escape: escapes the text as c string literal `hello "world" => "hello \"world\"`
+- to_snake_case: replace spaces or word boundaries with underscores and lowercase all letters
+- from_snake_case: replace underscores with spaces and apply normal casing
+- to_screaming_snake_case: convert to UPPERCASE_WITH_UNDERSCORES
+- to_kebab_case: replace spaces or word boundaries with hyphens and lowercase letters
+- from_kebab_case: replace hyphens with spaces and apply normal casing
+- to_camel_case: lowercase first word, capitalize subsequent words, remove separators
+- to_pascal_case: capitalize every word, remove separators
+- from_camel_or_pascal_case: insert spaces before capital letters, preserve acronym groups
+- to_train_case: Capitalize each word and join with hyphens
+- to_title_case: capitalize the first letter of every significant word
+- to_sentence_case: capitalize only the first letter of the first word of the sentence
+- to_lower: convert entire string to lowercase
+- to_upper: convert entire string to uppercase
+- capitalize_first: uppercase only the first character
+- swap_case: invert the case of every letter
+- to_constant_case: convert to UPPERCASE_WITH_UNDERSCORES and collapse multiple separators
+- transliterate_ascii: replace non-ASCII characters with closest ASCII equivalents
+- slugify: create URL-safe lowercase string with hyphens and ASCII letters only
+- remove_punctuation: strip all punctuation characters
+- strip_non_alphanum: keep letters and digits only
+- normalize_whitespace: collapse consecutive whitespace into single space
+- strip_whitespace: trim leading and trailing whitespace
+- tab_to_spaces: replace tab characters with configurable number of spaces
+- spaces_to_tab: replace groups of spaces with tabs
+- normalize_line_endings: convert CRLF, CR, LF variations to chosen style
+- encode_html_entities: replace &, <, >, ", ' with HTML entities
+- decode_html_entities: reverse html entity encoding
+- escape_json_string: add backslashes to JSON-sensitive characters
+- unescape_json_string: remove JSON escape sequences
+- escape_regex: backslash-escape regex meta-characters
+- unescape_regex: remove regex escapes where safe
+- base64_encode: convert binary or text to Base64 string
+- base64_decode: decode Base64 to original bytes or text
+- url_encode: percent-encode unsafe URL characters
+- url_decode: decode percent-encoded sequences
+- rot13: apply Caesar cipher rotation by 13 places
+- hex_encode: convert bytes to hexadecimal representation
+- hex_decode: convert hexadecimal string back to bytes
+- unicode_normalize: apply NFC, NFD, NFKC, or NFKD normalization forms
+- remove_accents: strip diacritical marks without changing letters
+- pluralize: convert singular English nouns to plural form
+- singularize: convert plural English nouns to singular form
+- number_to_words: spell out integers in English words
+- words_to_number: parse spelled-out numbers into integers
+- strip_comments: remove line and block comments given language grammar
+- minify_json: remove whitespace and newlines in JSON text
+- pretty_print_json: format JSON with indentation and sorted keys
+- strip_markdown: convert Markdown to plain text
+- markdown_to_html: render Markdown to HTML string
+- html_to_markdown: convert HTML to Markdown approximation
+
+
+
+
+
 ## 2025-07-16 Small fixes in aww date
 
 aww date now uses `"aww-special-string/aww-special-string.hpp"`
