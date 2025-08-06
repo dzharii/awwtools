@@ -46,9 +46,43 @@ transforms text from clipboard and copies it back
 
 Should use UTF8 library.
 
+**💡 UPD 1:**  this is so cool! So:
+
+- I can parse text as something like `reduce`, when maybe I have available immediate result, character by character or token by token. 
+-  I can order reducers by precedence, or maybe by groups. There are groups  that:
+  - can remove current character
+  - can transform current character
+  - can insert another character in place of current character
+- So, I need to ask first if this character will be removed, if so, there is no need to `upper case` or `lower case` it 
+
+Create simple text macros in `C:\Users\home\.awwtools\aww-text`, so I can use 
+
+
+
+aww text ! header1 ! hello, friends! 
+
+
+
+header.txt:
+
+```txt
+! capitalize_first ! prepend # ! 
+```
+
+
+
+🚩 Make this commands available in aww-create templates. 
+
+
+
 Ideas:
 
-- c_escape: escapes the text as c string literal `hello "world" => "hello \"world\"`
+- prepend
+- append
+- format text with line limit, like 80 chars
+- remove dashes
+- remove ai reference links
+- c_escape / quote: escapes the text as c string literal `hello "world" => "hello \"world\"`
 - to_snake_case: replace spaces or word boundaries with underscores and lowercase all letters
 - from_snake_case: replace underscores with spaces and apply normal casing
 - to_screaming_snake_case: convert to UPPERCASE_WITH_UNDERSCORES
