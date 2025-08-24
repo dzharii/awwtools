@@ -1,4 +1,4 @@
-// helloworld.h - v0.1 - tiny stb-style single-header "Hello, World!" library
+// ___FILE_NAME___.h - v0.1 - tiny stb-style single-header "Hello, World!" library
 // Public Domain or MIT, your choice, see end of file.
 //
 // Minimal example of the stb single-header pattern.
@@ -11,18 +11,18 @@
 //     or by writing it into a caller-provided buffer.
 //
 //   Defines that control this header:
-//     HELLOWORLD_STATIC
+//     ___CAPITALIZED_FILE_NAME____STATIC
 //         Define before including the *implementation* to make function
 //         definitions 'static' so each including .c/.cpp gets its own copy.
-//     HELLOWORLD_IMPLEMENTATION
+//     ___CAPITALIZED_FILE_NAME____IMPLEMENTATION
 //         Define in exactly one .c/.cpp before including this header to
 //         compile the implementation.
-//     HELLOWORLD_NO_STDIO
+//     ___CAPITALIZED_FILE_NAME____NO_STDIO
 //         Omit stdio-based sample helpers if you add any that use stdio.
 //
 //   Build:
 //     In one source file:
-//         #define HELLOWORLD_IMPLEMENTATION
+//         #define ___CAPITALIZED_FILE_NAME____IMPLEMENTATION
 //         #include "helloworld.h"
 //     In all other files:
 //         #include "helloworld.h"
