@@ -55,7 +55,8 @@ I will not switch to another modern high level language. .NET, Go, and Rust woul
 I am moving to C99. I am rewriting and refactoring from scratch in C. It is fun. It pushes me closer to the metal. It keeps the cross platform goal, while forcing clear, simple designs.
 
 
-# Developer Retrospectives: C vs C++
+
+**Developer Retrospectives: C vs C++**
 
 - **"Why should I have written ZeroMQ in C, not C++ (part I)"** (May 2012) – Martin Sustrik (ZeroMQ co-author) admits that choosing C++ was a poor choice in hindsight.  
   [250bpm.com](https://250bpm.com/blog:4/)  
@@ -63,9 +64,6 @@ I am moving to C99. I am rewriting and refactoring from scratch in C. It is fun.
 - **"NNG Rationale: Why I’m rewriting nanomsg in C"** (2020) – Garrett D’Amore explains why the new nanomsg (NNG) and its Go bindings were designed in C instead of C++. 
   [nng.nanomsg.org](https://nng.nanomsg.org/RATIONALE.html)  
   He writes that he was dissatisfied with the ZeroMQ licensing model and the C++ baggage that came with it. In other words, avoiding C++ features (and sticking to plain C) eliminated unwanted complexity and made the library easier to embed and maintain.
-- **"Goodbye to the C++ Implementation of Zig"** (Dec 2022) – Andrew Kelley (Zig creator) describes how the original Zig compiler (80,000 lines of C++) was bootstrapped and then replaced. [ziglang.org](https://ziglang.org/news/goodbye-cpp)  After converting the compiler frontend, instead of 80,000 lines of C++, there are now 4,000 lines of portable C. This shows a deliberate move from complex C++ code to a minimal C runtime for maximum simplicity and portability.
-
-
 
 **Thank you:**
 
