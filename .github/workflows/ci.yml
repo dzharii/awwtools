@@ -233,7 +233,7 @@ jobs:
             local archive_name="$2"
             local build_dir="$3"
             local staging_dir="release-files/$build_dir"
-            local bin_dir=""
+            local package_source_dir=""
             local expected_direct_path="$artifact_dir/bin"
             local expected_nested_path="$artifact_dir/$build_dir/bin"
 
@@ -255,35 +255,43 @@ jobs:
             fi
 
             if [ -d "$expected_direct_path" ]; then
-              bin_dir="$expected_direct_path"
+              package_source_dir="$expected_direct_path"
             elif [ -d "$expected_nested_path" ]; then
-              bin_dir="$expected_nested_path"
+              package_source_dir="$expected_nested_path"
             else
               echo "Searching for any directory named 'bin' under $artifact_dir"
-              bin_dir="$(find "$artifact_dir" -maxdepth 8 -type d -name bin | sort | head -1)"
+              package_source_dir="$(find "$artifact_dir" -maxdepth 8 -type d -name bin | sort | head -1)"
             fi
 
-            if [ -z "$bin_dir" ] || [ ! -d "$bin_dir" ]; then
+            if [ -z "$package_source_dir" ] && [ -d "$artifact_dir" ]; then
+              if find "$artifact_dir" -maxdepth 1 -type f -name "*.exe" | grep -q .; then
+                package_source_dir="$artifact_dir"
+                echo "Artifact root appears to already contain the bin contents; using $package_source_dir"
+              fi
+            fi
+
+            if [ -z "$package_source_dir" ] || [ ! -d "$package_source_dir" ]; then
               echo "ERROR: Binary directory was not found for artifact_dir=$artifact_dir build_dir=$build_dir"
               echo "ERROR: Missing expected path: $expected_direct_path"
               echo "ERROR: Missing expected path: $expected_nested_path"
-              if [ -n "$bin_dir" ]; then
-                echo "ERROR: Found candidate path, but it is not a directory: $bin_dir"
+              if [ -n "$package_source_dir" ]; then
+                echo "ERROR: Found candidate path, but it is not a directory: $package_source_dir"
               else
                 echo "ERROR: No fallback bin directory candidate was found under $artifact_dir"
+                echo "ERROR: The artifact root also did not look like unpacked bin contents"
               fi
               print_directory_diagnostics "$artifact_dir" "artifact root after failed bin lookup"
               print_directory_diagnostics "$(dirname "$artifact_dir")" "parent directory of artifact root"
               exit 1
             fi
 
-            mkdir -p "$staging_dir"
-            cp -r "$bin_dir" "$staging_dir/"
+            mkdir -p "$staging_dir/bin"
+            cp -r "$package_source_dir"/. "$staging_dir/bin/"
             rm -rf "$staging_dir/bin/logs"
 
             echo "Staged files for $archive_name:"
             find "$staging_dir" -maxdepth 4 \( -type d -o -type f \) | sort || true
-            echo "Creating archive $archive_name from $bin_dir"
+            echo "Creating archive $archive_name from $package_source_dir"
             (
               cd "$staging_dir"
               zip -r "../../$archive_name" bin/
