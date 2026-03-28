@@ -17,8 +17,6 @@
 //     ___CAPITALIZED_FILE_NAME____IMPLEMENTATION
 //         Define in exactly one .c/.cpp before including this header to
 //         compile the implementation.
-//     ___CAPITALIZED_FILE_NAME____NO_STDIO
-//         Omit stdio-based sample helpers if you add any that use stdio.
 //
 //   Build:
 //     In one source file:
@@ -26,21 +24,6 @@
 //         #include "___FILE_NAME___.h"
 //     In all other files:
 //         #include "___FILE_NAME___.h"
-//
-//   API:
-//     ___CAPITALIZED_FILE_NAME____PUBLIC_DECL const char* hw123_helloworld(void);
-//       Returns a pointer to a constant, null-terminated "Hello, World!".
-//
-//     ___CAPITALIZED_FILE_NAME____PUBLIC_DECL int hw123_helloworld_into(char* out, size_t out_cap);
-//       Writes "Hello, World!" into 'out' with null-termination.
-//       Returns the number of bytes written excluding the terminator.
-//       Writes nothing and returns 0 if out is NULL or out_cap == 0.
-//
-// VERSION HISTORY
-//   0.1  Initial release.
-//
-// CONTRIBUTORS
-//   %_YOU_%.
 //
 // LICENSE
 //   See end of file for license information.
@@ -53,34 +36,23 @@ extern "C" {
 #endif
 
 // Public declaration macro: resolves to extern or extern "C" for C++.
-// Users can override by defining HW123_PUBLIC_DECL before this include.
+// Users can override by defining "___CAPITALIZED_FILE_NAME____PUBLIC_DECL" before this include.
 #ifndef ___CAPITALIZED_FILE_NAME____PUBLIC_DECL
-#  ifdef ___CAPITALIZED_FILE_NAME____STATIC
-#    define ___CAPITALIZED_FILE_NAME____PUBLIC_DECL static
-#  else
-#    ifdef __cplusplus
-#      define ___CAPITALIZED_FILE_NAME____PUBLIC_DECL extern "C"
-#    else
-#      define ___CAPITALIZED_FILE_NAME____PUBLIC_DECL extern
-#    endif
-#  endif
+#ifdef ___CAPITALIZED_FILE_NAME____STATIC
+#define ___CAPITALIZED_FILE_NAME____PUBLIC_DECL static
+#else
+#ifdef __cplusplus
+#define ___CAPITALIZED_FILE_NAME____PUBLIC_DECL extern "C"
+#else
+#define ___CAPITALIZED_FILE_NAME____PUBLIC_DECL extern
 #endif
-
-// Optional configuration hooks for future allocation needs.
-// Not used by this template, but provided to match stb guidance.
-#ifndef ___CAPITALIZED_FILE_NAME____NO_ALLOC
-#  include <stddef.h> // size_t for allocator signatures if you use them later
-#  ifndef ___CAPITALIZED_FILE_NAME____MALLOC
-#    include <stdlib.h>
-#    define ___CAPITALIZED_FILE_NAME____MALLOC(ctx, size)        ((void)(ctx), malloc(size))
-#    define ___CAPITALIZED_FILE_NAME____FREE(ctx, ptr)           ((void)(ctx), free(ptr))
-#    define ___CAPITALIZED_FILE_NAME____REALLOC(ctx, ptr, size)  ((void)(ctx), realloc(ptr, size))
-#  endif
+#endif
 #endif
 
 // Public API
 ___CAPITALIZED_FILE_NAME____PUBLIC_DECL const char* hw123_helloworld(void);
-___CAPITALIZED_FILE_NAME____PUBLIC_DECL int         hw123_helloworld_into(char* out, size_t out_cap);
+
+___CAPITALIZED_FILE_NAME____PUBLIC_DECL int hw123_helloworld_into(char* out, size_t out_cap);
 
 // Version query, handy for diagnostics.
 ___CAPITALIZED_FILE_NAME____PUBLIC_DECL const char* hw123_version(void);
@@ -91,7 +63,6 @@ ___CAPITALIZED_FILE_NAME____PUBLIC_DECL const char* hw123_version(void);
 
 #endif // ___CAPITALIZED_FILE_NAME____H_INCLUDE
 
-
 /*=============================================================================
    IMPLEMENTATION
   =============================================================================*/
@@ -99,47 +70,48 @@ ___CAPITALIZED_FILE_NAME____PUBLIC_DECL const char* hw123_version(void);
 
 // Definition macro: empty for global symbols, or 'static' when HELLOWORLD_STATIC.
 #ifndef ___CAPITALIZED_FILE_NAME____PUBLIC_DEF
-#  ifdef ___CAPITALIZED_FILE_NAME____STATIC
-#    define ___CAPITALIZED_FILE_NAME____PUBLIC_DEF static
-#  else
-#    define ___CAPITALIZED_FILE_NAME____PUBLIC_DEF
-#  endif
+#ifdef ___CAPITALIZED_FILE_NAME____STATIC
+#define ___CAPITALIZED_FILE_NAME____PUBLIC_DEF static
+#else
+#define ___CAPITALIZED_FILE_NAME____PUBLIC_DEF
+#endif
 #endif
 
 // Private namespace prefix 'hw123__' for internal symbols.
 static const char hw123__hello_literal[] = "Hello, World!";
 static const char hw123__version_literal[] = "0.1";
 
-___CAPITALIZED_FILE_NAME____PUBLIC_DEF const char* hw123_helloworld(void)
-{
-    return hw123__hello_literal;
+___CAPITALIZED_FILE_NAME____PUBLIC_DEF const char* hw123_helloworld(void) {
+  return hw123__hello_literal;
 }
 
-___CAPITALIZED_FILE_NAME____PUBLIC_DEF int hw123_helloworld_into(char* out, size_t out_cap)
-{
-    if (!out || out_cap == 0) return 0;
-    // Simple, dependency-free copy of the known literal.
-    // Keep it malloc-free per stb guidance.
-    const char* s = hw123__hello_literal;
-    size_t i = 0;
-    // Reserve one byte for terminator.
-    while (s[i] != '\0' && i + 1 < out_cap) {
-        out[i] = s[i];
-        ++i;
-    }
-    out[i < out_cap ? i : out_cap - 1] = '\0';
-    return (int)i;
+___CAPITALIZED_FILE_NAME____PUBLIC_DEF int hw123_helloworld_into(char* out, size_t out_cap) {
+  if (!out || out_cap == 0)
+    return 0;
+  // Simple, dependency-free copy of the known literal.
+  // Keep it malloc-free per stb guidance.
+  const char* s = hw123__hello_literal;
+  size_t i = 0;
+  // Reserve one byte for terminator.
+  while (s[i] != '\0' && i + 1 < out_cap) {
+    out[i] = s[i];
+    ++i;
+  }
+  out[i < out_cap ? i : out_cap - 1] = '\0';
+  return (int)i;
 }
 
-___CAPITALIZED_FILE_NAME____PUBLIC_DEF const char* hw123_version(void)
-{
-    return hw123__version_literal;
+___CAPITALIZED_FILE_NAME____PUBLIC_DEF const char* hw123_version(void) {
+  return hw123__version_literal;
 }
 
 #endif // ___CAPITALIZED_FILE_NAME____IMPLEMENTATION
 
-
 /*
+VERSION HISTORY
+  2025-11-16  Initial release.
+
+==============================================================================
 ------------------------------------------------------------------------------
 This software is available under 2 licenses -- choose whichever you prefer.
 ------------------------------------------------------------------------------
