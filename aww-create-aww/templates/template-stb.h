@@ -91,7 +91,6 @@ ___CAPITALIZED_FILE_NAME____PUBLIC_DECL const char* hw123_version(void);
 
 #endif // ___CAPITALIZED_FILE_NAME____H_INCLUDE
 
-
 /*=============================================================================
    IMPLEMENTATION
   =============================================================================*/

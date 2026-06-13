@@ -2,8 +2,9 @@ name: CI
 
 on:
   push:
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build-and-test:
@@ -11,62 +12,82 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
-        toolchain:
-          - linux-gcc
-          - windows-msvc
-
         include:
           - toolchain: linux-gcc
             os: ubuntu-22.04
             build-script: "./cmake-b-release.sh"
+            build-dir: "build-linux-release"
+            artifact-name: "build-artifacts-linux-gcc"
 
-          - toolchain: windows-msvc
+          - toolchain: windows-msvc-x64
             os: windows-latest
             build-script: "cmake-b-release.cmd"
+            build-dir: "build-windows-x64-release"
+            artifact-name: "build-artifacts-windows-x64"
+            windows-arch: "x64"
+            cmake-generator-platform: "x64"
+
+          - toolchain: windows-msvc-arm64
+            os: windows-11-arm
+            build-script: "cmake-b-release.cmd"
+            build-dir: "build-windows-arm64-release"
+            artifact-name: "build-artifacts-windows-arm64"
+            windows-arch: "arm64"
+            cmake-generator-platform: "ARM64"
 
     steps:
-    - name: Install dependencies (Ubuntu)
-      if: matrix.os == 'ubuntu-22.04'
-      run: sudo apt-get update && sudo apt-get install -y build-essential cmake
+      - name: Install dependencies (Ubuntu)
+        if: matrix.os == 'ubuntu-22.04'
+        run: sudo apt-get update && sudo apt-get install -y build-essential cmake
 
-    - name: Checkout Code
-      uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: Create .env file
-      run: |
-        echo "BUILD_DIR_BASE=build" > .env
-        cat .env
+      - name: Create .env file
+        run: |
+          echo "BUILD_DIR_BASE=build" > .env
+          cat .env
 
-    - name: Make build script executable (Linux)
-      if: matrix.os == 'ubuntu-22.04'
-      run: chmod +x cmake-b-release.sh read-env-file.sh
+      - name: Make build script executable (Linux)
+        if: matrix.os == 'ubuntu-22.04'
+        run: chmod +x cmake-b-release.sh read-env-file.sh
 
-    - name: Build and Test using build script (Linux)
-      if: matrix.os == 'ubuntu-22.04'
-      run: ${{ matrix.build-script }}
+      - name: Build and Test using build script (Linux)
+        if: matrix.os == 'ubuntu-22.04'
+        run: ${{ matrix.build-script }}
 
-    - name: Build and Test using build script (Windows)
-      if: matrix.os == 'windows-latest'
-      shell: cmd
-      run: ${{ matrix.build-script }}
+      - name: Build and Test using build script (Windows)
+        if: startsWith(matrix.os, 'windows')
+        shell: cmd
+        env:
+          AWW_WINDOWS_ARCH: ${{ matrix.windows-arch }}
+          AWW_CMAKE_GENERATOR_PLATFORM: ${{ matrix.cmake-generator-platform }}
+        run: ${{ matrix.build-script }}
 
-    - name: Verify build output
-      run: |
-        echo "Checking build output..."
-        find . -name "build-*-release" -type d || echo "No release build directories found"
-        find . -name "*.exe" -o -name "unit_tests" | head -10 || echo "No executables found"
+      - name: Verify build output
+        shell: bash
+        run: |
+          echo "Checking build output..."
+          if [ -d "${{ matrix.build-dir }}" ]; then
+            find "${{ matrix.build-dir }}" -maxdepth 2 -type d
+            find "${{ matrix.build-dir }}/bin" -maxdepth 1 \( -name "*.exe" -o -name "unit_tests" \) | head -10
+          else
+            echo "Expected build directory ${{ matrix.build-dir }} was not created"
+            exit 1
+          fi
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-artifacts-${{ matrix.toolchain }}
-        path: |
-          build-*-release/bin/
-          !build-*-release/**/*.pdb
-          !build-*-release/**/*.ilk
-        retention-days: 7
-        if-no-files-found: warn
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact-name }}
+          path: |
+            ${{ matrix.build-dir }}/bin/
+            !${{ matrix.build-dir }}/**/*.pdb
+            !${{ matrix.build-dir }}/**/*.ilk
+          retention-days: 7
+          if-no-files-found: error
 
   release:
     name: Create Release
@@ -78,127 +99,257 @@ jobs:
       contents: write
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Download all artifacts
-      uses: actions/download-artifact@v4
+      - name: Download Windows x64 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-windows-x64
+          path: downloaded-artifacts/windows-x64
 
-    - name: Debug downloaded artifacts
-      run: |
-        echo "=== All downloaded files ==="
-        find . -name "build-artifacts-*" -type d
-        echo "=== Windows artifact contents ==="
-        if [ -d "build-artifacts-windows-msvc" ]; then
-          find build-artifacts-windows-msvc -type f | head -20
-        else
-          echo "No Windows artifacts directory found"
-        fi
+      - name: Download Windows ARM64 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts-windows-arm64
+          path: downloaded-artifacts/windows-arm64
 
-    - name: Generate release tag from current date
-      id: get_version
-      run: |
-        TAG=$(date -u +"%Y.%m.%d.%H.%M")
-        echo "version=$TAG" >> $GITHUB_OUTPUT
-        echo "Generated tag: $TAG"
+      - name: Debug downloaded artifacts
+        run: |
+          print_tree_summary() {
+            local target_dir="$1"
+            local label="$2"
 
-    - name: Check if tag exists
-      id: check_tag
-      run: |
-        if git rev-parse "${{ steps.get_version.outputs.version }}" >/dev/null 2>&1; then
-          echo "exists=true" >> $GITHUB_OUTPUT
-        else
-          echo "exists=false" >> $GITHUB_OUTPUT
-        fi
+            echo "=== $label ==="
+            echo "Target path: $target_dir"
+            if [ -d "$target_dir" ]; then
+              echo "Directory exists"
+              echo "Immediate children:"
+              ls -la "$target_dir" || true
+              echo "Directories within first 5 levels:"
+              find "$target_dir" -maxdepth 5 -type d | sort || true
+              echo "First 50 files:"
+              find "$target_dir" -maxdepth 5 -type f | sort | head -50 || true
+            else
+              echo "Directory does not exist: $target_dir"
+            fi
+          }
 
-    - name: Create release archive
-      if: steps.check_tag.outputs.exists == 'false'
-      run: |
-        # Create source code archive using git archive (avoids file change issues)
-        echo "Creating source code archive"
-        git archive --format=tar.gz --prefix=awwtools/ HEAD > awwtools-${{ steps.get_version.outputs.version }}-source.tar.gz
+          echo "=== Runner environment ==="
+          pwd
+          whoami
+          uname -a
+          df -h .
+          echo "GITHUB_WORKSPACE=${GITHUB_WORKSPACE:-<unset>}"
+          echo "RUNNER_OS=${RUNNER_OS:-<unset>}"
+          echo "RUNNER_ARCH=${RUNNER_ARCH:-<unset>}"
+          echo "PATH=$PATH"
+          git rev-parse --show-toplevel || true
+          git status --short || true
 
-        mkdir -p release-files
+          echo "=== Repository root contents ==="
+          ls -la
 
-        # List downloaded artifacts for debugging
-        ls -la
-
-        # Copy Windows binaries only
-        if [ -d "build-artifacts-windows-msvc" ]; then
-          echo "Found Windows artifacts"
-          echo "Contents of build-artifacts-windows-msvc:"
-          find build-artifacts-windows-msvc -type f | head -20
-
-          # Copy the bin directory directly, flattening the structure
-          if [ -d "build-artifacts-windows-msvc/build-windows-release/bin" ]; then
-            cp -r build-artifacts-windows-msvc/build-windows-release/bin release-files/
-            echo "Copied bin directory to release-files/"
+          echo "=== All downloaded artifact directories ==="
+          if [ -d "downloaded-artifacts" ]; then
+            find downloaded-artifacts -maxdepth 6 -type d | sort || true
+            echo "=== First 100 downloaded artifact files ==="
+            find downloaded-artifacts -maxdepth 6 -type f | sort | head -100 || true
           else
-            echo "No build-windows-release/bin directory found"
-            cp -r build-artifacts-windows-msvc/* release-files/
+            echo "downloaded-artifacts directory does not exist"
           fi
 
-          echo "Contents of release-files after copy:"
-          find release-files -type f | head -20
+          print_tree_summary "downloaded-artifacts/windows-x64" "Windows x64 artifact contents"
+          print_tree_summary "downloaded-artifacts/windows-arm64" "Windows ARM64 artifact contents"
 
-          # Delete logs folder if it exists
-          rm -rf release-files/bin/logs
+      - name: Generate release tag from current date
+        id: get_version
+        run: |
+          TAG=$(date -u +"%Y.%m.%d.%H.%M")
+          echo "version=$TAG" >> $GITHUB_OUTPUT
+          echo "Generated tag: $TAG"
 
-          echo "Contents of release-files/bin:"
-          ls -la release-files/bin/ || echo "No bin directory found"
-        else
-          echo "Warning: No Windows artifacts found"
-        fi
+      - name: Check if tag exists
+        id: check_tag
+        run: |
+          if git rev-parse "${{ steps.get_version.outputs.version }}" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
 
-        # Create Windows binary archive only if directory exists and contains files
-        if [ -d "release-files/bin" ] && [ "$(ls -A release-files/bin)" ]; then
-          echo "Creating Windows binary archive"
-          cd release-files
-          zip -r ../awwtools-${{ steps.get_version.outputs.version }}-windows-x64-binaries.zip bin/
-          cd ..
-        else
-          echo "ERROR: No Windows binary files found for release!"
-          echo "This indicates the Windows build failed or artifacts were not uploaded properly."
-          exit 1
-        fi
+      - name: Create release archive
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+          # Create source code archive using git archive (avoids file change issues)
+          echo "Creating source code archive"
+          git archive --format=tar.gz --prefix=awwtools/ HEAD > awwtools-${{ steps.get_version.outputs.version }}-source.tar.gz
 
-        # Verify both archives were created
-        if [ ! -f "awwtools-${{ steps.get_version.outputs.version }}-source.tar.gz" ]; then
-          echo "ERROR: Source archive was not created!"
-          exit 1
-        fi
+          mkdir -p release-files
 
-        if [ ! -f "awwtools-${{ steps.get_version.outputs.version }}-windows-x64-binaries.zip" ]; then
-          echo "ERROR: Windows binary archive was not created!"
-          exit 1
-        fi
+          print_directory_diagnostics() {
+            local target_dir="$1"
+            local label="$2"
 
-        # List created files
-        ls -la awwtools-* || echo "No archives created"
+            echo "=== Diagnostics: $label ==="
+            echo "Requested path: $target_dir"
+            if [ -e "$target_dir" ]; then
+              ls -ld "$target_dir" || true
+            else
+              echo "Path does not exist: $target_dir"
+            fi
 
-    - name: Create Release
-      if: steps.check_tag.outputs.exists == 'false'
-      id: create_release
-      uses: softprops/action-gh-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.get_version.outputs.version }}
-        name: AwwTools ${{ steps.get_version.outputs.version }}
-        body: |
-          ## AwwTools Release ${{ steps.get_version.outputs.version }}
+            if [ -d "$target_dir" ]; then
+              echo "Immediate children of $target_dir:"
+              ls -la "$target_dir" || true
+              echo "Directories under $target_dir (max depth 6):"
+              find "$target_dir" -maxdepth 6 -type d | sort || true
+              echo "Files under $target_dir (first 100):"
+              find "$target_dir" -maxdepth 6 -type f | sort | head -100 || true
+            fi
+          }
 
-          **Release Date:** ${{ github.event.head_commit.timestamp }}
+          echo "=== Release packaging environment ==="
+          pwd
+          ls -la
+          echo "Release version: ${{ steps.get_version.outputs.version }}"
+          echo "GITHUB_WORKSPACE=${GITHUB_WORKSPACE:-<unset>}"
+          echo "RUNNER_OS=${RUNNER_OS:-<unset>}"
+          echo "RUNNER_ARCH=${RUNNER_ARCH:-<unset>}"
+          command -v git || true
+          git --version || true
+          command -v zip || true
+          zip -v | head -5 || true
+          df -h .
 
-          ### Contents:
-          - 📦 **Source Code**: Complete source code archive
-          - 🖥️ **Windows x64 Binaries**: Ready-to-run executables for Windows
+          print_directory_diagnostics "downloaded-artifacts" "downloaded-artifacts root before packaging"
+          print_directory_diagnostics "downloaded-artifacts/windows-x64" "windows-x64 artifact root before packaging"
+          print_directory_diagnostics "downloaded-artifacts/windows-arm64" "windows-arm64 artifact root before packaging"
 
-          Build from commit: ${{ github.sha }}
-        draft: false
-        prerelease: false
-        files: |
-          awwtools-${{ steps.get_version.outputs.version }}-source.tar.gz
-          awwtools-${{ steps.get_version.outputs.version }}-windows-x64-binaries.zip
+          package_windows_artifact() {
+            local artifact_dir="$1"
+            local archive_name="$2"
+            local build_dir="$3"
+            local staging_dir="release-files/$build_dir"
+            local package_source_dir=""
+            local expected_direct_path="$artifact_dir/bin"
+            local expected_nested_path="$artifact_dir/$build_dir/bin"
+
+            echo "=== Packaging artifact ==="
+            echo "artifact_dir=$artifact_dir"
+            echo "archive_name=$archive_name"
+            echo "build_dir=$build_dir"
+            echo "staging_dir=$staging_dir"
+            echo "Checking expected paths:"
+            echo "  1. $expected_direct_path"
+            echo "  2. $expected_nested_path"
+
+            print_directory_diagnostics "$artifact_dir" "artifact root for $archive_name"
+
+            if [ ! -d "$artifact_dir" ]; then
+              echo "ERROR: Artifact directory path was not found: $artifact_dir"
+              print_directory_diagnostics "$(dirname "$artifact_dir")" "parent directory of missing artifact root"
+              exit 1
+            fi
+
+            if [ -d "$expected_direct_path" ]; then
+              package_source_dir="$expected_direct_path"
+            elif [ -d "$expected_nested_path" ]; then
+              package_source_dir="$expected_nested_path"
+            else
+              echo "Searching for any directory named 'bin' under $artifact_dir"
+              package_source_dir="$(find "$artifact_dir" -maxdepth 8 -type d -name bin | sort | head -1)"
+            fi
+
+            if [ -z "$package_source_dir" ] && [ -d "$artifact_dir" ]; then
+              if find "$artifact_dir" -maxdepth 1 -type f -name "*.exe" | grep -q .; then
+                package_source_dir="$artifact_dir"
+                echo "Artifact root appears to already contain the bin contents; using $package_source_dir"
+              fi
+            fi
+
+            if [ -z "$package_source_dir" ] || [ ! -d "$package_source_dir" ]; then
+              echo "ERROR: Binary directory was not found for artifact_dir=$artifact_dir build_dir=$build_dir"
+              echo "ERROR: Missing expected path: $expected_direct_path"
+              echo "ERROR: Missing expected path: $expected_nested_path"
+              if [ -n "$package_source_dir" ]; then
+                echo "ERROR: Found candidate path, but it is not a directory: $package_source_dir"
+              else
+                echo "ERROR: No fallback bin directory candidate was found under $artifact_dir"
+                echo "ERROR: The artifact root also did not look like unpacked bin contents"
+              fi
+              print_directory_diagnostics "$artifact_dir" "artifact root after failed bin lookup"
+              print_directory_diagnostics "$(dirname "$artifact_dir")" "parent directory of artifact root"
+              exit 1
+            fi
+
+            mkdir -p "$staging_dir/bin"
+            cp -r "$package_source_dir"/. "$staging_dir/bin/"
+            rm -rf "$staging_dir/bin/logs"
+
+            echo "Staged files for $archive_name:"
+            find "$staging_dir" -maxdepth 4 \( -type d -o -type f \) | sort || true
+            echo "Creating archive $archive_name from $package_source_dir"
+            (
+              cd "$staging_dir"
+              zip -r "../../$archive_name" bin/
+            )
+          }
+
+          package_windows_artifact \
+            "downloaded-artifacts/windows-x64" \
+            "awwtools-${{ steps.get_version.outputs.version }}-windows-x64-binaries.zip" \
+            "build-windows-x64-release"
+
+          package_windows_artifact \
+            "downloaded-artifacts/windows-arm64" \
+            "awwtools-${{ steps.get_version.outputs.version }}-windows-arm64-binaries.zip" \
+            "build-windows-arm64-release"
+
+          # Verify both archives were created
+          if [ ! -f "awwtools-${{ steps.get_version.outputs.version }}-source.tar.gz" ]; then
+            echo "ERROR: Source archive was not created!"
+            exit 1
+          fi
+
+          if [ ! -f "awwtools-${{ steps.get_version.outputs.version }}-windows-x64-binaries.zip" ]; then
+            echo "ERROR: Windows binary archive was not created!"
+            exit 1
+          fi
+
+          if [ ! -f "awwtools-${{ steps.get_version.outputs.version }}-windows-arm64-binaries.zip" ]; then
+            echo "ERROR: Windows ARM64 binary archive was not created!"
+            exit 1
+          fi
+
+          # List created files
+          ls -la awwtools-* || echo "No archives created"
+
+      - name: Create Release
+        if: steps.check_tag.outputs.exists == 'false'
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          name: AwwTools ${{ steps.get_version.outputs.version }}
+          body: |
+            ## AwwTools Release ${{ steps.get_version.outputs.version }}
+
+            **Release Date:** ${{ github.event.head_commit.timestamp }}
+
+            ### Contents:
+            - 📦 **Source Code**: Complete source code archive
+            - 🖥️ **Windows x64 Binaries**: Ready-to-run executables for Windows
+            - 🖥️ **Windows ARM64 Binaries**: Ready-to-run executables for Windows on Snapdragon/ARM64 devices
+
+            Build from commit: ${{ github.sha }}
+          draft: false
+          prerelease: false
+          files: |
+            awwtools-${{ steps.get_version.outputs.version }}-source.tar.gz
+            awwtools-${{ steps.get_version.outputs.version }}-windows-x64-binaries.zip
+            awwtools-${{ steps.get_version.outputs.version }}-windows-arm64-binaries.zip
