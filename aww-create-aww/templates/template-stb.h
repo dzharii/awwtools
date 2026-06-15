@@ -1,32 +1,64 @@
-// ___FILE_NAME___.h - v0.1 - tiny stb-style single-header "Hello, World!" library
+// ___FILE_NAME___.h - v0.1 - stb-style single-header library
 // Public Domain or MIT, your choice, see end of file.
-//
-// Minimal example of the stb single-header pattern.
-// No allocations, no dependencies beyond the C standard library.
 //
 // DOCUMENTATION
 //
 //   Overview:
-//     A trivial API that returns "Hello, World!" either as a const string
-//     or by writing it into a caller-provided buffer.
+//     A trivial API that returns a constant "Hello, World!" string.
 //
-//   Defines that control this header:
-//     ___CAPITALIZED_FILE_NAME____STATIC
-//         Define before including the *implementation* to make function
-//         definitions 'static' so each including .c/.cpp gets its own copy.
+//     TODO: Replace this overview with the actual library description.
+//
+//   Configuration:
 //     ___CAPITALIZED_FILE_NAME____IMPLEMENTATION
-//         Define in exactly one .c/.cpp before including this header to
-//         compile the implementation.
+//         Define in one .c file before including this header to compile the
+//         implementation.
+//
+//     ___CAPITALIZED_FILE_NAME____STATIC
+//         Define before including the implementation to make function
+//         definitions static. Use this when each .c file should get its own
+//         private copy.
+//
+//     ___CAPITALIZED_FILE_NAME____STRIP_PREFIX
+//         Define before the first include to expose shorter convenience names.
+//         For example, hw123_helloworld can also be called as helloworld.
+//
+//         Without strip prefix:
+//             hw123_helloworld();
+//             hw123_version();
+//
+//         With strip prefix:
+//             helloworld();
+//             version();
+//
+//         The compiled symbols keep their prefixed names. The shorter names are
+//         preprocessor aliases only.
 //
 //   Build:
-//     In one source file:
+//     In one .c file:
 //         #define ___CAPITALIZED_FILE_NAME____IMPLEMENTATION
 //         #include "___FILE_NAME___.h"
-//     In all other files:
+//
+//     In all other .c files:
 //         #include "___FILE_NAME___.h"
+//
+//   API:
+//     ___CAPITALIZED_FILE_NAME____PUBLIC_DECL const char* hw123_helloworld(void);
+//       Returns a pointer to a constant, null-terminated "Hello, World!".
+//
+//     ___CAPITALIZED_FILE_NAME____PUBLIC_DECL const char* hw123_version(void);
+//       Returns a pointer to a constant, null-terminated version string.
+//
+// VERSION HISTORY
+//   0.1  Initial release.
+//
+// CONTRIBUTORS
+//   %_YOU_%.
 //
 // LICENSE
 //   See end of file for license information.
+//
+//   TODO: Review and edit the license text for your project. This template is
+//   public domain; you may freely modify any text in this file.
 
 #ifndef ___CAPITALIZED_FILE_NAME____H_INCLUDE
 #define ___CAPITALIZED_FILE_NAME____H_INCLUDE
@@ -36,23 +68,21 @@ extern "C" {
 #endif
 
 // Public declaration macro: resolves to extern or extern "C" for C++.
-// Users can override by defining "___CAPITALIZED_FILE_NAME____PUBLIC_DECL" before this include.
+// Users can override by defining HW123_PUBLIC_DECL before this include.
 #ifndef ___CAPITALIZED_FILE_NAME____PUBLIC_DECL
-#ifdef ___CAPITALIZED_FILE_NAME____STATIC
-#define ___CAPITALIZED_FILE_NAME____PUBLIC_DECL static
-#else
-#ifdef __cplusplus
-#define ___CAPITALIZED_FILE_NAME____PUBLIC_DECL extern "C"
-#else
-#define ___CAPITALIZED_FILE_NAME____PUBLIC_DECL extern
-#endif
-#endif
+#  ifdef ___CAPITALIZED_FILE_NAME____STATIC
+#    define ___CAPITALIZED_FILE_NAME____PUBLIC_DECL static
+#  else
+#    ifdef __cplusplus
+#      define ___CAPITALIZED_FILE_NAME____PUBLIC_DECL extern "C"
+#    else
+#      define ___CAPITALIZED_FILE_NAME____PUBLIC_DECL extern
+#    endif
+#  endif
 #endif
 
 // Public API
 ___CAPITALIZED_FILE_NAME____PUBLIC_DECL const char* hw123_helloworld(void);
-
-___CAPITALIZED_FILE_NAME____PUBLIC_DECL int hw123_helloworld_into(char* out, size_t out_cap);
 
 // Version query, handy for diagnostics.
 ___CAPITALIZED_FILE_NAME____PUBLIC_DECL const char* hw123_version(void);
@@ -70,48 +100,58 @@ ___CAPITALIZED_FILE_NAME____PUBLIC_DECL const char* hw123_version(void);
 
 // Definition macro: empty for global symbols, or 'static' when HELLOWORLD_STATIC.
 #ifndef ___CAPITALIZED_FILE_NAME____PUBLIC_DEF
-#ifdef ___CAPITALIZED_FILE_NAME____STATIC
-#define ___CAPITALIZED_FILE_NAME____PUBLIC_DEF static
-#else
-#define ___CAPITALIZED_FILE_NAME____PUBLIC_DEF
-#endif
+#  ifdef ___CAPITALIZED_FILE_NAME____STATIC
+#    define ___CAPITALIZED_FILE_NAME____PUBLIC_DEF static
+#  else
+#    define ___CAPITALIZED_FILE_NAME____PUBLIC_DEF
+#  endif
 #endif
 
 // Private namespace prefix 'hw123__' for internal symbols.
 static const char hw123__hello_literal[] = "Hello, World!";
 static const char hw123__version_literal[] = "0.1";
 
-___CAPITALIZED_FILE_NAME____PUBLIC_DEF const char* hw123_helloworld(void) {
-  return hw123__hello_literal;
+___CAPITALIZED_FILE_NAME____PUBLIC_DEF const char* hw123_helloworld(void)
+{
+    return hw123__hello_literal;
 }
 
-___CAPITALIZED_FILE_NAME____PUBLIC_DEF int hw123_helloworld_into(char* out, size_t out_cap) {
-  if (!out || out_cap == 0)
-    return 0;
-  // Simple, dependency-free copy of the known literal.
-  // Keep it malloc-free per stb guidance.
-  const char* s = hw123__hello_literal;
-  size_t i = 0;
-  // Reserve one byte for terminator.
-  while (s[i] != '\0' && i + 1 < out_cap) {
-    out[i] = s[i];
-    ++i;
-  }
-  out[i < out_cap ? i : out_cap - 1] = '\0';
-  return (int)i;
-}
-
-___CAPITALIZED_FILE_NAME____PUBLIC_DEF const char* hw123_version(void) {
-  return hw123__version_literal;
+___CAPITALIZED_FILE_NAME____PUBLIC_DEF const char* hw123_version(void)
+{
+    return hw123__version_literal;
 }
 
 #endif // ___CAPITALIZED_FILE_NAME____IMPLEMENTATION
 
-/*
-VERSION HISTORY
-  2025-11-16  Initial release.
+#ifndef ___CAPITALIZED_FILE_NAME____PREFIX_GUARD_
+#define ___CAPITALIZED_FILE_NAME____PREFIX_GUARD_
+    // NOTE: The name stripping should be part of the header so it's not accidentally included
+    // several times. At the same time, it should be at the end of the file so to not create any
+    // potential conflicts in the ___CAPITALIZED_FILE_NAME____IMPLEMENTATION. The header obviously cannot be at the end
+    // of the file because ___CAPITALIZED_FILE_NAME____IMPLEMENTATION needs the forward declarations from there. So the
+    // solution is to split the header into two parts where the name stripping part is at the
+    // end of the file after the ___CAPITALIZED_FILE_NAME____IMPLEMENTATION.
+    #ifdef ___CAPITALIZED_FILE_NAME____STRIP_PREFIX
+        #define hw123_helloworld helloworld
+        #define hw123_version    version
+    #endif // ___CAPITALIZED_FILE_NAME____STRIP_PREFIX
+#endif // ___CAPITALIZED_FILE_NAME____PREFIX_GUARD_
 
-==============================================================================
+
+/*
+------------------------------------------------------------------------------
+Template attribution
+
+This generated header follows the stb-style single-header pattern documented by
+Sean Barrett. The optional prefix-stripping organization was inspired by nob.h
+by Tsoding / Alexey Kutepov.
+
+This comment is attribution for the template only. You may remove or modify it
+freely in generated files.
+------------------------------------------------------------------------------
+*/
+
+/*
 ------------------------------------------------------------------------------
 This software is available under 2 licenses -- choose whichever you prefer.
 ------------------------------------------------------------------------------
